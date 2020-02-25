@@ -25,6 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    //returns a list with all users http method: get, mapping: /users
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -40,6 +41,22 @@ public class UserController {
         return userGetDTOs;
     }
 
+    //returns a specific user corresponding to the id http method: get, mapping: /users
+    @GetMapping("/users/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO getUserByID(@RequestBody UserPostDTO userPostDTO) {
+        // fetch all users in the internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        //get the proper user
+        User user = userService.getUserById(userInput.getId());
+
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+    }
+
+    //creation of a user http method: post, mapping: /users
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -53,4 +70,20 @@ public class UserController {
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
     }
+
+    //login of a user http method: post mapping: /login
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO loginUser(@RequestBody UserPostDTO userPostDTO) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        // login user
+        User foundUser = userService.loginUser(userInput);
+
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
+    }
+
 }
