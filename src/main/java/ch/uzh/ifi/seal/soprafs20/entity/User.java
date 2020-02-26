@@ -41,6 +41,9 @@ public class User implements Serializable {
 	@Column(nullable = false)
     private Date creationDate;
 
+	@Column()
+    private String birthDate;
+
 	public Long getId() {
 		return id;
 	}
@@ -94,4 +97,10 @@ public class User implements Serializable {
     }
 
     public Date getCreationDate(){ return creationDate; }
+
+    public void setBirthDate(String birthDate){
+        this.birthDate = birthDate;
+    }
+
+    public String getBirthDate(){ return birthDate; }
 }

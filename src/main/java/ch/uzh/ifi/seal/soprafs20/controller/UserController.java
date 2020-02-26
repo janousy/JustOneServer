@@ -42,15 +42,13 @@ public class UserController {
     }
 
     //returns a specific user corresponding to the id http method: get, mapping: /users
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO getUserByID(@RequestBody UserPostDTO userPostDTO) {
-        // fetch all users in the internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    public UserGetDTO getUserByID(@PathVariable Long id) {
 
         //get the proper user
-        User user = userService.getUserById(userInput.getId());
+        User user = userService.getUserById(id);
 
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
