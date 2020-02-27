@@ -44,7 +44,7 @@ public class UserService {
 
         checkIfUserExists(newUser);
         Date date = new Date();
-        newUser.setCreationDate(date);
+        newUser.setCreationDate(date.toString());
 
         // saves the given entity but data is only persisted in the database once flush() is called
         newUser = userRepository.save(newUser);
@@ -80,6 +80,7 @@ public class UserService {
         }
     }
 
+
     //login user
     public User loginUser(User userInput){
         User userByUsername = userRepository.findByUsername(userInput.getUsername());
@@ -98,6 +99,8 @@ public class UserService {
         return userByUsername;
     }
 
+    //gets the user by its corresponding it
+    //return: User
     public User getUserById(Long UserId){
 
         List<User> users = getUsers();
@@ -116,4 +119,26 @@ public class UserService {
         log.debug("Found User by Id: {}", userById);
         return userById;
     }
+
+    //updates a user
+    //return: void
+    public void updateUser(Long id, User userInput){
+
+        //find user which should be updated
+        User oldUser = getUserById(id);
+
+        if(oldUser == null){
+            throw new SopraServiceException("The user does not exist which should be updated");
+        }
+
+        //update the two user fields
+        oldUser.setUsername(userInput.getUsername());
+        oldUser.setBirthDate(userInput.getBirthDate());
+
+        userRepository.flush();
+        log.debug("Updated user: {}", oldUser);
+
+    }
+
+
 }

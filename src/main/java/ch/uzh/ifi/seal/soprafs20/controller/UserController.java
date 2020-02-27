@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -83,5 +84,23 @@ public class UserController {
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
+
+    //update of a user http method: put, mapping: /users
+    @PutMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void updateUser(@PathVariable Long id, @RequestBody UserPutDTO userPutDTO) {
+
+        //create a new User with the new values
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        //update user in UserService
+        userService.updateUser(id, userInput);
+
+        // convert internal representation of user back to API
+        //return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+    }
+
+    //TODO put request für user changement and post logout to set the user to offline
 
 }

@@ -11,7 +11,7 @@ public class UserGetDTO {
     private String username;
     private UserStatus status;
     private String password;
-    private Date creationDate;
+    private String creationDate;
     private String birthDate;
 
     public Long getId() {
@@ -54,11 +54,11 @@ public class UserGetDTO {
         this.password = password;
     }
 
-    public Date getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date date) {
+    public void setCreationDate(String date) {
         this.creationDate = date;
     }
 
