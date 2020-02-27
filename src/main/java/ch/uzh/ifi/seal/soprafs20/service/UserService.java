@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.filter.OncePerRequestFilter;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+
 
 import java.util.Date;
 import java.util.List;
@@ -99,6 +101,15 @@ public class UserService {
         return userByUsername;
     }
 
+    //logout user
+    public User logoutUser(User userInput){
+        User toLogOutUser = userRepository.findByToken(userInput.getToken());
+
+        toLogOutUser.setStatus(UserStatus.OFFLINE);
+
+        return toLogOutUser;
+    }
+
     //gets the user by its corresponding it
     //return: User
     public User getUserById(Long UserId){
@@ -131,14 +142,40 @@ public class UserService {
             throw new SopraServiceException("The user does not exist which should be updated");
         }
 
-        //update the two user fields
-        oldUser.setUsername(userInput.getUsername());
-        oldUser.setBirthDate(userInput.getBirthDate());
+        if(userInput.getBirthDate() != null) {
+            if (!validateDate(userInput.getBirthDate())) {
+                throw new SopraServiceException("You did not input a correct date as birth date, please input the birth date in the format 1.1.1900");
+            }
+        }
 
+        //update the two user fields
+        if(userInput.getUsername() != null){
+            oldUser.setUsername(userInput.getUsername());
+        }
+        if(userInput.getBirthDate() != null) {
+            oldUser.setBirthDate(userInput.getBirthDate());
+        }
         userRepository.flush();
         log.debug("Updated user: {}", oldUser);
-
     }
 
+    //checks whether a date is correct
+    public static boolean validateDate(String strDate) {
+            SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
+            date.setLenient(false);
+
+            try
+            {
+                Date javaDate = date.parse(strDate);
+            }
+            // Date format is invalid
+            catch (ParseException e)
+            {
+                return false;
+            }
+
+            // Return true if date format is valid
+            return true;
+    }
 
 }
