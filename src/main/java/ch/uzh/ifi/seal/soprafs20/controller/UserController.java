@@ -96,7 +96,6 @@ public class UserController {
         //update user in UserService
         userService.updateUser(id, userInput);
 
-        // convert internal representation of user back to API
         return null;
     }
 
