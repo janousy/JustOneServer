@@ -7,8 +7,12 @@ import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class UserServiceIntegrationTest {
 
+    @Qualifier("userRepository")
     @Autowired
     private UserRepository userRepository;
 
@@ -40,6 +45,8 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setName("testName");
         testUser.setUsername("testUsername");
+        testUser.setPassword("test");
+        testUser.setCreationDate((new Date()).toString());
 
         // when
         User createdUser = userService.createUser(testUser);
@@ -49,7 +56,9 @@ public class UserServiceIntegrationTest {
         assertEquals(testUser.getName(), createdUser.getName());
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertNotNull(createdUser.getToken());
-        assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+        assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
+        assertEquals(testUser.getCreationDate(), createdUser.getCreationDate());
+        assertEquals(testUser.getPassword(), createdUser.getPassword());
     }
 
     @Test
@@ -59,6 +68,9 @@ public class UserServiceIntegrationTest {
         User testUser = new User();
         testUser.setName("testName");
         testUser.setUsername("testUsername");
+        testUser.setPassword("test");
+        testUser.setCreationDate((new Date()).toString());
+
         User createdUser = userService.createUser(testUser);
 
         // attempt to create second user with same username
@@ -69,8 +81,6 @@ public class UserServiceIntegrationTest {
         testUser2.setUsername("testUsername");
 
         // check that an error is thrown
-        String exceptionMessage = "The username provided is not unique. Therefore, the user could not be created!";
-        SopraServiceException exception = assertThrows(SopraServiceException.class, () -> userService.createUser(testUser2), exceptionMessage);
-        assertEquals(exceptionMessage, exception.getMessage());
+        assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
     }
 }

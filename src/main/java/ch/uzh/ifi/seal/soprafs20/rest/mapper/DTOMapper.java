@@ -39,6 +39,8 @@ public interface DTOMapper {
 
     @Mapping(source = "username", target = "username")
     @Mapping(source = "birthDate", target = "birthDate")
+    @Mapping(source = "password", target = "password")
+    @Mapping(source = "token", target = "token")
     User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 
 }

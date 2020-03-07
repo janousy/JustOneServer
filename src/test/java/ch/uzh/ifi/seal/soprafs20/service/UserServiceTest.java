@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +34,9 @@ public class UserServiceTest {
         testUser.setId(1L);
         testUser.setName("testName");
         testUser.setUsername("testUsername");
+        testUser.setPassword("password");
+        testUser.setCreationDate((new Date()).toString());
+        testUser.setStatus(UserStatus.OFFLINE);
 
         // when -> any object is being save in the userRepository -> return the dummy testUser
         Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
@@ -49,7 +54,9 @@ public class UserServiceTest {
         assertEquals(testUser.getName(), createdUser.getName());
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertNotNull(createdUser.getToken());
-        assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+        assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
+        assertEquals(testUser.getPassword(), createdUser.getPassword());
+        assertEquals(testUser.getCreationDate(), createdUser.getCreationDate());
     }
 
     @Test
@@ -62,9 +69,7 @@ public class UserServiceTest {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
 
         // then -> attempt to create second user with same user -> check that an error is thrown
-        String exceptionMessage = "The name provided is not unique. Therefore, the user could not be created!";
-        SopraServiceException exception = assertThrows(SopraServiceException.class, () -> userService.createUser(testUser), exceptionMessage);
-        assertEquals(exceptionMessage, exception.getMessage());
+        assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
     }
 
     @Test
@@ -77,9 +82,7 @@ public class UserServiceTest {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
         // then -> attempt to create second user with same user -> check that an error is thrown
-        String exceptionMessage = "The username and the name provided are not unique. Therefore, the user could not be created!";
-        SopraServiceException exception = assertThrows(SopraServiceException.class, () -> userService.createUser(testUser), exceptionMessage);
-        assertEquals(exceptionMessage, exception.getMessage());
+        assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
     }
 
 

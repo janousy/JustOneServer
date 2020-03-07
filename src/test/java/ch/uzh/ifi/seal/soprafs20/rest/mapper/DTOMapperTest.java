@@ -4,7 +4,10 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import org.junit.jupiter.api.Test;
+
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,6 +22,9 @@ public class DTOMapperTest {
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setName("name");
         userPostDTO.setUsername("username");
+        userPostDTO.setPassword("test");
+        userPostDTO.setBirthDate("1.1.1900");
+        userPostDTO.setToken("1");
 
         // MAP -> Create user
         User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
@@ -26,6 +32,9 @@ public class DTOMapperTest {
         // check content
         assertEquals(userPostDTO.getName(), user.getName());
         assertEquals(userPostDTO.getUsername(), user.getUsername());
+        assertEquals(userPostDTO.getPassword(), user.getPassword());
+        assertEquals(userPostDTO.getBirthDate(), user.getBirthDate());
+        assertEquals(userPostDTO.getToken(), user.getToken());
     }
 
     @Test
@@ -36,6 +45,9 @@ public class DTOMapperTest {
         user.setUsername("firstname@lastname");
         user.setStatus(UserStatus.OFFLINE);
         user.setToken("1");
+        user.setCreationDate((new Date()).toString());
+        user.setPassword("test");
+        user.setBirthDate("1.1.1900");
 
         // MAP -> Create UserGetDTO
         UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
@@ -45,5 +57,24 @@ public class DTOMapperTest {
         assertEquals(user.getName(), userGetDTO.getName());
         assertEquals(user.getUsername(), userGetDTO.getUsername());
         assertEquals(user.getStatus(), userGetDTO.getStatus());
+        assertEquals(user.getCreationDate(), userGetDTO.getCreationDate());
+        assertEquals(user.getPassword(), userGetDTO.getPassword());
+        assertEquals(user.getBirthDate(), userGetDTO.getBirthDate());
+        assertEquals(user.getToken(), userGetDTO.getToken());
+    }
+
+    @Test
+    public void testCreateUser_fromUserPutDTO_toUser_success() {
+        // create UserPostDTO
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("username");
+        userPutDTO.setBirthDate("1.1.1900");
+
+        // MAP -> Create user
+        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        // check content
+        assertEquals(userPutDTO.getBirthDate(), user.getBirthDate());
+        assertEquals(userPutDTO.getUsername(), user.getUsername());
     }
 }

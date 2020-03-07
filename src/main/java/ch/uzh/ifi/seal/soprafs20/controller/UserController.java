@@ -42,7 +42,7 @@ public class UserController {
         return userGetDTOs;
     }
 
-    //returns a specific user corresponding to the id http method: get, mapping: /users
+    //returns a specific user corresponding to the id http method: get, mapping: /users/{id}
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -70,13 +70,13 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
     }
 
-    //login of a user http method: post mapping: /login
-    @PostMapping("/login")
+    //login of a user http method: put mapping: /login
+    @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO loginUser(@RequestBody UserPostDTO userPostDTO) {
+    public UserGetDTO loginUser(@RequestBody UserPutDTO userPutDTO) {
         // convert API user to internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
         // login user
         User foundUser = userService.loginUser(userInput);
@@ -85,7 +85,22 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
 
-    //update of a user http method: put, mapping: /users
+    //logout of a user http method: put mapping: /logout
+    @PutMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO logoutUser(@RequestBody UserPutDTO userPutDTO) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        // logout user
+        User loggedOutUser = userService.logoutUser(userInput);
+
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedOutUser);
+    }
+
+    //update of a user http method: put, mapping: /users/{id}
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
@@ -94,23 +109,9 @@ public class UserController {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
         //update user in UserService
-        userService.updateUser(id, userInput);
+        User updatedUser = userService.updateUser(id, userInput);
 
-        return null;
-    }
 
-    //login of a user http method: post mapping: /login
-    @PostMapping("/logout")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public UserGetDTO logoutUser(@RequestBody UserPostDTO userPostDTO) {
-        // convert API user to internal representation
-        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
-
-        // logout user
-        User loggedOutUser = userService.logoutUser(userInput);
-
-        // convert internal representation of user back to API
-        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedOutUser);
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
     }
 }

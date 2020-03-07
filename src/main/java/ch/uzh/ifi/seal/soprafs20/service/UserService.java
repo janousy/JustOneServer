@@ -7,8 +7,12 @@ import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -31,7 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(@Qualifier("userRepository") UserRepository userRepository){
         this.userRepository = userRepository;
     }
 
@@ -58,40 +62,18 @@ public class UserService {
         return newUser;
     }
 
-    /**
-     * This is a helper method that will check the uniqueness criteria of the username and the name
-     * defined in the User entity. The method will do nothing if the input is unique and throw an error otherwise.
-     *
-     * @param userToBeCreated
-     * @throws SopraServiceException
-     * @see ch.uzh.ifi.seal.soprafs20.entity.User
-     */
-    private void checkIfUserExists(User userToBeCreated) {
-        User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-        User userByName = userRepository.findByName(userToBeCreated.getName());
-
-        String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
-        if (userByUsername != null && userByName != null) {
-            throw new SopraServiceException(String.format(baseErrorMessage, "username and the name", "are"));
-        }
-        else if (userByUsername != null) {
-            throw new SopraServiceException(String.format(baseErrorMessage, "username", "is"));
-        }
-        else if (userByName != null) {
-            throw new SopraServiceException(String.format(baseErrorMessage, "name", "is"));
-        }
-    }
-
-
     //login user
     public User loginUser(User userInput){
         User userByUsername = userRepository.findByUsername(userInput.getUsername());
 
         if(userByUsername == null){
-            throw new SopraServiceException("The username is not correct or the user does not exist");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The username is not correct or the user does not exist");
         }
         else if(!userByUsername.getPassword().equals(userInput.getPassword())){
-            throw new SopraServiceException("The password is not correct");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"The password is not correct");
+        }
+        else if (userByUsername.getStatus().equals(UserStatus.ONLINE)) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "User already logged in");
         }
 
         userByUsername.setStatus(UserStatus.ONLINE);
@@ -124,7 +106,7 @@ public class UserService {
         }
 
         if(userById == null){
-            throw new SopraServiceException("The id is not correct or the id does not exist");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The id is not correct or the id does not exist");
         }
 
         log.debug("Found User by Id: {}", userById);
@@ -133,10 +115,11 @@ public class UserService {
 
     //updates a user
     //return: void
-    public void updateUser(Long id, User userInput){
+    public User updateUser(Long id, User userInput){
 
         //find user which should be updated
         User oldUser = getUserById(id);
+
 
         if(oldUser == null){
             throw new SopraServiceException("The user does not exist which should be updated");
@@ -144,7 +127,13 @@ public class UserService {
 
         if(userInput.getBirthDate() != null) {
             if (!validateDate(userInput.getBirthDate())) {
-                throw new SopraServiceException("You did not input a correct date as birth date, please input the birth date in the format 1.1.1900");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "You did not input a correct date as birth date, please input the birth date in the format 1.1.1900");
+            }
+        }
+
+        if(userInput.getUsername() != null) {
+            if (!userInput.getUsername().equals(oldUser.getUsername())) {
+                checkIfUserExists(userInput);
             }
         }
 
@@ -157,6 +146,8 @@ public class UserService {
         }
         userRepository.flush();
         log.debug("Updated user: {}", oldUser);
+
+        return oldUser;
     }
 
     //checks whether a date is correct
@@ -166,7 +157,7 @@ public class UserService {
 
             try
             {
-                Date javaDate = date.parse(strDate);
+                Date date_check = date.parse(strDate);
             }
             // Date format is invalid
             catch (ParseException e)
@@ -176,6 +167,32 @@ public class UserService {
 
             // Return true if date format is valid
             return true;
+    }
+
+
+
+    /*
+     * This is a helper method that will check the uniqueness criteria of the username and the name
+     * defined in the User entity. The method will do nothing if the input is unique and throw an error otherwise.
+     *
+     * @param userToBeCreated
+     * @throws SopraServiceException
+     * @see User
+     */
+    private void checkIfUserExists(User userToBeCreated) {
+        User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
+        User userByName = userRepository.findByName(userToBeCreated.getName());
+
+        String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
+        if (userByUsername != null && userByName != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,String.format(baseErrorMessage, "username and the name", "are"));
+        }
+        else if (userByUsername != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
+        }
+        else if (userByName != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "name", "is"));
+        }
     }
 
 }

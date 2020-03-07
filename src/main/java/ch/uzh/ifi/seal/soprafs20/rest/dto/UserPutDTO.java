@@ -6,6 +6,10 @@ public class UserPutDTO {
 
     private String birthDate;
 
+    private String password;
+
+    private String token;
+
     public String getUsername() {
         return username;
     }
@@ -20,6 +24,22 @@ public class UserPutDTO {
 
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }
