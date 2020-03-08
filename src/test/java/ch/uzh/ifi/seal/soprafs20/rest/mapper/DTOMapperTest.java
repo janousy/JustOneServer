@@ -69,6 +69,8 @@ public class DTOMapperTest {
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("username");
         userPutDTO.setBirthDate("1.1.1900");
+        userPutDTO.setPassword("password");
+        userPutDTO.setToken("1");
 
         // MAP -> Create user
         User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
@@ -76,5 +78,7 @@ public class DTOMapperTest {
         // check content
         assertEquals(userPutDTO.getBirthDate(), user.getBirthDate());
         assertEquals(userPutDTO.getUsername(), user.getUsername());
+        assertEquals(userPutDTO.getPassword(), user.getPassword());
+        assertEquals(userPutDTO.getToken(), user.getToken());
     }
 }
