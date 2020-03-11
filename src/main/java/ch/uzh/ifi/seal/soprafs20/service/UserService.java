@@ -43,7 +43,7 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    //create user service and adding it into the database
+    //create user service and adding it into the database.
     public User createUser(User newUser) {
         newUser.setToken(UUID.randomUUID().toString());
         newUser.setStatus(UserStatus.OFFLINE);
