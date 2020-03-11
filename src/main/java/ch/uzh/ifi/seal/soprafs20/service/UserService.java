@@ -88,6 +88,7 @@ public class UserService {
         User toLogOutUser = userRepository.findByToken(userInput.getToken());
 
         toLogOutUser.setStatus(UserStatus.OFFLINE);
+        userRepository.save(toLogOutUser);
 
         return toLogOutUser;
     }
@@ -144,6 +145,8 @@ public class UserService {
         if(userInput.getBirthDate() != null) {
             oldUser.setBirthDate(userInput.getBirthDate());
         }
+
+        userRepository.save(oldUser);
         userRepository.flush();
         log.debug("Updated user: {}", oldUser);
 
