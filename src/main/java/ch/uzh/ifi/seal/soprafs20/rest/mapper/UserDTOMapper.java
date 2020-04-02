@@ -16,9 +16,9 @@ import org.mapstruct.factory.Mappers;
  * Always created one mapper for getting information (GET) and one mapper for creating information (POST).
  */
 @Mapper
-public interface DTOMapper {
+public interface UserDTOMapper {
 
-    DTOMapper INSTANCE = Mappers.getMapper(DTOMapper.class);
+    UserDTOMapper INSTANCE = Mappers.getMapper(UserDTOMapper.class);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "username", target = "username")
