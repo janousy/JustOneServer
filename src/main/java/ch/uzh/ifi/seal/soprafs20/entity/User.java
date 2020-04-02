@@ -92,7 +92,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public void setCreationDate(String creationDate){
+    public void setCreationDate(String creationDate) {
 	    this.creationDate = creationDate;
     }
 
