@@ -36,6 +36,8 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
+    //allgmeine methoden nicht auf state aufrufen
+
     //get all Games as a list
     public List<Game> getAllGames() {
         return null;
@@ -45,6 +47,12 @@ public class GameService {
     //
     public Game createGame(Game newGame) {
 
+        checkIfGameExists(newGame);
+
+        newGame = gameRepository.save(newGame);
+        gameRepository.flush();
+
+        log.debug("Created Information for User: {}", newGame);
         return newGame;
     }
 
@@ -58,6 +66,7 @@ public class GameService {
     }
 
 
+    //bei all diesen methoden soll auf dem state die methode aufgerufen werden
     public Player addPlayerToGame(Player player, Long GameId) {
         return null;
     }
@@ -90,9 +99,7 @@ public class GameService {
 
     }
 
-    public Game checkIfGameExists() {
-        return null;
-    }
+    //allgemeine methoden nicht auf state aufrufen
 
     public void changePlayerRoles() {
 
@@ -103,6 +110,12 @@ public class GameService {
     }
 
     public void updateScores() {
+
+    }
+
+    //TODO hier noch eine methode schreiben welche auf den namen überprüft
+    //
+    private void checkIfGameExists(Game newGame) {
 
     }
 

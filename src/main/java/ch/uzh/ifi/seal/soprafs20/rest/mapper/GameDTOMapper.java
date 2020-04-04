@@ -17,18 +17,18 @@ public interface GameDTOMapper {
     @Mapping(source = "name", target = "name")
     Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);
 
-
     @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "state", target = "state")
     @Mapping(source = "correctCards", target = "correctCards")
     GameGetDTO convertEntityToGameGetDTO(Game game);
+
 /*
     @Mapping(source = "playerId", target = "playerId")
     Game convertGamePutDTOtoEntity(GamePutDTO gamePutDTO);
 
- */
-
     @Mapping(source = "gameId", target = "gameId")
     Game convertGameDeleteDTOtoEntity(GameDeleteDTO gameDeleteDTO);
+
+ */
 }

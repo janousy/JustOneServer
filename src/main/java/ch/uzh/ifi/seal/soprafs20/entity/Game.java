@@ -85,11 +85,11 @@ public class Game implements Serializable {
         this.cardList = cardList;
     }
 
-    public GameState getStatus() {
+    public GameState getState() {
         return state;
     }
 
-    public void setStatus(GameState status) {
+    public void setState(GameState status) {
         this.state = status;
     }
 }

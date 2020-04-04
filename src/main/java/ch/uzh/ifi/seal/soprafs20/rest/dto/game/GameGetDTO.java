@@ -1,11 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.game;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Round;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 
-import java.util.List;
+import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 
 public class GameGetDTO {
 
@@ -33,12 +29,13 @@ public class GameGetDTO {
         this.name = name;
     }
 
-    public GameState getGameState() {
+
+    public GameState getState() {
         return state;
     }
 
-    public void setGameState(GameState gameState) {
-        this.state = gameState;
+    public void setState(GameState state) {
+        this.state = state;
     }
 
     public int getCorrectCards() {
