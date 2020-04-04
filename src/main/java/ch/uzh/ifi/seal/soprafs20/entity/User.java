@@ -47,6 +47,12 @@ public class User implements Serializable {
     @Column(nullable = true)
     private int overallScore;
 
+    @Column(nullable = true)
+    private int currentGameScore;
+
+    @OneToOne
+    private Player player;
+
 	public Long getId() {
 		return id;
 	}

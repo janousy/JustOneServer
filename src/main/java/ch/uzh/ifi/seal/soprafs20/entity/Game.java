@@ -37,11 +37,11 @@ public class Game implements Serializable {
     private GameState state = new LobbyState(this);
 
 
-    public Long getId() {
+    public Long getGameId() {
         return gameId;
     }
 
-    public void setId(Long id) {
+    public void setGameId(Long id) {
         this.gameId = id;
     }
 

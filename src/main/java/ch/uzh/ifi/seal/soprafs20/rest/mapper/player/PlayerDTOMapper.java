@@ -23,7 +23,6 @@ public interface PlayerDTOMapper {
     PlayerGetDTO convertEntityToPlayerGetDTO(Player player); //TODO multiple mappers needed if bots added
 
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "role", target = "role")
     Player convertPlayerPostDTOtoEntity(PlayerPostDTO playerPostDTO);
 
     @Mapping(source = "name", target = "name")

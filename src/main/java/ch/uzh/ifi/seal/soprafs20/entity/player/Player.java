@@ -2,11 +2,10 @@ package ch.uzh.ifi.seal.soprafs20.entity.player;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 public class Player implements Serializable {
@@ -25,14 +24,13 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    //TODO refactor
-    @Column(nullable = false)
-    private Long gameId;
+    @OneToMany(mappedBy = "playerList")
+    private Game game;
 
     @Column(nullable = false)
     private PlayerRole role;
 
-    @Column(nullable = false)
+    @OneToOne
     private User user;
 
     @Column(nullable = false)
@@ -74,12 +72,12 @@ public class Player implements Serializable {
         this.score = score;
     }
 
-    public Long getGameId() {
-        return gameId;
+    public Game getGame() {
+        return game;
     }
 
-    public void setGameId(Long gameId) {
-        this.gameId = gameId;
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public PlayerRole getRole() {

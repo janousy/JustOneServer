@@ -44,7 +44,7 @@ public class PlayerController {
 
         //TODO improve with repository implementation
         for (Player player : players) {
-            if (player.getGameId() == gameId) {
+            if (player.getGame().getGameId() == gameId) {
                 playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO((Player) player)); //TODO
             }
         }
@@ -60,16 +60,15 @@ public class PlayerController {
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(playerById);
     }
 
-
     //GET players sorted by score descending for scoreboard
 
     //POST create/join a player to a specific game
     @PostMapping("/games/{gameId}/players/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO, @PathVariable String gameId, @PathVariable String userId) {
+    public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO, @PathVariable Long gameId, @PathVariable Long userId) {
         Player playerInput = PlayerDTOMapper.INSTANCE.convertPlayerPostDTOtoEntity(playerPostDTO);
-        Player createdPlayer = playerService.createPlayer(playerInput);
+        Player createdPlayer = playerService.createPlayer(playerInput, gameId, userId);
 
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(createdPlayer);
     }

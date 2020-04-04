@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.entity.player.Player;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
@@ -16,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -26,8 +29,8 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
 
     @Autowired
-    public PlayerService(@Qualifier("playerRepository") PlayerRepository userRepository) {
-        this.playerRepository = userRepository;
+    public PlayerService(@Qualifier("playerRepository") PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 
 
@@ -50,12 +53,21 @@ public class PlayerService {
         }
     }
 
-    public Player createPlayer(Player newPlayer) {
+    public Player createPlayer(Player newPlayer, Long gameId, Long userId) {
         checkIfPlayerExistsByName(newPlayer);
 
-        newPlayer = playerRepository.save(newPlayer);
+        newPlayer.setStatus(PlayerStatus.WAITING);
+        newPlayer.setScore(0); //score initially zero
+        //newPlayer.setGame(); TODO how to set the game if we cannot check if exists
+        newPlayer.setRole(PlayerRole.GUEST);
+        //newPlayer.setUser();
+        newPlayer.setToken(UUID.randomUUID().toString());
+        newPlayer.setElapsedTime(0.00);
+
+
+        Player addedPlayer = playerRepository.save(newPlayer);
         log.debug("Created Information for Player: {}", newPlayer);
-        return newPlayer;
+        return addedPlayer;
     }
 
     //helper method
