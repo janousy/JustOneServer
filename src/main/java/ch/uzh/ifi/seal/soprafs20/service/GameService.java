@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
@@ -48,6 +49,8 @@ public class GameService {
     public Game createGame(Game newGame) {
 
         checkIfGameExists(newGame);
+        newGame.setStatus(GameStatus.LOBBY);
+
 
         newGame = gameRepository.save(newGame);
         gameRepository.flush();

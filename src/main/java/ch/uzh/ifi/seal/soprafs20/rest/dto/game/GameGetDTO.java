@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.game;
 
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 
 public class GameGetDTO {
@@ -9,7 +10,7 @@ public class GameGetDTO {
 
     private String name;
 
-    private GameState state;
+    private GameStatus status;
 
     private int correctCards;
 
@@ -29,13 +30,12 @@ public class GameGetDTO {
         this.name = name;
     }
 
-
-    public GameState getState() {
-        return state;
+    public String getStatus() {
+        return status.getClass().toString();
     }
 
-    public void setState(GameState state) {
-        this.state = state;
+    public void setStatus(GameStatus gameStatus) {
+        this.status = gameStatus;
     }
 
     public int getCorrectCards() {

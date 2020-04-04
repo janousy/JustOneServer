@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
 
@@ -34,7 +35,10 @@ public class Game implements Serializable {
     private List<Card> cardList = new ArrayList<Card>();
 
     @Column
-    private GameState state = new LobbyState(this);
+    private GameState gameState = new LobbyState(this);
+
+    @Column
+    private GameStatus status;
 
 
     public Long getGameId() {
@@ -85,11 +89,19 @@ public class Game implements Serializable {
         this.cardList = cardList;
     }
 
-    public GameState getState() {
-        return state;
+    public GameState getGameState() {
+        return gameState;
     }
 
-    public void setState(GameState status) {
-        this.state = status;
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GameStatus status) {
+        this.status = status;
     }
 }
