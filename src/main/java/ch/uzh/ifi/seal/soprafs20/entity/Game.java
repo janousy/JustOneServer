@@ -1,7 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameStatusClass;
+import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
+import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,12 +16,12 @@ public class Game implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long gameId;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private int correctCards;
 
     @OneToMany(mappedBy = "game")
@@ -30,16 +30,19 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game")
     private List<Round> roundList = new ArrayList<Round>();
 
-    @Column()
-    private GameStatusClass status;
+    @OneToMany(mappedBy = "game")
+    private List<Card> cardList = new ArrayList<Card>();
+
+    @Column
+    private GameState state = new LobbyState(this);
 
 
     public Long getId() {
-        return id;
+        return gameId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.gameId = id;
     }
 
     public String getName() {
@@ -64,5 +67,29 @@ public class Game implements Serializable {
 
     public void setPlayerList(List<Player> playerList) {
         this.playerList = playerList;
+    }
+
+    public List<Round> getRoundList() {
+        return roundList;
+    }
+
+    public void setRoundList(List<Round> roundList) {
+        this.roundList = roundList;
+    }
+
+    public List<Card> getCardList() {
+        return cardList;
+    }
+
+    public void setCardList(List<Card> cardList) {
+        this.cardList = cardList;
+    }
+
+    public GameState getStatus() {
+        return state;
+    }
+
+    public void setStatus(GameState status) {
+        this.state = status;
     }
 }
