@@ -1,6 +1,5 @@
-package ch.uzh.ifi.seal.soprafs20.rest.mapper;
+package ch.uzh.ifi.seal.soprafs20.rest.mapper.player;
 
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.entity.player.Player;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
@@ -16,11 +15,12 @@ public interface PlayerDTOMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "score", target = "score")
+    @Mapping(source = "gameId", target = "gameId")
     @Mapping(source = "role", target = "role")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "elapsedTime", target = "elapsedTime")
-    Player convertPlayerGetDTOtoEntity(PlayerGetDTO playerGetDTO);
+    PlayerGetDTO convertEntityToPlayerGetDTO(Player player); //TODO multiple mappers needed if bots added
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "role", target = "role")
@@ -28,8 +28,9 @@ public interface PlayerDTOMapper {
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "status", target = "status")
-    @Mapping(source = "role", target = "role")
     @Mapping(source = "score", target = "score")
+    @Mapping(source = "role", target = "role")
     @Mapping(source = "elapsedTime", target = "elapsedTime")
     Player convertPlayerPutDTOtoEntity(PlayerPutDTO playerPutDTO);
+
 }

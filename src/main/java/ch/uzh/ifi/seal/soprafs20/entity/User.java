@@ -41,8 +41,11 @@ public class User implements Serializable {
 	@Column(nullable = false)
     private String creationDate;
 
-	@Column()
+    @Column(nullable = true)
     private String birthDate;
+
+    @Column(nullable = true)
+    private int overallScore;
 
 	public Long getId() {
 		return id;
