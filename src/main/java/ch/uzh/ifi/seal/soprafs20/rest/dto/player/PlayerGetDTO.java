@@ -1,55 +1,21 @@
-package ch.uzh.ifi.seal.soprafs20.entity;
+package ch.uzh.ifi.seal.soprafs20.rest.dto.player;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 
-import javax.persistence.*;
-import java.io.Serializable;
-
-@Entity
-@Table(name = "PLAYER")
-public class Player implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(nullable = false)
+public class PlayerGetDTO {
     private String name;
-
-    @Column(nullable = false)
+    private Long id;
     private PlayerStatus status;
-
-    @Column(nullable = false)
     private int score;
-
-    //@OneToMany(mappedBy = "playerList")
     private Game game;
-
-    @Column(nullable = false)
     private PlayerRole role;
-
-    @OneToOne
     private User user;
-
-    @Column(nullable = false)
     private String token;
-
-    @Column(nullable = false)
-    private Double elapsedTime;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private int elapsedTime;
 
     public String getName() {
         return name;
@@ -57,6 +23,14 @@ public class Player implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public PlayerStatus getStatus() {
@@ -107,11 +81,11 @@ public class Player implements Serializable {
         this.token = token;
     }
 
-    public Double getElapsedTime() {
+    public int getElapsedTime() {
         return elapsedTime;
     }
 
-    public void setElapsedTime(Double elapsedTime) {
+    public void setElapsedTime(int elapsedTime) {
         this.elapsedTime = elapsedTime;
     }
 }

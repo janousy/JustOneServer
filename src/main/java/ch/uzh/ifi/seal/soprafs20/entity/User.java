@@ -41,8 +41,17 @@ public class User implements Serializable {
 	@Column(nullable = false)
     private String creationDate;
 
-	@Column()
+    @Column(nullable = true)
     private String birthDate;
+
+    @Column(nullable = true)
+    private int overallScore;
+
+    @Column(nullable = true)
+    private int currentGameScore;
+
+    @OneToOne
+    private Player player;
 
 	public Long getId() {
 		return id;
@@ -92,7 +101,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public void setCreationDate(String creationDate){
+    public void setCreationDate(String creationDate) {
 	    this.creationDate = creationDate;
     }
 
