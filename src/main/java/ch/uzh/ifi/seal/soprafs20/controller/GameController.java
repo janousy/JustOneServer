@@ -52,6 +52,7 @@ public class GameController {
         //TODO der status welcher zurückgegeben wird passt nicht mit dem was gesendet werden sollte überein
         GameGetDTO gameGetDTO = GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
 
+
         return gameGetDTO;
     }
 
