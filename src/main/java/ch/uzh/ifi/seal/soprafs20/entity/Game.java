@@ -37,11 +37,11 @@ public class Game implements Serializable {
     private GameState state = new LobbyState(this);
 
 
-    public Long getId() {
+    public Long getGameId() {
         return gameId;
     }
 
-    public void setId(Long id) {
+    public void setGameId(Long id) {
         this.gameId = id;
     }
 
@@ -85,11 +85,11 @@ public class Game implements Serializable {
         this.cardList = cardList;
     }
 
-    public GameState getStatus() {
+    public GameState getState() {
         return state;
     }
 
-    public void setStatus(GameState status) {
+    public void setState(GameState status) {
         this.state = status;
     }
 }
