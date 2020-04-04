@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto.player;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 
 public class PlayerGetDTO {
@@ -10,9 +11,9 @@ public class PlayerGetDTO {
     private Long id;
     private PlayerStatus status;
     private int score;
-    private Long gameId;
+    private Game game;
     private PlayerRole role;
-    private Long user;
+    private User user;
     private String token;
     private int elapsedTime;
 
@@ -48,12 +49,12 @@ public class PlayerGetDTO {
         this.score = score;
     }
 
-    public Long getGameId() {
-        return gameId;
+    public Game getGame() {
+        return game;
     }
 
-    public void setGameId(Long gameId) {
-        this.gameId = gameId;
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public PlayerRole getRole() {
@@ -64,11 +65,11 @@ public class PlayerGetDTO {
         this.role = role;
     }
 
-    public Long getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Long user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

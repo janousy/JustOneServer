@@ -1,9 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-import ch.uzh.ifi.seal.soprafs20.entity.player.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.mapper.player.PlayerDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.PlayerDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -1,12 +1,14 @@
-package ch.uzh.ifi.seal.soprafs20.rest.mapper.player;
+package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.entity.player.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPutDTO;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+@Mapper
 public interface PlayerDTOMapper {
 
     PlayerDTOMapper INSTANCE = Mappers.getMapper(PlayerDTOMapper.class);
@@ -15,7 +17,7 @@ public interface PlayerDTOMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "score", target = "score")
-    @Mapping(source = "gameId", target = "gameId")
+    @Mapping(source = "game", target = "game")
     @Mapping(source = "role", target = "role")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "token", target = "token")
