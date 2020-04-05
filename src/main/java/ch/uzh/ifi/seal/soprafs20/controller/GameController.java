@@ -34,6 +34,7 @@ public class GameController {
             gameGetDTOS.add(GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(g));
         }
         return gameGetDTOS;
+
     }
 
 

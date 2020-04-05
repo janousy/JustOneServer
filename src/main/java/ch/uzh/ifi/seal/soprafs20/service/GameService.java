@@ -2,14 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +25,7 @@ public class GameService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
+    private PlayerService playerService;
 
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
@@ -41,21 +36,39 @@ public class GameService {
 
     //get all Games as a list
     public List<Game> getAllGames() {
-        return null;
+        return this.gameRepository.findAll();
     }
 
-    //create game
-    //
+    //method returns the game which is found by its Id
+    //param: Long gameId
+    //return: returns a Game gameByID
+    public Game getGameById(Long gameId) {
+        return this.gameRepository.findGameByGameId(gameId);
+    }
+
+    //creates a game and saves it in the repository
+    //param: takes a Game newGame
+    //returns: returns the newly created game
     public Game createGame(Game newGame) {
 
         checkIfGameExists(newGame);
         newGame.setStatus(GameStatus.LOBBY);
 
-
         newGame = gameRepository.save(newGame);
         gameRepository.flush();
 
-        log.debug("Created Information for User: {}", newGame);
+        log.debug("Created Information for Game: {}", newGame);
+
+        Player player1 = new Player();
+        player1.setRole(PlayerRole.HOST);
+
+        addPlayerToGame(player1, newGame.getGameId());
+
+        Player player2 = new Player();
+        player2.setRole(PlayerRole.GUEST);
+
+        addPlayerToGame(player2, newGame.getGameId());
+
         return newGame;
     }
 
@@ -70,8 +83,23 @@ public class GameService {
 
 
     //bei all diesen methoden soll auf dem state die methode aufgerufen werden
-    public Player addPlayerToGame(Player player, Long GameId) {
-        return null;
+
+    //adds a Player to a game by using the gameId
+    //param: Player playerToBeAdded, Long GameId
+    //returns the Player which has been added to the game
+    public Player addPlayerToGame(Player playerToBeAdded, Long GameId) {
+
+        Game game = gameRepository.findGameByGameId(GameId);
+
+        List<Player> oldPlayerList = game.getPlayerList();
+
+        oldPlayerList.add(playerToBeAdded);
+
+        game.setPlayerList(oldPlayerList);
+
+        gameRepository.save(game);
+
+        return playerToBeAdded;
     }
 
     public Player removePlayerFromGame(Player player) {
@@ -116,9 +144,16 @@ public class GameService {
 
     }
 
-    //TODO hier noch eine methode schreiben welche auf den namen überprüft
-    //
+
+    //This is a helper method to check whether the provided name is unique, throws an exception if not
+    //param: Game newGame
     private void checkIfGameExists(Game newGame) {
+        Game gameByName = gameRepository.findByName(newGame.getName());
+
+        String baseErrorMessage = "The name provided is not unique. Therefore, the game could not be created!";
+        if (gameByName != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+        }
 
     }
 

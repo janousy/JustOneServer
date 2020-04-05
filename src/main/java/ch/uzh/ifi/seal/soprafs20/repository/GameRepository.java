@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository("gameRepository")
 public interface GameRepository extends JpaRepository<Game, Long> {
     Game findByName(String name);
+
+    Game findGameByGameId(Long Id);
 }

@@ -19,10 +19,10 @@ public class Game implements Serializable {
     @GeneratedValue
     private Long gameId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private int correctCards;
 
     @OneToMany(mappedBy = "game")
@@ -37,7 +37,7 @@ public class Game implements Serializable {
     @Column
     private GameState gameState = new LobbyState(this);
 
-    @Column
+    @Column(nullable = false)
     private GameStatus status;
 
 
