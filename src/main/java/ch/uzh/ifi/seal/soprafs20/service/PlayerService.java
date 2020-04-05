@@ -68,8 +68,7 @@ public class PlayerService {
 
         newPlayer.setUser(userById);
 
-        //TODO: how to link the player belonging to a game
-        gameService.addPlayerToGame(newPlayer, gameId);
+
 
         /* set role to HOST if player list is empty, otherwise set role to GUEST*/
         newPlayer.setRole(PlayerRole.GUEST);
@@ -81,6 +80,10 @@ public class PlayerService {
 
         Player addedPlayer = playerRepository.save(newPlayer);
         log.debug("Created Information for Player: {}", newPlayer);
+
+        //TODO: how to link the player belonging to a game
+        gameService.addPlayerToGame(newPlayer, gameId);
+
         return addedPlayer;
     }
 

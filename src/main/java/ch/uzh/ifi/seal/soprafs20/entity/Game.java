@@ -3,6 +3,8 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "GAME")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "gameId")
 public class Game implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,7 +28,7 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int correctCards;
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Player> playerList = new ArrayList<Player>();
 
     @OneToMany(mappedBy = "game")
@@ -104,4 +107,15 @@ public class Game implements Serializable {
     public void setStatus(GameStatus status) {
         this.status = status;
     }
+
+    public void addPlayer(Player player) {
+        playerList.add(player);
+        player.setGame(this);
+    }
+
+    public void removePlayer(Player player) {
+        playerList.remove(player);
+        player.setGame(null);
+    }
+
 }

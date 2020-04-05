@@ -87,10 +87,10 @@ public class GameService {
     //adds a Player to a game by using the gameId
     //param: Player playerToBeAdded, Long GameId
     //returns the Player which has been added to the game
-    public Player addPlayerToGame(Player playerToBeAdded, Long GameId) {
-
+    public Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
+/*
         //find the game to which a player should be added
-        Game game = gameRepository.findGameByGameId(GameId);
+        Game game = gameRepository.findGameByGameId(gameId);
 
         //get the playerlist and add a new player
         List<Player> oldPlayerList = game.getPlayerList();
@@ -101,6 +101,16 @@ public class GameService {
         gameRepository.save(game);
         gameRepository.flush();
 
+
+        return playerToBeAdded;
+
+ */
+        Game game = gameRepository.findGameByGameId(gameId);
+
+        game.addPlayer(playerToBeAdded);
+
+        //save the game in the repository
+        gameRepository.save(game);
 
         return playerToBeAdded;
     }
@@ -114,9 +124,10 @@ public class GameService {
         Game game = gameRepository.findGameByGameId(GameId);
 
         //get the playerlist and add a new player
-        List<Player> oldPlayerList = game.getPlayerList();
-        oldPlayerList.remove(playerToBeRemoved);
-        game.setPlayerList(oldPlayerList);
+        //List<Player> oldPlayerList = game.getPlayerList();
+        //oldPlayerList.remove(playerToBeRemoved);
+        //game.setPlayerList(oldPlayerList);
+        game.removePlayer(playerToBeRemoved);
 
         //save the game in the repository
         gameRepository.save(game);
