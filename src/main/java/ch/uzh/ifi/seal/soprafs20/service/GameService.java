@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -35,6 +34,8 @@ public class GameService {
     //allgmeine methoden nicht auf state aufrufen
 
     //get all Games as a list
+    //param:
+    //return: returns a List<Game> with all games in it
     public List<Game> getAllGames() {
         return this.gameRepository.findAll();
     }
@@ -59,24 +60,21 @@ public class GameService {
 
         log.debug("Created Information for Game: {}", newGame);
 
-        Player player1 = new Player();
-        player1.setRole(PlayerRole.HOST);
-
-        addPlayerToGame(player1, newGame.getGameId());
-
-        Player player2 = new Player();
-        player2.setRole(PlayerRole.GUEST);
-
-        addPlayerToGame(player2, newGame.getGameId());
-
         return newGame;
     }
 
     //delete a specific game with its id
-    public Game deleteGame(Game gametobedeleted) {
-        return null;
+    //param: Long gameId
+    //return: returns the deleted game Game
+    public Game deleteGameById(Long gameId) {
+        Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
+
+        gameRepository.delete(gameToBeDeleted);
+
+        return gameToBeDeleted;
     }
 
+    //TODO kann gelöscht werden
     public List<Player> getAllPlayers(Long gameId) {
         return null;
     }
@@ -89,21 +87,36 @@ public class GameService {
     //returns the Player which has been added to the game
     public Player addPlayerToGame(Player playerToBeAdded, Long GameId) {
 
+        //find the game to which a player should be added
         Game game = gameRepository.findGameByGameId(GameId);
 
+        //get the playerlist and add a new player
         List<Player> oldPlayerList = game.getPlayerList();
-
         oldPlayerList.add(playerToBeAdded);
-
         game.setPlayerList(oldPlayerList);
 
+        //save the game in the repository
         gameRepository.save(game);
 
         return playerToBeAdded;
     }
 
-    public Player removePlayerFromGame(Player player) {
-        return null;
+    //removes a Player from a game by using the gameId
+    //param: Player playerToBeRemoved, Long GameId
+    //returns the Player which has been removed from the game
+    public Player removePlayerFromGame(Player playerToBeRemoved, Long GameId) {
+        //find the game to which a player should be added
+        Game game = gameRepository.findGameByGameId(GameId);
+
+        //get the playerlist and add a new player
+        List<Player> oldPlayerList = game.getPlayerList();
+        oldPlayerList.remove(playerToBeRemoved);
+        game.setPlayerList(oldPlayerList);
+
+        //save the game in the repository
+        gameRepository.save(game);
+
+        return playerToBeRemoved;
     }
 
     public List<Player> updatePlayerList() {

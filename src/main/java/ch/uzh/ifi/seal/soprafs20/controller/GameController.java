@@ -3,7 +3,9 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.user.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.GameDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.UserDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,18 @@ public class GameController {
 
     }
 
+    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    @GetMapping("/games/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO getGameByID(@PathVariable Long id) {
+
+        //get the proper game
+        Game game = gameService.getGameById(id);
+
+        // convert internal representation of user back to API
+        return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+    }
 
     //creation of a game
     @PostMapping("/games")
@@ -56,6 +70,18 @@ public class GameController {
     }
 
 
+    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    @DeleteMapping("/games/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO deleteGameByID(@PathVariable Long id) {
+
+        //get the proper game
+        Game game = gameService.deleteGameById(id);
+
+        // convert internal representation of user back to API
+        return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+    }
 
 
 }
