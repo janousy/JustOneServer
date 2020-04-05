@@ -6,13 +6,16 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.PlayerDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class PlayerController {
+
 
     private final PlayerService playerService;
 
@@ -66,7 +69,9 @@ public class PlayerController {
     @PostMapping("/games/{gameId}/players/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO, @PathVariable Long gameId, @PathVariable Long userId) {
+    public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO,
+                                     @PathVariable Long gameId,
+                                     @PathVariable Long userId) { //controller returns 400 if header not found!
         Player playerInput = PlayerDTOMapper.INSTANCE.convertPlayerPostDTOtoEntity(playerPostDTO);
         Player createdPlayer = playerService.createPlayer(playerInput, gameId, userId);
 

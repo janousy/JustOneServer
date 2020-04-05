@@ -27,7 +27,7 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    //@OneToMany(mappedBy = "playerList")
+    @ManyToOne
     private Game game;
 
     @Column(nullable = false)
