@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +25,18 @@ public class PlayerService {
     private final Logger log = LoggerFactory.getLogger(PlayerService.class);
 
     private final PlayerRepository playerRepository;
+    private final GameService gameService;
+    private final UserService userService;
 
     @Autowired
-    public PlayerService(@Qualifier("playerRepository") PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
-    }
+    public PlayerService(@Qualifier("playerRepository") PlayerRepository playerRepository,
+                         GameService gameService,
+                         UserService userService) {
 
+        this.playerRepository = playerRepository;
+        this.gameService = gameService;
+        this.userService = userService;
+    }
 
     public List<Player> getPlayers() {
         return playerRepository.findAll();
@@ -55,19 +62,36 @@ public class PlayerService {
 
         newPlayer.setStatus(PlayerStatus.WAITING);
         newPlayer.setScore(0); //score initially zero
-        //newPlayer.setGame(); TODO how to set the game if we cannot check if exists
+
+        User userById = userService.getUserById(userId);
+
+        newPlayer.setUser(userById);
+
+
+
+        /* set role to HOST if player list is empty, otherwise set role to GUEST*/
         newPlayer.setRole(PlayerRole.GUEST);
+
         //newPlayer.setUser();
         newPlayer.setToken(UUID.randomUUID().toString());
         newPlayer.setElapsedTime(0.00);
 
 
         Player addedPlayer = playerRepository.save(newPlayer);
+
+        //TODO: how to link the player belonging to a game
+        addedPlayer = gameService.addPlayerToGame(newPlayer, gameId);
+
         log.debug("Created Information for Player: {}", newPlayer);
         return addedPlayer;
     }
 
-    //helper method
+    public Player deletePlayer(Player player) {
+        return null;
+    }
+
+
+    //helper methods
     private void checkIfPlayerExistsByName(Player playerToBeCreated) {
         Player playerByName = playerRepository.findByName(playerToBeCreated.getName());
         String baseErrorMessage = "The %s provided %s not unique. Therefore, the player could not be created!";

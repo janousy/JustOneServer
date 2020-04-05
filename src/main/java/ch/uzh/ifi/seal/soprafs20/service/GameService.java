@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
@@ -24,7 +23,6 @@ public class GameService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
-    private PlayerService playerService;
 
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
@@ -40,12 +38,14 @@ public class GameService {
         return this.gameRepository.findAll();
     }
 
+
     //method returns the game which is found by its Id
     //param: Long gameId
     //return: returns a Game gameByID
     public Game getGameById(Long gameId) {
         return this.gameRepository.findGameByGameId(gameId);
     }
+
 
     //creates a game and saves it in the repository
     //param: takes a Game newGame
@@ -63,6 +63,7 @@ public class GameService {
         return newGame;
     }
 
+
     //delete a specific game with its id
     //param: Long gameId
     //return: returns the deleted game Game
@@ -73,6 +74,7 @@ public class GameService {
 
         return gameToBeDeleted;
     }
+
 
     //TODO kann gelöscht werden
     public List<Player> getAllPlayers(Long gameId) {
@@ -97,9 +99,11 @@ public class GameService {
 
         //save the game in the repository
         gameRepository.save(game);
+        gameRepository.flush();
 
         return playerToBeAdded;
     }
+
 
     //removes a Player from a game by using the gameId
     //param: Player playerToBeRemoved, Long GameId

@@ -2,8 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,7 +25,7 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private int score;
 
-    //@OneToMany(mappedBy = "playerList")
+    @ManyToOne
     private Game game;
 
     @Column(nullable = false)

@@ -13,12 +13,4 @@ public class PlayerPostDTO {
     public void setName(String name) {
         this.name = name;
     }
-
-    public PlayerRole getRole() {
-        return role;
-    }
-
-    public void setRole(PlayerRole role) {
-        this.role = role;
-    }
 }
