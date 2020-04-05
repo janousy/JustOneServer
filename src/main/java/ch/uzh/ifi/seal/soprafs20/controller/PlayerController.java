@@ -71,10 +71,22 @@ public class PlayerController {
     @ResponseBody
     public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO,
                                      @PathVariable Long gameId,
-                                     @PathVariable Long userId) { //controller returns 400 if header not found!
+                                     @PathVariable Long userId) {
         Player playerInput = PlayerDTOMapper.INSTANCE.convertPlayerPostDTOtoEntity(playerPostDTO);
         Player createdPlayer = playerService.createPlayer(playerInput, gameId, userId);
 
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(createdPlayer);
+    }
+
+    //DELETE delete player TODO: who becomes host
+    @DeleteMapping("/games/{gameId}/players/{playerId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public PlayerGetDTO deletePlayer(@PathVariable Long gameId,
+                                     @PathVariable Long playerId) {
+
+        Player deletedPlayer = playerService.deletePlayer(gameId, playerId);
+
+        return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(deletedPlayer);
     }
 }

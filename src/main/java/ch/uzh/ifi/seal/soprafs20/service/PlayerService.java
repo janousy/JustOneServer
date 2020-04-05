@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +84,16 @@ public class PlayerService {
         return addedPlayer;
     }
 
-    public Player deletePlayer(Player player) {
-        return null;
+    public Player deletePlayer(Long gameId, Long playerId) {
+        Optional<Player> playerById = playerRepository.findById(playerId);
+
+        if (playerById.isPresent()) {
+            playerRepository.delete(playerById.get());
+            return playerById.get();
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "player by id not found");
+        }
     }
 
 
