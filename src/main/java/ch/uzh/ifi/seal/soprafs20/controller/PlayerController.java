@@ -41,14 +41,14 @@ public class PlayerController {
     @GetMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<PlayerGetDTO> getAllPlayersFromGame(@PathVariable int gameId) {
+    public List<PlayerGetDTO> getAllPlayersFromGame(@PathVariable long gameId) {
         List<Player> players = playerService.getPlayers();
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
 
         //TODO improve with repository implementation
         for (Player player : players) {
             if (player.getGame().getGameId() == gameId) {
-                playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO((Player) player)); //TODO
+                playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player)); //TODO
             }
         }
         return playerGetDTOs;

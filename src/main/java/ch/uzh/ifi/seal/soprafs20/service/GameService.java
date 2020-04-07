@@ -70,13 +70,18 @@ public class GameService {
     public Game deleteGameById(Long gameId) {
         Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
 
+        if (gameToBeDeleted == null) {
+            String baseErrorMessage = "The gameId provided does not exist. Therefore, the game could not be deleted";
+            throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+        }
+
         gameRepository.delete(gameToBeDeleted);
 
         return gameToBeDeleted;
     }
 
 
-    //TODO kann gelöscht werden
+    //TODO kann gelöscht werden da diese in PlayerService ist
     public List<Player> getAllPlayers(Long gameId) {
         return null;
     }
@@ -107,6 +112,12 @@ public class GameService {
  */
         Game game = gameRepository.findGameByGameId(gameId);
 
+        //throw an error if too many players want to join the game
+        if (game.getPlayerList().size() == 7) {
+            String baseErrorMessage = "The lobby has already the maximum amount of players(7)";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
         game.addPlayer(playerToBeAdded);
 
         //save the game in the repository
@@ -120,13 +131,16 @@ public class GameService {
     //param: Player playerToBeRemoved, Long GameId
     //returns the Player which has been removed from the game
     public Player removePlayerFromGame(Player playerToBeRemoved, Long GameId) {
-        //find the game to which a player should be added
+
+        //find the game from which a player should be removed and remove it
         Game game = gameRepository.findGameByGameId(GameId);
 
-        //get the playerlist and add a new player
-        //List<Player> oldPlayerList = game.getPlayerList();
-        //oldPlayerList.remove(playerToBeRemoved);
-        //game.setPlayerList(oldPlayerList);
+        //throw an error if too many players want to join the game
+        if (game.getPlayerList().size() == 0) {
+            String baseErrorMessage = "The lobby is already empty";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
         game.removePlayer(playerToBeRemoved);
 
         //save the game in the repository
@@ -135,10 +149,7 @@ public class GameService {
         return playerToBeRemoved;
     }
 
-    public List<Player> updatePlayerList() {
-        return null;
-    }
-
+    //TODO can be removed as this is already in the playerservice
     public List<Player> getPlayerList() {
         return null;
     }
@@ -161,6 +172,7 @@ public class GameService {
 
     //allgemeine methoden nicht auf state aufrufen
 
+    //TODO can be removed as this should be in the playerservice as well
     public void changePlayerRoles() {
 
     }
@@ -179,9 +191,9 @@ public class GameService {
     private void checkIfGameExists(Game newGame) {
         Game gameByName = gameRepository.findByName(newGame.getName());
 
-        String baseErrorMessage = "The name provided is not unique. Therefore, the game could not be created!";
+        String baseErrorMessage = "The name provided is not %s. Therefore, the game could not be %s!";
         if (gameByName != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "unique", "created"));
         }
 
     }

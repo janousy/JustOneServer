@@ -17,7 +17,7 @@ public interface PlayerDTOMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "score", target = "score")
-    @Mapping(source = "game", target = "game")
+    //@Mapping(source = "game", target = "game")
     @Mapping(source = "role", target = "role")
     @Mapping(source = "user", target = "user")
     @Mapping(source = "token", target = "token")

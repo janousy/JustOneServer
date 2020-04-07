@@ -10,7 +10,7 @@ public class PlayerGetDTO {
     private Long id;
     private PlayerStatus status;
     private int score;
-    private Game game;
+    //private Game game;
     private PlayerRole role;
     private User user;
     private String token;
@@ -48,7 +48,7 @@ public class PlayerGetDTO {
         this.score = score;
     }
 
-    public Game getGame() {
+    /*public Game getGame() {
         return game;
     }
 
@@ -56,6 +56,8 @@ public class PlayerGetDTO {
         this.game = game;
     }
 
+
+     */
     public PlayerRole getRole() {
         return role;
     }
