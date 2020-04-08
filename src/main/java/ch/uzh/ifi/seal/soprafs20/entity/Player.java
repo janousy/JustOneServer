@@ -37,8 +37,7 @@ public class Player implements Serializable {
     private PlayerRole role;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
-    //@JsonBackReference(value = "user")
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     @Column(nullable = false)

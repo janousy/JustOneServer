@@ -53,11 +53,9 @@ public class User implements Serializable {
     @Column(nullable = true)
     private int currentGameScore;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL
-            //fetch = FetchType.LAZY,
-            //optional = false
+    @OneToOne(mappedBy = "user",
+            cascade = CascadeType.ALL
     )
-    //@JsonManagedReference(value = "user")
     private Player player;
 
     public void setPlayer(Player player) {
@@ -76,11 +74,6 @@ public class User implements Serializable {
     public Player getPlayer() {
         return player;
     }
-
-   /* public void setPlayer(Player player) {
-        this.player = player;
-    }*/
-
 
     public Long getId() {
         return id;
