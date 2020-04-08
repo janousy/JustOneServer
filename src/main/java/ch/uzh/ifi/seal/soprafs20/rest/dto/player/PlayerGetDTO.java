@@ -10,9 +10,7 @@ public class PlayerGetDTO {
     private Long id;
     private PlayerStatus status;
     private int score;
-    //private Game game;
     private PlayerRole role;
-    private User user;
     private String token;
     private int elapsedTime;
 
@@ -48,30 +46,13 @@ public class PlayerGetDTO {
         this.score = score;
     }
 
-    /*public Game getGame() {
-        return game;
-    }
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-
-     */
     public PlayerRole getRole() {
         return role;
     }
 
     public void setRole(PlayerRole role) {
         this.role = role;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getToken() {

@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -19,28 +20,28 @@ import java.io.Serializable;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(nullable = false)
-	private String name;
-	
-	@Column(nullable = false, unique = true) 
-	private String username;
-	
-	@Column(nullable = false, unique = true) 
-	private String token;
+    private Long id;
 
-	@Column(nullable = false)
-	private UserStatus status;
+    @Column(nullable = true)
+    private String name;
 
-	@Column(nullable = false)
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false, unique = true)
+    private String token;
+
+    @Column(nullable = false)
+    private UserStatus status;
+
+    @Column(nullable = false)
     private String password;
 
-	@Column(nullable = false)
+    @Column(nullable = false)
     private String creationDate;
 
     @Column(nullable = true)
@@ -52,48 +53,75 @@ public class User implements Serializable {
     @Column(nullable = true)
     private int currentGameScore;
 
-    @OneToOne
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL
+            //fetch = FetchType.LAZY,
+            //optional = false
+    )
+    //@JsonManagedReference(value = "user")
     private Player player;
 
-	public Long getId() {
-		return id;
-	}
+    public void setPlayer(Player player) {
+        if (player == null) {
+            if (this.player != null) {
+                this.player.setUser(null);
+            }
+        }
+        else {
+            player.setUser(this);
+        }
+        this.player = player;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
 
-	public String getName() {
-		return name;
-	}
+    public Player getPlayer() {
+        return player;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+   /* public void setPlayer(Player player) {
+        this.player = player;
+    }*/
 
-	public String getUsername() {
-		return username;
-	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getToken() {
-		return token;
-	}
+    public void setId(Long id) {
+        this.id = id;
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    }
 
-	public UserStatus getStatus() {
-		return status;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setStatus(UserStatus status) {
-		this.status = status;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
 
     public String getPassword() {
         return password;
@@ -104,14 +132,35 @@ public class User implements Serializable {
     }
 
     public void setCreationDate(String creationDate) {
-	    this.creationDate = creationDate;
+        this.creationDate = creationDate;
     }
 
-    public String getCreationDate(){ return creationDate; }
+    public String getCreationDate() {
+        return creationDate;
+    }
 
-    public void setBirthDate(String birthDate){
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
-    public String getBirthDate(){ return birthDate; }
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public int getOverallScore() {
+        return overallScore;
+    }
+
+    public void setOverallScore(int overallScore) {
+        this.overallScore = overallScore;
+    }
+
+    public int getCurrentGameScore() {
+        return currentGameScore;
+    }
+
+    public void setCurrentGameScore(int currentGameScore) {
+        this.currentGameScore = currentGameScore;
+    }
+
 }

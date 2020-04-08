@@ -17,12 +17,10 @@ public interface PlayerDTOMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "score", target = "score")
-    //@Mapping(source = "game", target = "game")
     @Mapping(source = "role", target = "role")
-    @Mapping(source = "user", target = "user")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "elapsedTime", target = "elapsedTime")
-    PlayerGetDTO convertEntityToPlayerGetDTO(Player player); //TODO multiple mappers needed if bots added
+    PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 
     @Mapping(source = "name", target = "name")
     Player convertPlayerPostDTOtoEntity(PlayerPostDTO playerPostDTO);

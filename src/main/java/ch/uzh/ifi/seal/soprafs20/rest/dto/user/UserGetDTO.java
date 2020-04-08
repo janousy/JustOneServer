@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.user;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 
 import java.util.Date;
 
@@ -10,10 +11,12 @@ public class UserGetDTO {
     private String name;
     private String username;
     private UserStatus status;
-    private String password;
     private String creationDate;
     private String birthDate;
     private String token;
+    private int overallScore;
+    private int currentGameScore;
+    private Player player;
 
     public Long getId() {
         return id;
@@ -47,14 +50,6 @@ public class UserGetDTO {
         this.status = status;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getCreationDate() {
         return creationDate;
     }
@@ -78,4 +73,29 @@ public class UserGetDTO {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public int getOverallScore() {
+        return overallScore;
+    }
+
+    public void setOverallScore(int overallScore) {
+        this.overallScore = overallScore;
+    }
+
+    public int getCurrentGameScore() {
+        return currentGameScore;
+    }
+
+    public void setCurrentGameScore(int currentGameScore) {
+        this.currentGameScore = currentGameScore;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
 }

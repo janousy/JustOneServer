@@ -71,7 +71,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[0].name", is(user.getName())))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$[0].password", is(user.getPassword())))
                 .andExpect(jsonPath("$[0].creationDate", is(user.getCreationDate())))
                 .andExpect(jsonPath("$[0].token", is(user.getToken())));
     }
@@ -109,7 +108,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(user.getName())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.password", is(user.getPassword())))
                 .andExpect(jsonPath("$.birthDate", is(user.getBirthDate())))
                 .andExpect(jsonPath("$.token", is(user.getToken())));
     }
@@ -132,7 +130,6 @@ public class UserControllerTest {
         userGetDto.setUsername("testUsername");
         userGetDto.setToken("1");
         userGetDto.setStatus(UserStatus.ONLINE);
-        userGetDto.setPassword("password");
         userGetDto.setBirthDate("1.1.1900");
 
         given(userService.getUserById(Mockito.any())).willReturn(user);
@@ -149,7 +146,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(user.getName())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.password", is(user.getPassword())))
                 .andExpect(jsonPath("$.birthDate", is(user.getBirthDate())))
                 .andExpect(jsonPath("$.token", is(user.getToken())));
     }
@@ -184,7 +180,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(user.getId().intValue())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.password", is(user.getPassword())))
                 .andExpect(jsonPath("$.token", is(user.getToken())));
     }
 
@@ -252,7 +247,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name", is(user.getName())))
                 .andExpect(jsonPath("$.username", is(user.getUsername())))
                 .andExpect(jsonPath("$.status", is(user.getStatus().toString())))
-                .andExpect(jsonPath("$.password", is(user.getPassword())))
                 .andExpect(jsonPath("$.birthDate", is(user.getBirthDate())))
                 .andExpect(jsonPath("$.token", is(user.getToken())));
     }
