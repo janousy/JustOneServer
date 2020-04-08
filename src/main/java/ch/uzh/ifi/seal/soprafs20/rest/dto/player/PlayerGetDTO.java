@@ -11,7 +11,7 @@ public class PlayerGetDTO {
     private PlayerStatus status;
     private int score;
     private PlayerRole role;
-    private String token;
+    private String userToken;
     private int elapsedTime;
 
     public String getName() {
@@ -46,7 +46,6 @@ public class PlayerGetDTO {
         this.score = score;
     }
 
-
     public PlayerRole getRole() {
         return role;
     }
@@ -55,12 +54,12 @@ public class PlayerGetDTO {
         this.role = role;
     }
 
-    public String getToken() {
-        return token;
+    public String getUserToken() {
+        return userToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
     }
 
     public int getElapsedTime() {

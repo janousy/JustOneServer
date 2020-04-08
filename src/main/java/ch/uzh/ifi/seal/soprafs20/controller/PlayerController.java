@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,12 @@ public class PlayerController {
         for (Player player : players) {
             playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
         }
-        return playerGetDTOs;
+        if (!playerGetDTOs.isEmpty()) {
+            return playerGetDTOs;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no players found");
+        }
     }
 
     //GET players from specific game
@@ -42,14 +48,12 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<PlayerGetDTO> getAllPlayersFromGame(@PathVariable long gameId) {
-        List<Player> players = playerService.getPlayers();
-        List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
 
-        //TODO improve with repository implementation
-        for (Player player : players) {
-            if (player.getGame().getGameId() == gameId) {
-                playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player)); //TODO
-            }
+        List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
+        List<Player> playersByGameId = playerService.getPlayersFromGame(gameId);
+
+        for (Player player : playersByGameId) {
+            playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
         }
         return playerGetDTOs;
     }
@@ -66,14 +70,13 @@ public class PlayerController {
     //GET players sorted by score descending for scoreboard
 
     //POST create/join a player to a specific game
-    @PostMapping("/games/{gameId}/players/{userId}")
+    @PostMapping("/games/{gameId}/players/")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO,
-                                     @PathVariable Long gameId,
-                                     @PathVariable Long userId) {
+                                     @PathVariable Long gameId) {
         Player playerInput = PlayerDTOMapper.INSTANCE.convertPlayerPostDTOtoEntity(playerPostDTO);
-        Player createdPlayer = playerService.createPlayer(playerInput, gameId, userId);
+        Player createdPlayer = playerService.createPlayer(playerInput, gameId);
 
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(createdPlayer);
     }

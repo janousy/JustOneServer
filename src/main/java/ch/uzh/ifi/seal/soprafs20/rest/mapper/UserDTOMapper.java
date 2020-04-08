@@ -31,13 +31,11 @@ public interface UserDTOMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "username", target = "username")
     @Mapping(source = "status", target = "status")
-    //@Mapping(source = "password", target = "password")
     @Mapping(source = "creationDate", target = "creationDate")
     @Mapping(source = "birthDate", target = "birthDate")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "overallScore", target = "overallScore")
     @Mapping(source = "currentGameScore", target = "currentGameScore")
-    @Mapping(source = "player", target = "player")
     UserGetDTO convertEntityToUserGetDTO(User user);
 
     @Mapping(source = "username", target = "username")

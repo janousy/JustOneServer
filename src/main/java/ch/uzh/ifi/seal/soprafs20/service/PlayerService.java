@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,7 +44,9 @@ public class PlayerService {
         return playerRepository.findAll();
     }
 
-    //TODO get players from specific game with repository method
+    public List<Player> getPlayersFromGame(Long gameId) {
+        return playerRepository.findByGameGameId(gameId);
+    }
 
     public Player getPlayerById(Long playerId) {
         Optional<Player> optionalPlayer = playerRepository.findById(playerId);
@@ -58,28 +61,26 @@ public class PlayerService {
         }
     }
 
-    public Player createPlayer(Player newPlayer, Long gameId, Long userId) {
+    public Player createPlayer(Player newPlayer, Long gameId) {
+
         checkIfPlayerExistsByName(newPlayer);
+        User userByToken = userService.getUserByToken(newPlayer.getUserToken());
 
         newPlayer.setStatus(PlayerStatus.WAITING);
         newPlayer.setScore(0); //score initially zero
-
-        User userById = userService.getUserById(userId);
-
-        newPlayer.setUser(userById);
-
-        /* set role to HOST if player list is empty, otherwise set role to GUEST*/
-        newPlayer.setRole(PlayerRole.GUEST);
-
-        //newPlayer.setUser();
-        newPlayer.setToken(UUID.randomUUID().toString());
+        newPlayer.setUser(userByToken);
+        newPlayer.setUserToken(userByToken.getToken());
         newPlayer.setElapsedTime(0.00);
-
+        if (!checkIfGameHasHost(gameId)) {
+            newPlayer.setRole(PlayerRole.HOST);
+        }
+        else {
+            newPlayer.setRole(PlayerRole.GUEST);
+        }
 
         Player addedPlayer = playerRepository.save(newPlayer);
         log.debug("Created Information for Player: {}", newPlayer);
 
-        //TODO: how to link the player belonging to a game
         addedPlayer = gameService.addPlayerToGame(newPlayer, gameId);
 
         return addedPlayer;
@@ -106,5 +107,17 @@ public class PlayerService {
         if (playerByName != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "playername", "is"));
         }
+    }
+
+    private boolean checkIfGameHasHost(Long gameId) {
+        boolean hasHost = false;
+        List<Player> playersInGameById = playerRepository.findByGameGameId(gameId);
+        for (Player player : playersInGameById) {
+            if (player.getRole().equals(PlayerRole.HOST)) {
+                hasHost = true;
+                break;
+            }
+        }
+        return hasHost;
     }
 }

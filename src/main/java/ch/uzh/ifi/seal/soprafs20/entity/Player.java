@@ -31,6 +31,7 @@ public class Player implements Serializable {
     private int score;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_id")
     private Game game;
 
     @Column(nullable = false)
@@ -41,7 +42,7 @@ public class Player implements Serializable {
     private User user;
 
     @Column(nullable = false)
-    private String token;
+    private String userToken; //is equal to the user's token
 
     @Column(nullable = false)
     private Double elapsedTime;
@@ -103,12 +104,12 @@ public class Player implements Serializable {
         this.user = user;
     }
 
-    public String getToken() {
-        return token;
+    public String getUserToken() {
+        return userToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
     }
 
     public Double getElapsedTime() {
