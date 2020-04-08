@@ -80,7 +80,7 @@ public class DataLoader implements ApplicationRunner {
 
 
             testPlayer.setName("testPlayer" + i);
-            testPlayer.setStatus(PlayerStatus.WAITING);
+            testPlayer.setStatus(i % 2 == 0 ? PlayerStatus.WAITING : PlayerStatus.READY);
             testPlayer.setScore(0);
             //defining a Host for each game
             testPlayer.setRole(i % 2 == 0 ? PlayerRole.GUEST : PlayerRole.HOST);
