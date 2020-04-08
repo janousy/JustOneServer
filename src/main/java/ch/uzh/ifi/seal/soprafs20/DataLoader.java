@@ -82,9 +82,11 @@ public class DataLoader implements ApplicationRunner {
             testPlayer.setName("testPlayer" + i);
             testPlayer.setStatus(PlayerStatus.WAITING);
             testPlayer.setScore(0);
+            //defining a Host for each game
             testPlayer.setRole(i % 2 == 0 ? PlayerRole.GUEST : PlayerRole.HOST);
             testPlayer.setUserToken(testUser.getToken());
             testPlayer.setElapsedTime(0.00);
+            //put two player player into each game, leave third game empty
             testPlayer.setGame(i < 3 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
 
             testUser.setPlayer(testPlayer);
