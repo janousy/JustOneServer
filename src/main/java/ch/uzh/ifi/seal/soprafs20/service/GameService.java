@@ -93,23 +93,7 @@ public class GameService {
     //param: Player playerToBeAdded, Long GameId
     //returns the Player which has been added to the game
     public Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
-/*
-        //find the game to which a player should be added
-        Game game = gameRepository.findGameByGameId(gameId);
 
-        //get the playerlist and add a new player
-        List<Player> oldPlayerList = game.getPlayerList();
-        oldPlayerList.add(playerToBeAdded);
-        game.setPlayerList(oldPlayerList);
-
-        //save the game in the repository
-        gameRepository.save(game);
-        gameRepository.flush();
-
-
-        return playerToBeAdded;
-
- */
         Game game = gameRepository.findGameByGameId(gameId);
 
         //throw an error if too many players want to join the game
