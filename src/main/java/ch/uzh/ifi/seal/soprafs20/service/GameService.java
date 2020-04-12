@@ -6,6 +6,8 @@ import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
+import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,14 @@ public class GameService {
     //param: Long gameId
     //return: returns a Game gameByID
     public Game getGameById(Long gameId) {
-        return this.gameRepository.findGameByGameId(gameId);
+
+        Game gameById = gameRepository.findGameByGameId(gameId);
+
+        if (gameById == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The id is not correct or the id does not exist");
+        }
+
+        return gameById;
     }
 
 
@@ -54,6 +63,7 @@ public class GameService {
 
         checkIfGameExists(newGame);
         newGame.setStatus(GameStatus.LOBBY);
+        newGame.setGameState(new LobbyState(newGame));
 
         newGame = gameRepository.save(newGame);
         gameRepository.flush();
@@ -72,18 +82,12 @@ public class GameService {
 
         if (gameToBeDeleted == null) {
             String baseErrorMessage = "The gameId provided does not exist. Therefore, the game could not be deleted";
-            throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, baseErrorMessage);
         }
 
         gameRepository.delete(gameToBeDeleted);
 
         return gameToBeDeleted;
-    }
-
-
-    //TODO kann gelöscht werden da diese in PlayerService ist
-    public List<Player> getAllPlayers(Long gameId) {
-        return null;
     }
 
 
@@ -96,6 +100,11 @@ public class GameService {
 
         Game game = gameRepository.findGameByGameId(gameId);
 
+        GameState state = game.getGameState();
+
+        playerToBeAdded = game.getGameState().addPlayerToGame(playerToBeAdded);
+
+        /*
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 7) {
             String baseErrorMessage = "The lobby has already the maximum amount of players(7)";
@@ -103,6 +112,8 @@ public class GameService {
         }
 
         game.addPlayer(playerToBeAdded);
+
+         */
 
         //save the game in the repository
         gameRepository.save(game);
@@ -133,10 +144,6 @@ public class GameService {
         return playerToBeRemoved;
     }
 
-    //TODO can be removed as this is already in the playerservice
-    public List<Player> getPlayerList() {
-        return null;
-    }
 
     public Card getCurrentCard() {
         return null;
@@ -156,10 +163,6 @@ public class GameService {
 
     //allgemeine methoden nicht auf state aufrufen
 
-    //TODO can be removed as this should be in the playerservice as well
-    public void changePlayerRoles() {
-
-    }
 
     public void newRound() {
 

@@ -38,7 +38,7 @@ public class Game implements Serializable {
     private List<Card> cardList = new ArrayList<Card>();
 
     @Column
-    private GameState gameState = new LobbyState(this);
+    private GameState gameState;
 
     @Column(nullable = false)
     private GameStatus status;

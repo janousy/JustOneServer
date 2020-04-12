@@ -70,7 +70,7 @@ public class PlayerController {
     //GET players sorted by score descending for scoreboard
 
     //POST create/join a player to a specific game
-    @PostMapping("/games/{gameId}/players/")
+    @PostMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public PlayerGetDTO createPlayer(@RequestBody PlayerPostDTO playerPostDTO,

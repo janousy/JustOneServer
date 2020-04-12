@@ -52,7 +52,7 @@ public class DataLoader implements ApplicationRunner {
 
         for (int i = 1; i <= 3; i++) {
             Game testGame = new Game();
-            GameStatus gameStatus = GameStatus.IDLE;
+            GameStatus gameStatus = GameStatus.LOBBY;
             GameState gameState = new LobbyState(testGame);
 
             testGame.setName("testGame" + i);
