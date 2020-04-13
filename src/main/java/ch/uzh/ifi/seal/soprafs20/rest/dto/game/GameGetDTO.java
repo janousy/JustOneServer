@@ -3,7 +3,6 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto.game;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 
 import java.util.List;
 

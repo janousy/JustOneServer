@@ -63,7 +63,7 @@ public class GameService {
 
         checkIfGameExists(newGame);
         newGame.setStatus(GameStatus.LOBBY);
-        newGame.setGameState(new LobbyState(newGame));
+        //newGame.setGameState(new LobbyState(newGame));
 
         newGame = gameRepository.save(newGame);
         gameRepository.flush();
@@ -100,11 +100,10 @@ public class GameService {
 
         Game game = gameRepository.findGameByGameId(gameId);
 
-        GameState state = game.getGameState();
+        //GameState state = game.getGameState();
 
-        playerToBeAdded = game.getGameState().addPlayerToGame(playerToBeAdded);
+        //playerToBeAdded = game.getGameState().addPlayerToGame(playerToBeAdded);
 
-        /*
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 7) {
             String baseErrorMessage = "The lobby has already the maximum amount of players(7)";
@@ -112,8 +111,6 @@ public class GameService {
         }
 
         game.addPlayer(playerToBeAdded);
-
-         */
 
         //save the game in the repository
         gameRepository.save(game);

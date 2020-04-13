@@ -37,9 +37,6 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game")
     private List<Card> cardList = new ArrayList<Card>();
 
-    @Column
-    private GameState gameState;
-
     @Column(nullable = false)
     private GameStatus status;
 
@@ -92,13 +89,15 @@ public class Game implements Serializable {
         this.cardList = cardList;
     }
 
-    public GameState getGameState() {
+    /*public GameState getGameState() {
         return gameState;
     }
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
+
+     */
 
     public GameStatus getStatus() {
         return status;
@@ -116,6 +115,26 @@ public class Game implements Serializable {
     public void removePlayer(Player player) {
         playerList.remove(player);
         player.setGame(null);
+    }
+
+    public void addRound(Round round) {
+        roundList.add(round);
+        round.setGame(this);
+    }
+
+    public void removeRound(Round round) {
+        roundList.remove(round);
+        round.setGame(null);
+    }
+
+    public void addCard(Card card) {
+        cardList.add(card);
+        card.setGame(this);
+    }
+
+    public void removeCard(Card card) {
+        cardList.remove(card);
+        card.setGame(null);
     }
 
 }

@@ -57,7 +57,6 @@ public class DataLoader implements ApplicationRunner {
 
             testGame.setName("testGame" + i);
             testGame.setCorrectCards(0);
-            testGame.setGameState(gameState);
             testGame.setStatus(gameStatus);
             gameRepository.save(testGame);
         }

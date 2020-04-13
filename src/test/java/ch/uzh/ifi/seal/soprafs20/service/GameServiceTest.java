@@ -78,7 +78,7 @@ public class GameServiceTest {
     public void getGameById_validInputs_success() {
         // when -> setup additional mocks for GameRepository
         Mockito.when(gameRepository.findByName(Mockito.any())).thenReturn(testGame);
-        Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(null);
+        Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Game gameById = gameService.getGameById(1L);
