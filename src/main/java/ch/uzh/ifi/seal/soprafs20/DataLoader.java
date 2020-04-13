@@ -4,14 +4,20 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
+import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import org.apache.tomcat.jni.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
@@ -19,7 +25,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Lob;
-import java.util.Date;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /*
 This Class automatically loads data into the H2 database. The run method is automatically
@@ -31,20 +39,25 @@ public class DataLoader implements ApplicationRunner {
     private UserRepository userRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
+    private CardRepository cardRepository;
+    private final Logger log = LoggerFactory.getLogger(DataLoader.class);
 
     @Autowired
     public DataLoader(@Qualifier("userRepository") UserRepository userRepository,
                       @Qualifier("gameRepository") GameRepository gameRepository,
-                      @Qualifier("playerRepository") PlayerRepository playerRepository) {
+                      @Qualifier("playerRepository") PlayerRepository playerRepository,
+                      @Qualifier("cardRepository") CardRepository cardRepository) {
 
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+        this.cardRepository = cardRepository;
     }
 
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws IOException {
         createInitialGames();
         createInitialUsers();
+        createInitialCards();
     }
 
 
@@ -97,5 +110,35 @@ public class DataLoader implements ApplicationRunner {
         }
         userRepository.flush();
         playerRepository.flush();
+    }
+
+    private void createInitialCards() throws IOException {
+        int BATCHSIZE = 5;
+        FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
+        //String fileName = "/Users/janoschbaltensperger/IdeaProjects/SOPRA-Group17/sopra_server/src/main/resources/cards-EN.txt";
+
+        String[] termsSplitted;
+        try (BufferedReader br = new BufferedReader(fileName)) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                if (!line.equals("")) {
+                    sb.append(line);
+                    sb.append(System.lineSeparator());
+                }
+                line = br.readLine();
+            }
+            String everything = sb.toString();
+            termsSplitted = everything.split("\n");
+        }
+
+        for (int i = BATCHSIZE; i < termsSplitted.length + BATCHSIZE; i = i + BATCHSIZE) {
+            String[] termBatch = Arrays.copyOfRange(termsSplitted, i - BATCHSIZE, i);
+            log.info(String.format("Init new Card with terms: %s, %s, %s, %s, %s", (Object[]) termBatch));
+            Card card = new Card(termBatch);
+            cardRepository.save(card);
+        }
+        cardRepository.flush();
     }
 }
