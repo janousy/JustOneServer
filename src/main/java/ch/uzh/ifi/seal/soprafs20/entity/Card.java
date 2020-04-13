@@ -13,7 +13,7 @@ import java.util.List;
 public class Card {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -90,8 +90,5 @@ public class Card {
         this.term5 = termBatch[4];
     }
 
-    @OneToOne
-    @JoinColumn(name = "roundId", unique = true)
-    private Round round;
 
 }

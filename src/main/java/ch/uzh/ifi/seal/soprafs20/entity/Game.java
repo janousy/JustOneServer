@@ -1,8 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -116,7 +114,7 @@ public class Game implements Serializable {
         playerList.remove(player);
         player.setGame(null);
     }
-
+/*
     public void addRound(Round round) {
         roundList.add(round);
         round.setGame(this);
@@ -126,6 +124,8 @@ public class Game implements Serializable {
         roundList.remove(round);
         round.setGame(null);
     }
+
+ */
 
     public void addCard(Card card) {
         cardList.add(card);

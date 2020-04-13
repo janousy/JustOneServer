@@ -1,9 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.round;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Guess;
-import ch.uzh.ifi.seal.soprafs20.entity.Hint;
-import ch.uzh.ifi.seal.soprafs20.entity.Term;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 
 import java.util.List;
 
@@ -11,11 +11,14 @@ public class RoundGetDTO {
 
     private Long id;
 
-    private Guess guess;
+    //private Guess guess;
 
-    private List<Hint> hintList;
+    //private List<Hint> hintList;
 
-    private Term term;
+    //private Term term;
+
+    //private Card card;
+
 
     public Long getId() {
         return id;
@@ -25,6 +28,8 @@ public class RoundGetDTO {
         this.id = id;
     }
 
+
+    /*
     public Guess getGuess() {
         return guess;
     }
@@ -41,6 +46,8 @@ public class RoundGetDTO {
         this.hintList = hintList;
     }
 
+
+
     public Term getTerm() {
         return term;
     }
@@ -48,6 +55,8 @@ public class RoundGetDTO {
     public void setTerm(Term term) {
         this.term = term;
     }
+
+
 
     public Card getCard() {
         return card;
@@ -57,6 +66,7 @@ public class RoundGetDTO {
         this.card = card;
     }
 
-    private Card card;
+     */
+
 
 }

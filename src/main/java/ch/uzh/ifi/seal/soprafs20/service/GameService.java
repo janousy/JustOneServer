@@ -2,12 +2,11 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +25,14 @@ public class GameService {
 
     private final GameRepository gameRepository;
 
+    private final RoundService roundService;
+
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, RoundService roundService) {
         this.gameRepository = gameRepository;
+        this.roundService = roundService;
     }
 
-    //allgmeine methoden nicht auf state aufrufen
 
     //get all Games as a list
     //param:
@@ -142,6 +143,7 @@ public class GameService {
     }
 
 
+    //TODO diese können rausgeworfen werden
     public Card getCurrentCard() {
         return null;
     }
@@ -158,12 +160,30 @@ public class GameService {
 
     }
 
-    //allgemeine methoden nicht auf state aufrufen
+/*
+    //checks wheter a game is ready and returns the game
+    //param: Long gameId
+    //returns the game which has been checked on its Status
+    public Game checkGameReady(Long gameId){
 
+        Game gameToBeChecked = gameRepository.findGameByGameId(gameId);
 
-    public void newRound() {
+        List<Player> playerList = gameToBeChecked.getPlayerList();
 
+        for(Player player : playerList){
+            if(player.getStatus() == PlayerStatus.WAITING){
+                return gameToBeChecked;
+            }
+        }
+
+        gameToBeChecked.setStatus(GameStatus.READY);
+        roundService.addRoundToGame(gameToBeChecked);
+        return gameToBeChecked;
     }
+
+
+
+ */
 
     public void updateScores() {
 

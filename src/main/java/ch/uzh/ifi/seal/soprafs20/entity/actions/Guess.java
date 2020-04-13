@@ -1,5 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.entity.actions;
 
+import javax.persistence.Embeddable;
+
+//@Embeddable
 public class Guess {
     private Long contentId;
     private Long roundId;

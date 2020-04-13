@@ -1,5 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,25 +12,28 @@ import java.util.List;
 public class Round {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "round")
-    private List<Hint> hintList = new ArrayList<Hint>();
+    /*
 
-    //@OneToOne(mappedBy = "round", cascade = CascadeType.ALL)
-    private Guess guess;
+    //@ElementCollection
+    //private List<Hint> hintList = new ArrayList<Hint>();
 
-    //@OneToOne(mappedBy = "round", cascade = CascadeType.ALL)
-    private Term term;
+    //private Guess guess;
 
-    @OneToOne(mappedBy = "round", cascade = CascadeType.ALL)
-    private Card card;
+    //private Term term;
+
+    //@OneToOne(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "id")
+    //private Card card;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gameId")
     private Game game;
 
+
+     */
 
     public Long getId() {
         return id;
@@ -36,13 +43,17 @@ public class Round {
         this.id = id;
     }
 
+    /*
     public List<Hint> getHintList() {
+
         return hintList;
     }
 
     public void setHintList(List<Hint> hintList) {
         this.hintList = hintList;
     }
+
+
 
     public Guess getGuess() {
         return guess;
@@ -60,6 +71,8 @@ public class Round {
         this.term = term;
     }
 
+
+
     public Card getCard() {
         return card;
     }
@@ -67,6 +80,8 @@ public class Round {
     public void setCard(Card card) {
         this.card = card;
     }
+
+
 
     public Game getGame() {
         return game;
@@ -76,13 +91,16 @@ public class Round {
         this.game = game;
     }
 
+    /*
     public void addHint(Hint hint) {
         hintList.add(hint);
-        hint.setRound(this);
+        hint.setRoundId(id);
     }
 
     public void removeHint(Hint hint) {
         hintList.remove(hint);
-        hint.setRound(null);
+        hint.setRoundId(null);
     }
+
+     */
 }
