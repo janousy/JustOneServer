@@ -115,7 +115,6 @@ public class DataLoader implements ApplicationRunner {
     private void createInitialCards() throws IOException {
         int BATCHSIZE = 5;
         FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
-        //String fileName = "/Users/janoschbaltensperger/IdeaProjects/SOPRA-Group17/sopra_server/src/main/resources/cards-EN.txt";
 
         String[] termsSplitted;
         try (BufferedReader br = new BufferedReader(fileName)) {
