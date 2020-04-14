@@ -172,7 +172,7 @@ public class GameService {
 
     //This is a helper method to check whether the provided name is unique, throws an exception if not
     //param: Game newGame
-    private void checkIfGameExists(Game newGame) {
+    public void checkIfGameExists(Game newGame) {
         Game gameByName = gameRepository.findByName(newGame.getName());
 
         String baseErrorMessage = "The name provided is not %s. Therefore, the game could not be %s!";

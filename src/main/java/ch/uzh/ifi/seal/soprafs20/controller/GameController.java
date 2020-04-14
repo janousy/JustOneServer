@@ -77,6 +77,4 @@ public class GameController {
         // convert internal representation of user back to API
         return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
-
-
 }

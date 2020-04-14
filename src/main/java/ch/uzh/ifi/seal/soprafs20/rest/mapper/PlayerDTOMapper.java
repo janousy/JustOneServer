@@ -27,10 +27,6 @@ public interface PlayerDTOMapper {
     Player convertPlayerPostDTOtoEntity(PlayerPostDTO playerPostDTO);
 
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "score", target = "score")
-    @Mapping(source = "role", target = "role")
-    @Mapping(source = "elapsedTime", target = "elapsedTime")
     Player convertPlayerPutDTOtoEntity(PlayerPutDTO playerPutDTO);
 
 }
