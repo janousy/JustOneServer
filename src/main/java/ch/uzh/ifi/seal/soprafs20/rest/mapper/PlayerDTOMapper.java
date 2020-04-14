@@ -26,7 +26,6 @@ public interface PlayerDTOMapper {
     @Mapping(source = "userToken", target = "userToken")
     Player convertPlayerPostDTOtoEntity(PlayerPostDTO playerPostDTO);
 
-    @Mapping(source = "name", target = "name")
+    @Mapping(source = "status", target = "status")
     Player convertPlayerPutDTOtoEntity(PlayerPutDTO playerPutDTO);
-
 }

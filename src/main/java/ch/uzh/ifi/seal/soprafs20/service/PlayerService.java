@@ -66,7 +66,7 @@ public class PlayerService {
         checkIfPlayerExistsByName(newPlayer);
         User userByToken = userService.getUserByToken(newPlayer.getUserToken());
 
-        newPlayer.setStatus(PlayerStatus.WAITING);
+        newPlayer.setStatus(PlayerStatus.NOT_READY);
         newPlayer.setScore(0); //score initially zero
         newPlayer.setUser(userByToken);
         newPlayer.setUserToken(userByToken.getToken());
@@ -113,6 +113,23 @@ public class PlayerService {
         }
     }
 
+    /* Update player status */
+    public Player updatePlayer(Player playerInput, Long playerId, Long gameId) {
+        Optional<Player> playerById = playerRepository.findById(playerId);
+        if (playerById.isPresent()) {
+
+            if (!checkIfPlayerStatusExists(playerInput.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid player status");
+            }
+            Player updatedPlayer = playerById.get();
+            updatedPlayer.setStatus(playerInput.getStatus());
+            playerRepository.save(updatedPlayer);
+            return updatedPlayer;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "player by id not found");
+        }
+    }
 
     //helper methods
     private void checkIfPlayerExistsByName(Player playerToBeCreated) {
@@ -134,6 +151,15 @@ public class PlayerService {
             }
         }
         return hasHost;
+    }
+
+    private boolean checkIfPlayerStatusExists(PlayerStatus status) {
+        for (PlayerStatus playerStatus : PlayerStatus.values()) {
+            if (playerStatus.equals(status)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

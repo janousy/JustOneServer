@@ -31,7 +31,7 @@ public class PlayerDTOMapperTest {
         testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
+        testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");

@@ -46,7 +46,7 @@ public class PlayerControllerTest {
         Player testPlayer = new Player();
         testPlayer = new Player();
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
+        testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
@@ -74,7 +74,7 @@ public class PlayerControllerTest {
         Player testPlayer = new Player();
         testPlayer = new Player();
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
+        testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
@@ -103,7 +103,7 @@ public class PlayerControllerTest {
         Player testPlayer = new Player();
         testPlayer = new Player();
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
+        testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
@@ -128,7 +128,7 @@ public class PlayerControllerTest {
         testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
+        testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
@@ -160,7 +160,7 @@ public class PlayerControllerTest {
         testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
+        testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");

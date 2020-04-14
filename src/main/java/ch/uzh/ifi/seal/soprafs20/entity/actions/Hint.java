@@ -26,4 +26,5 @@ public class Hint {
     public void setContent(String content) {
         this.content = content;
     }
+
 }

@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.PlayerDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import org.springframework.http.HttpStatus;
@@ -79,6 +80,18 @@ public class PlayerController {
         Player createdPlayer = playerService.createPlayer(playerInput, gameId);
 
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(createdPlayer);
+    }
+
+    //TODO: put to update a player
+    @PutMapping("/games/{gameId}/players/{playerId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public PlayerGetDTO updatePlayer(@RequestBody PlayerPutDTO playerPutDTO,
+                                     @PathVariable Long gameId,
+                                     @PathVariable Long playerId) {
+        Player playerInput = PlayerDTOMapper.INSTANCE.convertPlayerPutDTOtoEntity(playerPutDTO);
+        Player updatedPlayer = playerService.updatePlayer(playerInput, playerId, gameId);
+        return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(updatedPlayer);
     }
 
     //DELETE delete player TODO: who becomes host

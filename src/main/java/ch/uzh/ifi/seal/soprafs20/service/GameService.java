@@ -182,7 +182,7 @@ public class GameService {
 
         List<Player> playerList = game.getPlayerList();
         for (Player player : playerList) {
-            if (player.getStatus() == PlayerStatus.WAITING) {
+            if (player.getStatus() == PlayerStatus.NOT_READY) {
                 return game;
             }
         }
