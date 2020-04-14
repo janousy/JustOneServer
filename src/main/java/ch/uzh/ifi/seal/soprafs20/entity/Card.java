@@ -68,6 +68,10 @@ public class Card {
         this.term5 = term5;
     }
 
+    public String[] getTerms() {
+        return new String[]{term1, term2, term3, term4, term5};
+    }
+
     public Game getGame() {
         return game;
     }
