@@ -11,13 +11,13 @@ public class RoundGetDTO {
 
     private Long id;
 
-    //private Guess guess;
+    private Guess guess;
 
-    //private List<Hint> hintList;
+    private List<Hint> hintList;
 
-    //private Term term;
+    private Term term;
 
-    //private Card card;
+    private Card card;
 
 
     public Long getId() {
@@ -29,7 +29,6 @@ public class RoundGetDTO {
     }
 
 
-    /*
     public Guess getGuess() {
         return guess;
     }
@@ -37,6 +36,7 @@ public class RoundGetDTO {
     public void setGuess(Guess guess) {
         this.guess = guess;
     }
+
 
     public List<Hint> getHintList() {
         return hintList;
@@ -65,8 +65,6 @@ public class RoundGetDTO {
     public void setCard(Card card) {
         this.card = card;
     }
-
-     */
 
 
 }

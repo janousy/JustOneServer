@@ -26,13 +26,17 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int correctCards;
 
+    @Column(nullable = false)
+    private int roundNr;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Player> playerList = new ArrayList<Player>();
 
     @OneToMany(mappedBy = "game")
     private List<Round> roundList = new ArrayList<Round>();
 
-    @OneToMany(mappedBy = "game")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "game_card", joinColumns = @JoinColumn(name = "game_gameId"), inverseJoinColumns = @JoinColumn(name = "card_id"))
     private List<Card> cardList = new ArrayList<Card>();
 
     @Column(nullable = false)
@@ -87,22 +91,20 @@ public class Game implements Serializable {
         this.cardList = cardList;
     }
 
-    /*public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-     */
-
     public GameStatus getStatus() {
         return status;
     }
 
     public void setStatus(GameStatus status) {
         this.status = status;
+    }
+
+    public int getRoundNr() {
+        return roundNr;
+    }
+
+    public void setRoundNr(int roundNr) {
+        this.roundNr = roundNr;
     }
 
     public void addPlayer(Player player) {
@@ -114,7 +116,7 @@ public class Game implements Serializable {
         playerList.remove(player);
         player.setGame(null);
     }
-/*
+
     public void addRound(Round round) {
         roundList.add(round);
         round.setGame(this);
@@ -125,16 +127,15 @@ public class Game implements Serializable {
         round.setGame(null);
     }
 
- */
 
     public void addCard(Card card) {
         cardList.add(card);
-        card.setGame(this);
+        card.getGamelist().add(this);
     }
 
     public void removeCard(Card card) {
         cardList.remove(card);
-        card.setGame(null);
+        card.getGamelist().remove(this);
     }
 
 }

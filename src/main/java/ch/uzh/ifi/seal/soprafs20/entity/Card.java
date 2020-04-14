@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,8 +17,8 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Game game;
+    @ManyToMany(mappedBy = "cardList")
+    private List<Game> gameList = new ArrayList<Game>();
 
     @Column
     private String term1;
@@ -74,12 +75,12 @@ public class Card {
         this.term5 = term5;
     }
 
-    public Game getGame() {
-        return game;
+    public List<Game> getGamelist() {
+        return gameList;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGame(List<Game> gameList) {
+        this.gameList = gameList;
     }
 
     public Card(String[] termBatch) {

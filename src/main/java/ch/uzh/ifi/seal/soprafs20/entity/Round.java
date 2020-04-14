@@ -15,25 +15,27 @@ public class Round {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
+    @ElementCollection
+    private List<Hint> hintList = new ArrayList<Hint>();
 
-    //@ElementCollection
-    //private List<Hint> hintList = new ArrayList<Hint>();
+    @Embedded
+    private Guess guess;
 
-    //private Guess guess;
+    @Embedded
+    private Term term;
 
-    //private Term term;
-
-    //@OneToOne(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "id")
-    //private Card card;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private Card card;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gameId")
     private Game game;
 
 
-     */
+    public Round() {
+    }
+
 
     public Long getId() {
         return id;
@@ -43,17 +45,13 @@ public class Round {
         this.id = id;
     }
 
-    /*
     public List<Hint> getHintList() {
-
         return hintList;
     }
 
     public void setHintList(List<Hint> hintList) {
         this.hintList = hintList;
     }
-
-
 
     public Guess getGuess() {
         return guess;
@@ -63,6 +61,7 @@ public class Round {
         this.guess = guess;
     }
 
+
     public Term getTerm() {
         return term;
     }
@@ -70,8 +69,6 @@ public class Round {
     public void setTerm(Term term) {
         this.term = term;
     }
-
-
 
     public Card getCard() {
         return card;
@@ -91,16 +88,16 @@ public class Round {
         this.game = game;
     }
 
-    /*
+
     public void addHint(Hint hint) {
         hintList.add(hint);
-        hint.setRoundId(id);
+        //hint.setRoundId(id);
     }
 
     public void removeHint(Hint hint) {
         hintList.remove(hint);
-        hint.setRoundId(null);
+        //hint.setRoundId(null);
     }
 
-     */
+
 }

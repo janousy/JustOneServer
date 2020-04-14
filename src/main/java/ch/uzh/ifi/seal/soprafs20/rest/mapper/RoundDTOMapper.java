@@ -12,9 +12,9 @@ public interface RoundDTOMapper {
     RoundDTOMapper INSTANCE = Mappers.getMapper(RoundDTOMapper.class);
 
     @Mapping(source = "id", target = "id")
-        //@Mapping(source = "guess", target = "guess")
-        //@Mapping(source = "term", target = "term")
-        //@Mapping(source = "hintList", target = "hintList")
-        //@Mapping(source = "card", target = "card")
+    @Mapping(source = "guess", target = "guess")
+    @Mapping(source = "term", target = "term")
+    @Mapping(source = "hintList", target = "hintList")
+    @Mapping(source = "card", target = "card")
     RoundGetDTO convertEntityToRoundGetDTO(Round round);
 }

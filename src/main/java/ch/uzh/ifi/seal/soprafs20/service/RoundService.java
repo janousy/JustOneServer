@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
@@ -53,21 +54,22 @@ public class RoundService {
         return rounds;
     }
 
+ */
+
     //add a new Round to a Game
     //param: game Game
     //return: returns the newly created round
-    public Round addRoundToGame(Game game){
+    public Game addRoundToGame(Game game, Card card) {
 
         Round newRound = new Round();
+        newRound.setCard(card);
 
         game.addRound(newRound);
 
-        return newRound;
+        newRound = roundRepository.save(newRound);
+
+        return game;
     }
 
-
-
-
- */
 
 }

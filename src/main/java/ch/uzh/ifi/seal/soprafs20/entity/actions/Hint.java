@@ -1,21 +1,15 @@
 package ch.uzh.ifi.seal.soprafs20.entity.actions;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-//@Embeddable
+@Embeddable
 public class Hint {
-    private Long contentId;
+
+    @Column(name = "roundId_Hint")
     private Long roundId;
-    private Long gameId;
+    @Column(name = "content_Hint")
     private String content;
-
-    public Long getContentId() {
-        return contentId;
-    }
-
-    public void setContentId(Long contentId) {
-        this.contentId = contentId;
-    }
 
     public Long getRoundId() {
         return roundId;
@@ -23,14 +17,6 @@ public class Hint {
 
     public void setRoundId(Long roundId) {
         this.roundId = roundId;
-    }
-
-    public Long getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(Long gameId) {
-        this.gameId = gameId;
     }
 
     public String getContent() {

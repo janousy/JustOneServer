@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.round.RoundGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.RoundDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +15,18 @@ import java.util.List;
 public class RoundController {
 
     private final RoundService roundService;
+    private final GameService gameService;
 
-    RoundController(RoundService roundService) {
+    RoundController(RoundService roundService, GameService gameService) {
         this.roundService = roundService;
+        this.gameService = gameService;
     }
 
     //returns a list with all games http method: get, mapping: /games
-    @GetMapping("/games/{id}/rounds")
+    @GetMapping("/games/rounds")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<RoundGetDTO> getAllGames() {
+    public List<RoundGetDTO> getAllRounds() {
         // fetch all rounds in the internal representation
         List<Round> rounds = roundService.getAllRounds();
         List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
@@ -34,7 +37,19 @@ public class RoundController {
 
         return roundGetDTOS;
     }
+/*
+    //returns a list with all games http method: get, mapping: /games
+    @PostMapping("/games/{id}/rounds")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public RoundGetDTO createRound(@PathVariable Long id) {
+        // fetch all rounds in the internal representation
 
+        Round round = gameService.addRound(id);
+
+        return RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round);
+    }
+*/
 /*
 
     //returns a list with all games http method: get, mapping: /games

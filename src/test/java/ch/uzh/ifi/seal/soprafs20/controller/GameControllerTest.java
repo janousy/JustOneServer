@@ -132,7 +132,7 @@ public class GameControllerTest {
 
         GameGetDTO gameGetDTO = new GameGetDTO();
         gameGetDTO.setGameId(1L);
-        gameGetDTO.setName("Test User");
+        gameGetDTO.setName("Game 1");
         gameGetDTO.setStatus(GameStatus.LOBBY);
         gameGetDTO.setCorrectCards(0);
         gameGetDTO.setPlayerList(new ArrayList<Player>());
@@ -143,6 +143,7 @@ public class GameControllerTest {
         MockHttpServletRequestBuilder getRequest = get("/games/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(gameGetDTO));
+
 
         // then
         mockMvc.perform(getRequest)

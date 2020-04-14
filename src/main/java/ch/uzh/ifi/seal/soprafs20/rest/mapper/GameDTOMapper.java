@@ -21,6 +21,7 @@ public interface GameDTOMapper {
     @Mapping(source = "status", target = "status")
     @Mapping(source = "correctCards", target = "correctCards")
     @Mapping(source = "playerList", target = "playerList")
+    @Mapping(source = "roundNr", target = "roundNr")
     GameGetDTO convertEntityToGameGetDTO(Game game);
 
     @Mapping(source = "gameId", target = "gameId")
