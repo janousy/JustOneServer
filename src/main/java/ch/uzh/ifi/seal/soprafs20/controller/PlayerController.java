@@ -82,7 +82,6 @@ public class PlayerController {
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(createdPlayer);
     }
 
-    //TODO: put to update a player
     @PutMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -94,7 +93,7 @@ public class PlayerController {
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(updatedPlayer);
     }
 
-    //DELETE delete player TODO: who becomes host
+    //DELETE delete player TODO: fix, delete repository not working correctly
     @DeleteMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

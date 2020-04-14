@@ -1,17 +1,8 @@
-package ch.uzh.ifi.seal.soprafs20.entity.actions;
+package ch.uzh.ifi.seal.soprafs20.rest.dto.action;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
-@Embeddable
-public class Term {
-
-    @Column(name = "roundId_Term")
+public class TermGetDTO implements ActionTypeDTO {
     private Long roundId;
-    @Column(name = "content_Term")
     private String content;
-
-    @Column(name = "wordId_Term")
     private Long wordId;
 
     public Long getWordId() {

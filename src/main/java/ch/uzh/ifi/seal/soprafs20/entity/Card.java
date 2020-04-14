@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -21,62 +22,62 @@ public class Card {
     private List<Game> gameList = new ArrayList<Game>();
 
     @Column
-    private String term1;
+    private String word1;
 
     @Column
-    private String term2;
+    private String word2;
 
     @Column
-    private String term3;
+    private String word3;
 
     @Column
-    private String term4;
+    private String word4;
 
     @Column
-    private String term5;
+    private String word5;
 
-    public String getTerm1() {
-        return term1;
+    public String getWord1() {
+        return word1;
     }
 
-    public void setTerm1(String term1) {
-        this.term1 = term1;
+    public void setWord1(String word1) {
+        this.word1 = word1;
     }
 
-    public String getTerm2() {
-        return term2;
+    public String getWord2() {
+        return word2;
     }
 
-    public void setTerm2(String term2) {
-        this.term2 = term2;
+    public void setWord2(String word2) {
+        this.word2 = word2;
     }
 
-    public String getTerm3() {
-        return term3;
+    public String getWord3() {
+        return word3;
     }
 
-    public void setTerm3(String term3) {
-        this.term3 = term3;
+    public void setWord3(String word3) {
+        this.word3 = word3;
     }
 
-    public String getTerm4() {
-        return term4;
+    public String getWord4() {
+        return word4;
     }
 
-    public void setTerm4(String term4) {
-        this.term4 = term4;
+    public void setWord4(String word4) {
+        this.word4 = word4;
     }
 
-    public String getTerm5() {
-        return term5;
+    public String getWord5() {
+        return word5;
     }
 
-    public void setTerm5(String term5) {
-        this.term5 = term5;
+    public void setWord5(String word5) {
+        this.word5 = word5;
     }
 
     public String[] getTerms() {
-        return new String[]{term1, term2, term3, term4, term5};
+        return new String[]{word1, word2, word3, word4, word5};
     }
 
     public List<Game> getGamelist() {
@@ -87,11 +88,11 @@ public class Card {
         this.gameList = gameList;
     }
 
-    public Card(String[] termBatch) {
-        this.term1 = termBatch[0];
-        this.term2 = termBatch[1];
-        this.term3 = termBatch[2];
-        this.term4 = termBatch[3];
-        this.term5 = termBatch[4];
+    public Card(String[] wordBatch) {
+        this.word1 = wordBatch[0];
+        this.word2 = wordBatch[1];
+        this.word3 = wordBatch[2];
+        this.word4 = wordBatch[3];
+        this.word5 = wordBatch[4];
     }
 }

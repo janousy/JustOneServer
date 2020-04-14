@@ -1,8 +1,14 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.action.ActionTypeDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintGetDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.round.RoundGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.RoundDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.HintDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
@@ -34,9 +40,18 @@ public class RoundController {
         for (Round round : rounds) {
             roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
         }
-
         return roundGetDTOS;
     }
+
+    @PostMapping("/games/{gameId}/hints")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public HintGetDTO createHint(@RequestBody HintPostDTO hintPostDTO, @PathVariable String gameId) {
+        Hint inputHint = HintDTOMapper.INSTANCE.convertHintPostDTOToEntity(hintPostDTO);
+        return null;
+
+    }
+
 /*
     //returns a list with all games http method: get, mapping: /games
     @PostMapping("/games/{id}/rounds")
@@ -71,6 +86,5 @@ public class RoundController {
 
 
  */
-
 
 }
