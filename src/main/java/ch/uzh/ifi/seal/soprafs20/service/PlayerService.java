@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
@@ -54,11 +55,13 @@ public class PlayerService {
             return playerById;
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID provided does not exists");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player ID provided does not exists");
         }
     }
 
     public Player createPlayer(Player newPlayer, Long gameId) {
+
+        //TODO how to check if gameByID exists? cannot ask gameService
 
         checkIfPlayerExistsByName(newPlayer);
         User userByToken = userService.getUserByToken(newPlayer.getUserToken());

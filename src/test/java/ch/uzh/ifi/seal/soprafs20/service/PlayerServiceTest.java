@@ -22,10 +22,11 @@ public class PlayerServiceTest {
 
     @Mock
     private PlayerRepository playerRepository;
-    private UserService userService;
+
 
     @InjectMocks
     private PlayerService playerService;
+
 
     private Player testPlayer;
 
@@ -36,22 +37,23 @@ public class PlayerServiceTest {
         testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
-        testPlayer.setStatus(PlayerStatus.WAITING);
-        testPlayer.setScore(0);
-        testPlayer.setRole(PlayerRole.HOST);
-        testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        //testPlayer.setStatus(PlayerStatus.WAITING);
+        //testPlayer.setScore(0);
+        //testPlayer.setRole(PlayerRole.HOST);
+        //testPlayer.setUserToken("12345");
+        //testPlayer.setElapsedTime(0.00);
 
         User testUser = new User();
         testUser.setId(1L);
         testUser.setName("testName");
         testUser.setUsername("testUsername");
+        testUser.setToken("12345");
+        testUser.setStatus(UserStatus.OFFLINE);
         testUser.setPassword("password");
         testUser.setCreationDate((new Date()).toString());
-        testUser.setStatus(UserStatus.OFFLINE);
 
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
-        given(userService.getUserByToken(Mockito.anyString())).willReturn(testUser);
+
     }
 
 
@@ -67,6 +69,5 @@ public class PlayerServiceTest {
         assertEquals(testPlayer.getRole(), createdPlayer.getRole());
         assertEquals(testPlayer.getUserToken(), createdPlayer.getUserToken());
         assertEquals(testPlayer.getElapsedTime(), createdPlayer.getElapsedTime());
-
     }
 }
