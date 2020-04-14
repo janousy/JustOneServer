@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class PlayerService {
         checkIfPlayerExistsByName(newPlayer);
         User userByToken = userService.getUserByToken(newPlayer.getUserToken());
 
-        newPlayer.setStatus(PlayerStatus.WAITING);
+        newPlayer.setStatus(PlayerStatus.NOT_READY);
         newPlayer.setScore(0); //score initially zero
         newPlayer.setUser(userByToken);
         newPlayer.setUserToken(userByToken.getToken());
@@ -96,6 +97,15 @@ public class PlayerService {
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "player by id not found");
         }
+    }
+
+
+    //method sets the playerStatus and saves the player
+    //param: Player player, PlayerStatus, playerStatus
+    //return: void
+    public void setPlayerStatus(Player player, PlayerStatus playerStatus) {
+        player.setStatus(playerStatus);
+        playerRepository.save(player);
     }
 
 

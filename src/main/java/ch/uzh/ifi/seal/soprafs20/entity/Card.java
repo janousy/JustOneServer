@@ -35,6 +35,10 @@ public class Card {
     @Column
     private String term5;
 
+
+    public Card() {
+    }
+
     public String getTerm1() {
         return term1;
     }
@@ -82,14 +86,5 @@ public class Card {
     public void setGame(List<Game> gameList) {
         this.gameList = gameList;
     }
-
-    public Card(String[] termBatch) {
-        this.term1 = termBatch[0];
-        this.term2 = termBatch[1];
-        this.term3 = termBatch[2];
-        this.term4 = termBatch[3];
-        this.term5 = termBatch[4];
-    }
-
 
 }

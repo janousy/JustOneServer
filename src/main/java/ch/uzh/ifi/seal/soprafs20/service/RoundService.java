@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,22 @@ public class RoundService {
     }
 
  */
+
+
+    public Hint addHintToRound(Hint hint, Long roundId) {
+        Round round = roundRepository.findRoundById(roundId);
+        round.addHint(hint);
+
+        roundRepository.save(round);
+
+        return hint;
+    }
+
+    public Round addRound(Long gameId) {
+
+
+        return null;
+    }
 
     //add a new Round to a Game
     //param: game Game
