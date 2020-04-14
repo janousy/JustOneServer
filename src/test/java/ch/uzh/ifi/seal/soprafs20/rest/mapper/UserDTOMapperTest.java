@@ -63,7 +63,7 @@ public class UserDTOMapperTest {
     }
 
     @Test
-    public void testCreateUser_fromUserPutDTO_toUser_success() {
+    public void testUpdateUser_fromUserPutDTO_toUser_success() {
         // create UserPostDTO
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("username");

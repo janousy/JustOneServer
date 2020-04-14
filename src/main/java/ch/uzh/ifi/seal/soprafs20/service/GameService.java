@@ -2,9 +2,12 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Round;
+import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +26,18 @@ public class GameService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
+    private final CardRepository cardRepository;
+
+    private final RoundService roundService;
+
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("cardRepository") CardRepository cardRepository, RoundService roundService) {
         this.gameRepository = gameRepository;
+        this.cardRepository = cardRepository;
+        this.roundService = roundService;
     }
 
-    //allgmeine methoden nicht auf state aufrufen
 
     //get all Games as a list
     //param:
@@ -43,7 +51,16 @@ public class GameService {
     //param: Long gameId
     //return: returns a Game gameByID
     public Game getGameById(Long gameId) {
-        return this.gameRepository.findGameByGameId(gameId);
+
+        Game gameById = gameRepository.findGameByGameId(gameId);
+
+        if (gameById == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The id is not correct or the id does not exist");
+        }
+
+        gameById = checkGameReady(gameById);
+
+        return gameById;
     }
 
 
@@ -52,8 +69,13 @@ public class GameService {
     //returns: returns the newly created game
     public Game createGame(Game newGame) {
 
+        //first check if the game exists
         checkIfGameExists(newGame);
+
+        //setting status and cards
         newGame.setStatus(GameStatus.LOBBY);
+        newGame.setRoundNr(0);
+        newGame.setCorrectCards(0);
 
         newGame = gameRepository.save(newGame);
         gameRepository.flush();
@@ -72,18 +94,12 @@ public class GameService {
 
         if (gameToBeDeleted == null) {
             String baseErrorMessage = "The gameId provided does not exist. Therefore, the game could not be deleted";
-            throw new ResponseStatusException(HttpStatus.CONFLICT, baseErrorMessage);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, baseErrorMessage);
         }
 
         gameRepository.delete(gameToBeDeleted);
 
         return gameToBeDeleted;
-    }
-
-
-    //TODO kann gelöscht werden da diese in PlayerService ist
-    public List<Player> getAllPlayers(Long gameId) {
-        return null;
     }
 
 
@@ -95,6 +111,10 @@ public class GameService {
     public Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
 
         Game game = gameRepository.findGameByGameId(gameId);
+
+        //GameState state = game.getGameState();
+
+        //playerToBeAdded = game.getGameState().addPlayerToGame(playerToBeAdded);
 
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 7) {
@@ -133,11 +153,8 @@ public class GameService {
         return playerToBeRemoved;
     }
 
-    //TODO can be removed as this is already in the playerservice
-    public List<Player> getPlayerList() {
-        return null;
-    }
 
+    //TODO diese können rausgeworfen werden
     public Card getCurrentCard() {
         return null;
     }
@@ -154,15 +171,43 @@ public class GameService {
 
     }
 
-    //allgemeine methoden nicht auf state aufrufen
+    //checks whether a game is ready and returns the game
+    //param: Long gameId
+    //returns the game which has been checked on its Status
+    public Game checkGameReady(Game game) {
 
-    //TODO can be removed as this should be in the playerservice as well
-    public void changePlayerRoles() {
+        if (game.getPlayerList().isEmpty()) {
+            return game;
+        }
 
+        List<Player> playerList = game.getPlayerList();
+        for (Player player : playerList) {
+            if (player.getStatus() == PlayerStatus.WAITING) {
+                return game;
+            }
+        }
+
+        //if all players are ready invoke the final preparation of the game
+        prepareGameToPlay(game);
+
+        return game;
     }
 
-    public void newRound() {
+    //TODO noch löschen diese methode
+    public Game addRound(Long gameId) {
+        Game game = getGameById(gameId);
 
+        int roundNr = game.getRoundNr();
+        if (roundNr > 13) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game has already finished 13 rounds");
+        }
+
+        Card card = game.getCardList().get(roundNr);
+        game = roundService.addRoundToGame(game, card);
+        game.setStatus(GameStatus.RECEIVINGHINTS);
+
+        gameRepository.save(game);
+        return game;
     }
 
     public void updateScores() {
@@ -180,6 +225,55 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "unique", "created"));
         }
 
+    }
+
+    //this method finish the preparation of a game to start playing
+    //param: Game game
+    //return: void
+    private void prepareGameToPlay(Game game) {
+        //add cards to game and sets it status
+        addCardsToGame(game);
+
+        game.setStatus(GameStatus.RECEIVINGHINTS);
+
+        int roundNr = game.getRoundNr();
+        Card card = game.getCardList().get(roundNr);
+        roundService.addRoundToGame(game, card);
+
+        game.setRoundNr(roundNr + 1);
+        gameRepository.save(game);
+    }
+
+
+    //This methods adds 13 unique cards to a game
+    //param: Game game
+    //return: void
+    private void addCardsToGame(Game game) {
+        int totalNrOfCards = gameRepository.findAll().size();
+        Long[] pickedNrs = new Long[13];
+
+        //adding 13 unique cards to the game
+        for (int i = 0; i < 13; i++) {
+            long randomNum = 0L;
+            boolean unique = false;
+            //loop to check uniqueness of card
+            while (!unique) {
+                randomNum = (long) (Math.random() * totalNrOfCards);
+                unique = true;
+                for (int j = 0; j < 13; j++) {
+                    if (pickedNrs[j].equals(randomNum)) {
+                        unique = false;
+                        break;
+                    }
+                }
+                pickedNrs[i] = randomNum;
+            }
+
+            Card cardToBeAdded = cardRepository.findCardById(randomNum);
+            game.addCard(cardToBeAdded);
+        }
+
+        gameRepository.save(game);
     }
 
 

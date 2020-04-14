@@ -1,8 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -28,17 +26,18 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int correctCards;
 
+    @Column(nullable = false)
+    private int roundNr;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Player> playerList = new ArrayList<Player>();
 
     @OneToMany(mappedBy = "game")
     private List<Round> roundList = new ArrayList<Round>();
 
-    @OneToMany(mappedBy = "game")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "game_card", joinColumns = @JoinColumn(name = "game_gameId"), inverseJoinColumns = @JoinColumn(name = "card_id"))
     private List<Card> cardList = new ArrayList<Card>();
-
-    @Column
-    private GameState gameState = new LobbyState(this);
 
     @Column(nullable = false)
     private GameStatus status;
@@ -92,20 +91,20 @@ public class Game implements Serializable {
         this.cardList = cardList;
     }
 
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
     public GameStatus getStatus() {
         return status;
     }
 
     public void setStatus(GameStatus status) {
         this.status = status;
+    }
+
+    public int getRoundNr() {
+        return roundNr;
+    }
+
+    public void setRoundNr(int roundNr) {
+        this.roundNr = roundNr;
     }
 
     public void addPlayer(Player player) {
@@ -116,6 +115,27 @@ public class Game implements Serializable {
     public void removePlayer(Player player) {
         playerList.remove(player);
         player.setGame(null);
+    }
+
+    public void addRound(Round round) {
+        roundList.add(round);
+        round.setGame(this);
+    }
+
+    public void removeRound(Round round) {
+        roundList.remove(round);
+        round.setGame(null);
+    }
+
+
+    public void addCard(Card card) {
+        cardList.add(card);
+        card.getGamelist().add(this);
+    }
+
+    public void removeCard(Card card) {
+        cardList.remove(card);
+        card.getGamelist().remove(this);
     }
 
 }

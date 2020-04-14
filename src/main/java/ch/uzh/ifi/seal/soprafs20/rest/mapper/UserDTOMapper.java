@@ -29,10 +29,10 @@ public interface UserDTOMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "username", target = "username")
+    //@Mapping(source = "username", target = "username")
     @Mapping(source = "status", target = "status")
-    @Mapping(source = "creationDate", target = "creationDate")
-    @Mapping(source = "birthDate", target = "birthDate")
+    //@Mapping(source = "creationDate", target = "creationDate")
+    //@Mapping(source = "birthDate", target = "birthDate")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "overallScore", target = "overallScore")
     @Mapping(source = "currentGameScore", target = "currentGameScore")
