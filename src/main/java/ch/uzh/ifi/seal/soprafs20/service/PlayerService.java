@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
@@ -16,10 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -58,11 +56,13 @@ public class PlayerService {
             return playerById;
         }
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID provided does not exists");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player ID provided does not exists");
         }
     }
 
     public Player createPlayer(Player newPlayer, Long gameId) {
+
+        //TODO how to check if gameByID exists? cannot ask gameService
 
         checkIfPlayerExistsByName(newPlayer);
         User userByToken = userService.getUserByToken(newPlayer.getUserToken());
@@ -88,10 +88,25 @@ public class PlayerService {
     }
 
     public Player deletePlayer(Long gameId, Long playerId) {
+        //TODO delete somehow not working
         Optional<Player> playerById = playerRepository.findById(playerId);
 
         if (playerById.isPresent()) {
-            playerRepository.delete(playerById.get());
+            Player toDelete = playerById.get();
+            playerRepository.delete(toDelete);
+            playerRepository.flush();
+            List<Player> playerList2 = playerRepository.findByGameGameId(gameId);
+
+            //a new host must be set if the deleted player was a host
+            if (playerById.get().getRole().equals(PlayerRole.HOST)) {
+                List<Player> playerList = playerRepository.findByGameGameId(gameId);
+                Random rand = new Random();
+                Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
+                randomPlayer.setRole(PlayerRole.HOST);
+                playerRepository.save(randomPlayer);
+                log.info("new host was set");
+            }
+            playerRepository.flush();
             return playerById.get();
         }
         else {
@@ -99,6 +114,23 @@ public class PlayerService {
         }
     }
 
+    /* Update player status */
+    public Player updatePlayer(Player playerInput, Long playerId, Long gameId) {
+        Optional<Player> playerById = playerRepository.findById(playerId);
+        if (playerById.isPresent()) {
+
+            if (!checkIfPlayerStatusExists(playerInput.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid player status");
+            }
+            Player updatedPlayer = playerById.get();
+            updatedPlayer.setStatus(playerInput.getStatus());
+            playerRepository.save(updatedPlayer);
+            return updatedPlayer;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "player by id not found");
+        }
+    }
 
     //method sets the playerStatus and saves the player
     //param: Player player, PlayerStatus, playerStatus
@@ -130,4 +162,14 @@ public class PlayerService {
         }
         return hasHost;
     }
+
+    private boolean checkIfPlayerStatusExists(PlayerStatus status) {
+        for (PlayerStatus playerStatus : PlayerStatus.values()) {
+            if (playerStatus.equals(status)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
