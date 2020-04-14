@@ -1,8 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.entity.actions;
 
-
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 

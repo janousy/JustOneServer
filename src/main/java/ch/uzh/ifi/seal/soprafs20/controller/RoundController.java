@@ -21,11 +21,9 @@ import java.util.List;
 public class RoundController {
 
     private final RoundService roundService;
-    private final GameService gameService;
 
-    RoundController(RoundService roundService, GameService gameService) {
+    RoundController(RoundService roundService) {
         this.roundService = roundService;
-        this.gameService = gameService;
     }
 
     //returns a list with all games http method: get, mapping: /games
@@ -54,17 +52,20 @@ public class RoundController {
 
 /*
     //returns a list with all games http method: get, mapping: /games
+
+    /*
+    //adds a new round to a game
     @PostMapping("/games/{id}/rounds")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public RoundGetDTO createRound(@PathVariable Long id) {
         // fetch all rounds in the internal representation
 
-        Round round = gameService.addRound(id);
+        //Round round = gameService.addRound(id);
 
         return RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round);
     }
-*/
+
 /*
 
     //returns a list with all games http method: get, mapping: /games
@@ -86,5 +87,6 @@ public class RoundController {
 
 
  */
+
 
 }

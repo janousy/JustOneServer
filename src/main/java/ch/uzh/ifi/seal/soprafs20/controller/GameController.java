@@ -78,21 +78,4 @@ public class GameController {
         return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 
-/*
-    //returns the game in a new state when it is ready to play
-    @GetMapping("/games/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public GameGetDTO askGameReady(@PathVariable Long id){
-
-        //check whether the game is ready or not
-        Game checkedGame = gameService.checkGameReady(id);
-
-        return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(checkedGame);
-    }
-
-
- */
-
-
 }

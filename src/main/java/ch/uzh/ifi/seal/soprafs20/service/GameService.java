@@ -13,11 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -29,13 +31,15 @@ public class GameService {
     private final CardRepository cardRepository;
 
     private final RoundService roundService;
+    private final PlayerService playerService;
 
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("cardRepository") CardRepository cardRepository, RoundService roundService) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("cardRepository") CardRepository cardRepository, RoundService roundService, @Lazy PlayerService playerService) {
         this.gameRepository = gameRepository;
         this.cardRepository = cardRepository;
         this.roundService = roundService;
+        this.playerService = playerService;
     }
 
 
@@ -182,7 +186,7 @@ public class GameService {
 
         List<Player> playerList = game.getPlayerList();
         for (Player player : playerList) {
-            if (player.getStatus() == PlayerStatus.NOT_READY) {
+            if (player.getStatus() != PlayerStatus.READY) {
                 return game;
             }
         }
@@ -193,37 +197,29 @@ public class GameService {
         return game;
     }
 
-    //TODO noch löschen diese methode
-    public Game addRound(Long gameId) {
-        Game game = getGameById(gameId);
+    //TODO hier schauen was besser zurückgegeben werden soll, besser ein game oder besser eine neue Round?
+    //method adds a round to a game
+    //param: Game game
+    //return: returns the game to which the round has been added
+    public Game addRound(Game game) {
 
         int roundNr = game.getRoundNr();
         if (roundNr > 13) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game has already finished 13 rounds");
         }
 
+        //adding a new round to the game
         Card card = game.getCardList().get(roundNr);
         game = roundService.addRoundToGame(game, card);
-        game.setStatus(GameStatus.RECEIVINGHINTS);
+        game.setStatus(GameStatus.RECEIVINGTERM);
 
+        game.setRoundNr(roundNr + 1);
         gameRepository.save(game);
+
         return game;
     }
 
     public void updateScores() {
-
-    }
-
-
-    //This is a helper method to check whether the provided name is unique, throws an exception if not
-    //param: Game newGame
-    public void checkIfGameExists(Game newGame) {
-        Game gameByName = gameRepository.findByName(newGame.getName());
-
-        String baseErrorMessage = "The name provided is not %s. Therefore, the game could not be %s!";
-        if (gameByName != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "unique", "created"));
-        }
 
     }
 
@@ -234,33 +230,35 @@ public class GameService {
         //add cards to game and sets it status
         addCardsToGame(game);
 
-        game.setStatus(GameStatus.RECEIVINGHINTS);
+        //adding a new round to the game
+        game = addRound(game);
 
-        int roundNr = game.getRoundNr();
-        Card card = game.getCardList().get(roundNr);
-        roundService.addRoundToGame(game, card);
+        //setting the new player status
+        settingPlayerStatus(game);
 
-        game.setRoundNr(roundNr + 1);
         gameRepository.save(game);
     }
-
 
     //This methods adds 13 unique cards to a game
     //param: Game game
     //return: void
     private void addCardsToGame(Game game) {
-        int totalNrOfCards = gameRepository.findAll().size();
+
+        List<Card> cardList = cardRepository.findAll();
+
+        int totalNrOfCards = cardList.size();
         Long[] pickedNrs = new Long[13];
+        Arrays.fill(pickedNrs, -1L);
 
         //adding 13 unique cards to the game
         for (int i = 0; i < 13; i++) {
-            long randomNum = 0L;
+            long randomNum = 0;
             boolean unique = false;
             //loop to check uniqueness of card
             while (!unique) {
                 randomNum = (long) (Math.random() * totalNrOfCards);
                 unique = true;
-                for (int j = 0; j < 13; j++) {
+                for (int j = 0; j < i; j++) {
                     if (pickedNrs[j].equals(randomNum)) {
                         unique = false;
                         break;
@@ -276,5 +274,37 @@ public class GameService {
         gameRepository.save(game);
     }
 
+    //this method sets the player roles
+    //param: Game game
+    //return void
+    private void settingPlayerStatus(Game game) {
 
+        List<Player> playerList = game.getPlayerList();
+
+        int numberOfPlayers = playerList.size();
+        int roundNr = game.getRoundNr();
+
+        int nextGuesser = roundNr % numberOfPlayers;
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (i == nextGuesser) {
+                playerService.setPlayerStatus(playerList.get(i), PlayerStatus.GUESSER);
+            }
+            else {
+                playerService.setPlayerStatus(playerList.get(i), PlayerStatus.CLUE_GIVER);
+            }
+        }
+    }
+
+    //This is a helper method to check whether the provided name is unique, throws an exception if not
+    //param: Game newGame
+    private void checkIfGameExists(Game newGame) {
+        Game gameByName = gameRepository.findByName(newGame.getName());
+
+        String baseErrorMessage = "The name provided is not %s. Therefore, the game could not be %s!";
+        if (gameByName != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "unique", "created"));
+        }
+
+    }
 }

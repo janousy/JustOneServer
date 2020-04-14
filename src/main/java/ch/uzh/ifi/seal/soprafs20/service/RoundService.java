@@ -7,6 +7,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,7 @@ public class RoundService {
 
 
     @Autowired
-    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository,
-                        @Qualifier("gameRepository") GameRepository gameRepository) {
+    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository) {
         this.roundRepository = roundRepository;
     }
 
@@ -103,6 +103,14 @@ public class RoundService {
     }
 
  */
+
+
+
+    public Round addRound(Long gameId) {
+
+
+        return null;
+    }
 
     //add a new Round to a Game
     //param: game Game
