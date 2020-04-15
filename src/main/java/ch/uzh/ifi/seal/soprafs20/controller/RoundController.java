@@ -92,15 +92,6 @@ public class RoundController {
         return hintGetDTOs;
     }
 
-    @GetMapping("/games/{gameId}/guesses")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public GuessGetDTO getCurentGuessOfGame(@PathVariable Long gameId) {
-        Guess currentGuess = roundService.getGuessOfCurrentRound(gameId);
-        return GuessDTOMapper.INSTANCE.convertEntitytoGuessGetDTO(currentGuess);
-    }
-
-
     @PostMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -127,6 +118,15 @@ public class RoundController {
         Term createdTerm = roundService.addTermToRound(inputTerm, gameId);
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(createdTerm);
     }
+
+    @DeleteMapping("/games/{gameId}/terms")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public TermGetDTO deleteTerm(@PathVariable Long gameId) {
+        Term deletedTerm = roundService.deleteCurrentTermOfRound(gameId);
+        return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
+    }
+
 
 /*
     //returns a list with all games http method: get, mapping: /games

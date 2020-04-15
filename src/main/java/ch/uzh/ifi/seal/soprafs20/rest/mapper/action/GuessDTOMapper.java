@@ -15,12 +15,14 @@ public interface GuessDTOMapper {
 
     GuessDTOMapper INSTANCE = Mappers.getMapper(GuessDTOMapper.class);
 
-    @Mapping(source = "content", target = "content")
     @Mapping(source = "roundId", target = "roundId")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "token", target = "token")
     Guess convertGuessPostDTOtoEntity(GuessPostDTO guessPostDTO);
 
-    @Mapping(source = "content", target = "content")
     @Mapping(source = "roundId", target = "roundId")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "token", target = "token")
     GuessGetDTO convertEntityToGuessGetDTO(Guess guess);
 
 }

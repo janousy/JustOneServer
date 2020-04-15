@@ -12,12 +12,14 @@ public interface HintDTOMapper {
 
     HintDTOMapper INSTANCE = Mappers.getMapper(HintDTOMapper.class);
 
-    @Mapping(source = "content", target = "content")
     @Mapping(source = "roundId", target = "roundId")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "token", target = "token")
     Hint convertHintPostDTOToEntity(HintPostDTO hintPostDTO);
 
-    @Mapping(source = "content", target = "content")
     @Mapping(source = "roundId", target = "roundId")
+    @Mapping(source = "content", target = "content")
+    @Mapping(source = "token", target = "token")
     HintGetDTO convertEntityToHintGetDTO(Hint hint);
 
 }

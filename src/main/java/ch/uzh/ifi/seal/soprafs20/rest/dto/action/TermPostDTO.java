@@ -1,9 +1,17 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.action;
 
-public class TermPostDTO implements ActionTypeDTO {
-    private Long roundId;
-    private String content;
+public class TermPostDTO {
+
     private Long wordId;
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public Long getWordId() {
         return wordId;

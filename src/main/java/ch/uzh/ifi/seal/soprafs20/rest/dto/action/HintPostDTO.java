@@ -3,6 +3,15 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto.action;
 public class HintPostDTO {
     private Long roundId;
     private String content;
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public Long getRoundId() {
         return roundId;

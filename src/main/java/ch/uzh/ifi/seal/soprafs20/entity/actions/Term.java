@@ -8,11 +8,23 @@ public class Term {
 
     @Column(name = "roundId_Term")
     private Long roundId;
+
     @Column(name = "content_Term")
     private String content;
 
     @Column(name = "wordId_Term")
     private Long wordId;
+
+    @Column(name = "token_Term")
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public Long getWordId() {
         return wordId;
