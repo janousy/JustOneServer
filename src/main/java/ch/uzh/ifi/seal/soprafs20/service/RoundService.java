@@ -30,11 +30,14 @@ public class RoundService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final RoundRepository roundRepository;
+    private final GameRepository gameRepository;
 
 
     @Autowired
-    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository) {
+    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository,
+                        @Qualifier("gameRepository") GameRepository gameRepository) {
         this.roundRepository = roundRepository;
+        this.gameRepository = gameRepository;
     }
 
     //get all rounds as a list
@@ -55,26 +58,11 @@ public class RoundService {
         return hint;
     }
 
-    public List<Hint> getAllHintsFromRound(Long gameId) {
-        Round currentRound = findRoundByGameId(gameId);
-        return currentRound.getHintList();
-    }
-
     public Guess addGuessToRound(Guess guess, Long gameId) {
         Round currentRound = findRoundByGameId(gameId);
         guess.setRoundId(currentRound.getId());
         currentRound.setGuess(guess);
         return guess;
-    }
-
-    public Guess getGuessOfCurrentRound(Long gameId) {
-        Round currentRound = findRoundByGameId(gameId);
-        return currentRound.getGuess();
-    }
-
-    public Term getCurrentTermFromRound(Long gameId) {
-        Round currentRound = findRoundByGameId(gameId);
-        return currentRound.getTerm();
     }
 
     public Term addTermToRound(Long gameId, Long wordId) {
@@ -98,22 +86,20 @@ public class RoundService {
         }
     }
 
+    public List<Hint> getAllHintsFromRound(Long gameId) {
+        Round currentRound = findRoundByGameId(gameId);
+        return currentRound.getHintList();
+    }
+
     public Guess getGuessOfCurrentRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         return currentRound.getGuess();
     }
 
     public Term getCurrentTermFromRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         return currentRound.getTerm();
     }
-
-    public List<Hint> getAllHintsFromRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
-        return currentRound.getHintList();
-    }
-
-
 
 /*
     //method returns the rounds which belong to a game by the gameId
@@ -134,8 +120,6 @@ public class RoundService {
     }
 
  */
-
-
 
     public Round addRound(Long gameId) {
 
@@ -159,11 +143,10 @@ public class RoundService {
     }
 
     private Round findRoundByGameId(Long gameId) {
-        Game game = gameService.getGameById(gameId);
+        Game game = gameRepository.findGameByGameId(gameId);
         int indexOfCurrentRound = game.getRoundNr() - 1;
 
         return game.getRoundList().get(indexOfCurrentRound);
     }
-
 
 }
