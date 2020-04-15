@@ -123,25 +123,6 @@ public class RoundService {
         return deletedTerm;
     }
 
-/*
-    //method returns the rounds which belong to a game by the gameId
-    //param: Long gameId
-    //return: returns all rounds which belong to a game
-    public List<Round> getAllRoundsOfGame(Long gameId) {
-
-        List<Round> allRounds = roundRepository.findAll();
-        List<Round> rounds = new ArrayList<Round>();
-
-        for(Round r : allRounds){
-            if(r.getGame().getGameId().equals(gameId)){
-                rounds.add(r);
-            }
-        }
-
-        return rounds;
-    }
-
- */
 
     public Round addRound(Long gameId) {
 
