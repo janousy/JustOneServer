@@ -65,7 +65,6 @@ public class Round {
         this.guess = guess;
     }
 
-
     public Term getTerm() {
         return term;
     }
@@ -81,8 +80,6 @@ public class Round {
     public void setCard(Card card) {
         this.card = card;
     }
-
-
 
     public Game getGame() {
         return game;
