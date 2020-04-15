@@ -12,20 +12,4 @@ public class TermPostDTO implements ActionTypeDTO {
     public void setWordId(Long wordId) {
         this.wordId = wordId;
     }
-
-    public Long getRoundId() {
-        return roundId;
-    }
-
-    public void setRoundId(Long roundId) {
-        this.roundId = roundId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }

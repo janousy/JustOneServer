@@ -43,6 +43,12 @@ public class RoundService {
         return this.roundRepository.findAll();
     }
 
+    public Guess addGuessToRound(Guess guess, Long gameId) {
+        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        guess.setRoundId(currentRound.getId());
+        currentRound.setGuess(guess);
+        return guess;
+    }
 
     //TODO: restrict number of hints accorinding to number of players
     //TODO: check status of game such that it is actually acepting hints
@@ -54,36 +60,13 @@ public class RoundService {
         return hint;
     }
 
-    public List<Hint> getAllHintsFromRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
-        return currentRound.getHintList();
-    }
-
-    public Guess addGuessToRound(Guess guess, Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
-        guess.setRoundId(currentRound.getId());
-        currentRound.setGuess(guess);
-        return guess;
-    }
-
-    public Guess getGuessOfCurrentRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
-        return currentRound.getGuess();
-    }
-
-    public Term getCurrentTermFromRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
-        return currentRound.getTerm();
-    }
-
-    public Term addTermToRound(Long gameId, Long wordId) {
+    public Term addTermToRound(Term newTerm, Long gameId) {
 
         Round currentRound = roundRepository.findRoundByGameGameId(gameId);
         String[] wordsOfCards = currentRound.getCard().getTerms();
-        int relWordId = Math.toIntExact(wordId) - 1;
+        int relWordId = Math.toIntExact(newTerm.getWordId()) - 1;
 
         if (relWordId >= 0 && relWordId < CONSTANTS.MAX_WORDS_PER_CARD) {
-            Term newTerm = new Term();
             newTerm.setContent(wordsOfCards[Math.toIntExact(relWordId)]);
             newTerm.setWordId((long) relWordId);
             newTerm.setRoundId(currentRound.getId());
@@ -96,6 +79,22 @@ public class RoundService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invalid wordId");
         }
     }
+
+    public Guess getGuessOfCurrentRound(Long gameId) {
+        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        return currentRound.getGuess();
+    }
+
+    public Term getCurrentTermFromRound(Long gameId) {
+        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        return currentRound.getTerm();
+    }
+
+    public List<Hint> getAllHintsFromRound(Long gameId) {
+        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        return currentRound.getHintList();
+    }
+
 
 
 /*

@@ -12,8 +12,7 @@ public interface TermDTOMapper {
 
     TermDTOMapper INSTANCE = Mappers.getMapper(TermDTOMapper.class);
 
-    @Mapping(source = "content", target = "content")
-    @Mapping(source = "roundId", target = "roundId")
+
     @Mapping(source = "wordId", target = "wordId")
     Term convertTermPostDTOToEntity(TermPostDTO termPostDTO);
 
