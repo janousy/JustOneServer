@@ -26,6 +26,4 @@ public interface GameDTOMapper {
 
     @Mapping(source = "gameId", target = "gameId")
     Game convertGameDeleteDTOtoEntity(GameDeleteDTO gameDeleteDTO);
-
-
 }
