@@ -87,24 +87,18 @@ public class PlayerService {
     }
 
     public Player deletePlayer(Long gameId, Long playerId) {
-        //List<Game> list = gameRepository.findAll();
         Game game1 = gameRepository.findGameByGameId(gameId);
 
         Player playerById = playerRepository.findPlayerById(playerId);
 
         if (playerById != null) {
-            Player playerToDelete = playerById;
 
             //delete the player from the game
-            playerToDelete = removePlayerFromGame(playerToDelete, gameId);
+            removePlayerFromGame(playerById, gameId);
 
             //delete the player from the user
-            removePlayerFromUser(playerToDelete);
+            removePlayerFromUser(playerById);
 
-            List<Player> playerList1 = playerRepository.findAll();
-            //playerRepository.deleteById(playerId);
-
-            playerList1 = playerRepository.findAll();
             playerRepository.flush();
 
             //a new host must be set if the deleted player was a host
