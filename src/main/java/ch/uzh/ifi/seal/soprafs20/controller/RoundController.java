@@ -119,8 +119,6 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(createdTerm);
     }
 
-    //deletes the current term, game status is being set back to RECEIVING TERM
-    //TODO: how many clue givers need to report the term?
     @DeleteMapping("/games/{gameId}/terms")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -128,6 +126,15 @@ public class RoundController {
         //clue givers report the word to be unknown
         Term deletedTerm = roundService.deleteCurrentTermOfRound(gameId);
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
+    }
+
+    //TODO hier noch report hints einbauen
+    @PutMapping("/games/{gameId}/hints")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public HintGetDTO reportHint(@PathVariable Long gameId) {
+
+        return null;
     }
 
     @DeleteMapping("/games/{gameId}/guesses")

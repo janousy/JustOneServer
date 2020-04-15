@@ -2,9 +2,12 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,17 +26,17 @@ public class PlayerService {
     private final Logger log = LoggerFactory.getLogger(PlayerService.class);
 
     private final PlayerRepository playerRepository;
-    private final GameService gameService;
-    private final UserService userService;
+    private final GameRepository gameRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public PlayerService(@Qualifier("playerRepository") PlayerRepository playerRepository,
-                         GameService gameService,
-                         UserService userService) {
+                         @Qualifier("gameRepository") GameRepository gameRepository,
+                         @Qualifier("userRepository") UserRepository userRepository) {
 
         this.playerRepository = playerRepository;
-        this.gameService = gameService;
-        this.userService = userService;
+        this.gameRepository = gameRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Player> getPlayers() {
@@ -45,12 +48,11 @@ public class PlayerService {
     }
 
     public Player getPlayerById(Long playerId) {
-        Optional<Player> optionalPlayer = playerRepository.findById(playerId);
+        Player optionalPlayer = playerRepository.findPlayerById(playerId);
 
-        if (optionalPlayer.isPresent()) {
-            Player playerById = optionalPlayer.get();
-            log.debug("Found Player by Id: {}", playerById);
-            return playerById;
+        if (optionalPlayer != null) {
+            log.debug("Found Player by Id: {}", optionalPlayer);
+            return optionalPlayer;
         }
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player ID provided does not exists");
@@ -62,7 +64,7 @@ public class PlayerService {
         //TODO how to check if gameByID exists? cannot ask gameService
 
         checkIfPlayerExistsByName(newPlayer);
-        User userByToken = userService.getUserByToken(newPlayer.getUserToken());
+        User userByToken = userRepository.findByToken(newPlayer.getUserToken());
 
         newPlayer.setStatus(PlayerStatus.NOT_READY);
         newPlayer.setScore(0); //score initially zero
@@ -79,24 +81,31 @@ public class PlayerService {
         Player addedPlayer = playerRepository.save(newPlayer);
         log.debug("Created Information for Player: {}", newPlayer);
 
-        addedPlayer = gameService.addPlayerToGame(newPlayer, gameId);
+        addedPlayer = addPlayerToGame(newPlayer, gameId);
 
         return addedPlayer;
     }
 
     public Player deletePlayer(Long gameId, Long playerId) {
-        //TODO delete somehow not working
-        Optional<Player> playerById = playerRepository.findById(playerId);
+        Game game1 = gameRepository.findGameByGameId(gameId);
 
-        if (playerById.isPresent()) {
-            Player toDelete = playerById.get();
-            playerRepository.delete(toDelete);
+        Player playerById = playerRepository.findPlayerById(playerId);
+
+        if (playerById != null) {
+
+            //delete the player from the game
+            removePlayerFromGame(playerById, gameId);
+
+            //delete the player from the user
+            removePlayerFromUser(playerById);
+
             playerRepository.flush();
-            List<Player> playerList2 = playerRepository.findByGameGameId(gameId);
 
             //a new host must be set if the deleted player was a host
-            if (playerById.get().getRole().equals(PlayerRole.HOST)) {
-                List<Player> playerList = playerRepository.findByGameGameId(gameId);
+            if (playerById.getRole().equals(PlayerRole.HOST)) {
+                Game game = gameRepository.findGameByGameId(gameId);
+                List<Player> playerList = game.getPlayerList();
+                //List<Player> playerList = playerRepository.findByGameGameId(gameId);
                 Random rand = new Random();
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
                 randomPlayer.setRole(PlayerRole.HOST);
@@ -104,7 +113,7 @@ public class PlayerService {
                 log.info("new host was set");
             }
             playerRepository.flush();
-            return playerById.get();
+            return playerById;
         }
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "player by id not found");
@@ -168,5 +177,55 @@ public class PlayerService {
         }
         return false;
     }
+
+    public void removePlayerFromUser(Player playerToBeRemoved) {
+        User userToDeletePlayerFrom = userRepository.findByToken(playerToBeRemoved.getUserToken());
+        userToDeletePlayerFrom.setPlayer(null);
+    }
+
+
+    //adds a Player to a game by using the gameId
+    //param: Player playerToBeAdded, Long GameId
+    //returns the Player which has been added to the game
+    private Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
+        Game game = gameRepository.findGameByGameId(gameId);
+
+        //throw an error if too many players want to join the game
+        if (game.getPlayerList().size() == 7) {
+            String baseErrorMessage = "The lobby has already the maximum amount of players(7)";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
+        game.addPlayer(playerToBeAdded);
+
+        gameRepository.save(game);
+        log.debug("Added a Player to a game");
+
+        return playerToBeAdded;
+    }
+
+
+    //removes a Player from a game by using the gameId
+    //param: Player playerToBeRemoved, Long GameId
+    //returns the Player which has been removed from the game
+    private Player removePlayerFromGame(Player playerToBeRemoved, Long GameId) {
+
+        //find the game from which a player should be removed and remove it
+        Game game = gameRepository.findGameByGameId(GameId);
+
+        //throw an error if too many players want to join the game
+        if (game.getPlayerList().size() == 0) {
+            String baseErrorMessage = "The lobby is already empty";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
+        game.removePlayer(playerToBeRemoved);
+
+        //save the game in the repository
+        gameRepository.save(game);
+
+        return playerToBeRemoved;
+    }
+
 
 }

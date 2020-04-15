@@ -39,7 +39,7 @@ public class GameDTOMapperTest {
         game.setStatus(GameStatus.LOBBY);
         game.setGameId(1L);
         game.setCorrectCards(0);
-        game.setPlayerList(new ArrayList<Player>());
+        //game.setPlayerList(new ArrayList<Player>());
 
 
         // MAP -> Create UserGetDTO
@@ -50,7 +50,7 @@ public class GameDTOMapperTest {
         assertEquals(game.getName(), gameGetDTO.getName());
         assertEquals(game.getStatus(), gameGetDTO.getStatus());
         assertEquals(game.getCorrectCards(), gameGetDTO.getCorrectCards());
-        assertEquals(game.getPlayerList(), gameGetDTO.getPlayerList());
+        //assertEquals(game.getPlayerList(), gameGetDTO.getPlayerList());
     }
 
     @Test

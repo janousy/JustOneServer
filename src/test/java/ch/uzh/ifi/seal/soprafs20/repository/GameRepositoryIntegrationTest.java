@@ -40,7 +40,6 @@ public class GameRepositoryIntegrationTest {
         assertEquals(found.getName(), game.getName());
         assertEquals(found.getStatus(), game.getStatus());
         assertEquals(found.getCorrectCards(), game.getCorrectCards());
-        assertEquals(found.getPlayerList(), game.getPlayerList());
 
     }
 
@@ -66,7 +65,6 @@ public class GameRepositoryIntegrationTest {
         assertEquals(found.getName(), game.getName());
         assertEquals(found.getStatus(), game.getStatus());
         assertEquals(found.getCorrectCards(), game.getCorrectCards());
-        assertEquals(found.getPlayerList(), game.getPlayerList());
     }
 
 */
