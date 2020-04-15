@@ -1,17 +1,11 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameDeleteDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.user.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.user.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.user.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -27,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;

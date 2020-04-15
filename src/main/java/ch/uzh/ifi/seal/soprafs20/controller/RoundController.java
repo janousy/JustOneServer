@@ -40,6 +40,7 @@ public class RoundController {
         for (Round round : rounds) {
             roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
         }
+
         return roundGetDTOS;
     }
 

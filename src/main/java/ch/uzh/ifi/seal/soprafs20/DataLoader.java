@@ -12,10 +12,6 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.LobbyState;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
-import org.apache.tomcat.jni.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +20,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Lob;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /*
