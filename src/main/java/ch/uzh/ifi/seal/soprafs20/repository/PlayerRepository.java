@@ -12,5 +12,6 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     Player findByName(String name);
 
     List<Player> findByGameGameId(Long gameId); //special for joined column, see column naming in h2 db
-    Optional<Player> findById(Long id);
+
+    Player findPlayerById(Long id);
 }

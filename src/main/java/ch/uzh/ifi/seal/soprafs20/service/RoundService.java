@@ -14,14 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -30,14 +27,13 @@ public class RoundService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final RoundRepository roundRepository;
-
-    private final GameService gameService;
+    private final GameRepository gameRepository;
 
 
     @Autowired
-    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository, @Lazy GameService gameService) {
+    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository, @Qualifier("gameRepository") GameRepository gameRepository) {
         this.roundRepository = roundRepository;
-        this.gameService = gameService;
+        this.gameRepository = gameRepository;
     }
 
     //get all rounds as a list
@@ -146,7 +142,7 @@ public class RoundService {
     }
 
     private Round findRoundByGameId(Long gameId) {
-        Game game = gameService.getGameById(gameId);
+        Game game = gameRepository.findGameByGameId(gameId);
         int indexOfCurrentRound = game.getRoundNr() - 1;
 
         return game.getRoundList().get(indexOfCurrentRound);

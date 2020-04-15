@@ -70,8 +70,7 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$[0].name", is(game.getName())))
                 .andExpect(jsonPath("$[0].gameId", is(game.getGameId().intValue())))
                 .andExpect(jsonPath("$[0].status", is(game.getStatus().toString())))
-                .andExpect(jsonPath("$[0].correctCards", is(game.getCorrectCards())))
-                .andExpect(jsonPath("$[0].playerList", is(game.getPlayerList())));
+                .andExpect(jsonPath("$[0].correctCards", is(game.getCorrectCards())));
     }
 
     @Test
@@ -103,11 +102,7 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$.gameId", is(game.getGameId().intValue())))
                 .andExpect(jsonPath("$.name", is(game.getName())))
                 .andExpect(jsonPath("$.status", is(game.getStatus().toString())))
-                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())))
-                .andExpect(jsonPath("$.playerList", is(game.getPlayerList())));
-        //.andExpect(jsonPath("$.roundList", is(game.getRoundList())))
-        //.andExpect(jsonPath("$.cardList", is(game.getCardList())));
-        //TODO hier noch anpassen das diese attribute auch getestet werden
+                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())));
 
     }
 
@@ -128,7 +123,7 @@ public class GameControllerTest {
         gameGetDTO.setName("Game 1");
         gameGetDTO.setStatus(GameStatus.LOBBY);
         gameGetDTO.setCorrectCards(0);
-        gameGetDTO.setPlayerList(new ArrayList<Player>());
+        //gameGetDTO.setPlayerList(new ArrayList<Player>());
 
         given(gameService.getGameById(Mockito.any())).willReturn(game);
 
@@ -144,8 +139,7 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$.gameId", is(game.getGameId().intValue())))
                 .andExpect(jsonPath("$.name", is(game.getName())))
                 .andExpect(jsonPath("$.status", is(game.getStatus().toString())))
-                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())))
-                .andExpect(jsonPath("$.playerList", is(game.getPlayerList())));
+                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())));
     }
 
 
@@ -177,8 +171,7 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$.gameId", is(game.getGameId().intValue())))
                 .andExpect(jsonPath("$.name", is(game.getName())))
                 .andExpect(jsonPath("$.status", is(game.getStatus().toString())))
-                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())))
-                .andExpect(jsonPath("$.playerList", is(game.getPlayerList())));
+                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())));
     }
 
 

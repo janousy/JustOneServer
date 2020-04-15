@@ -36,7 +36,7 @@ public class GameServiceTest {
         testGame.setName("testName");
         testGame.setCorrectCards(0);
         testGame.setStatus(GameStatus.LOBBY);
-        testGame.setPlayerList(new ArrayList<Player>());
+        //testGame.setPlayerList(new ArrayList<Player>());
 
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame

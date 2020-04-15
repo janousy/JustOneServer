@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class GameService {
 
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("cardRepository") CardRepository cardRepository, RoundService roundService, @Lazy PlayerService playerService) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("cardRepository") CardRepository cardRepository, RoundService roundService, PlayerService playerService) {
         this.gameRepository = gameRepository;
         this.cardRepository = cardRepository;
         this.roundService = roundService;
@@ -88,74 +89,39 @@ public class GameService {
         return newGame;
     }
 
-    //TODO hier noch anpassen das beim löschen keine foreign keys vereltzt werden
     //delete a specific game with its id
     //param: Long gameId
     //return: returns the deleted game Game
     public Game deleteGameById(Long gameId) {
         Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
 
-        if (gameToBeDeleted == null) {
-            String baseErrorMessage = "The gameId provided does not exist. Therefore, the game could not be deleted";
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, baseErrorMessage);
+        if (gameToBeDeleted.getStatus() != GameStatus.LOBBY && gameToBeDeleted.getStatus() != GameStatus.IDLE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game is not in the correct status to delete");
+        }
+
+        List<Player> playerList = gameToBeDeleted.getPlayerList();
+        List<Round> roundList = gameToBeDeleted.getRoundList();
+        List<Card> cardList = gameToBeDeleted.getCardList();
+
+        //remove all players from the list
+        int sizePlayerList = playerList.size();
+        for (int i = 0; i < sizePlayerList; i++) {
+            gameToBeDeleted.removePlayer(playerList.get(i));
+            playerService.removePlayerFromUser(playerList.get(i));
+        }
+
+        for (Round r : roundList) {
+            gameToBeDeleted.removeRound(r);
+        }
+
+        for (Card c : cardList) {
+            gameToBeDeleted.removeCard(c);
         }
 
         gameRepository.delete(gameToBeDeleted);
 
         return gameToBeDeleted;
     }
-
-
-    //bei all diesen methoden soll auf dem state die methode aufgerufen werden
-
-    //adds a Player to a game by using the gameId
-    //param: Player playerToBeAdded, Long GameId
-    //returns the Player which has been added to the game
-    public Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
-
-        Game game = gameRepository.findGameByGameId(gameId);
-
-        //GameState state = game.getGameState();
-
-        //playerToBeAdded = game.getGameState().addPlayerToGame(playerToBeAdded);
-
-        //throw an error if too many players want to join the game
-        if (game.getPlayerList().size() == 7) {
-            String baseErrorMessage = "The lobby has already the maximum amount of players(7)";
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
-        }
-
-        game.addPlayer(playerToBeAdded);
-
-        //save the game in the repository
-        gameRepository.save(game);
-
-        return playerToBeAdded;
-    }
-
-
-    //removes a Player from a game by using the gameId
-    //param: Player playerToBeRemoved, Long GameId
-    //returns the Player which has been removed from the game
-    public Player removePlayerFromGame(Player playerToBeRemoved, Long GameId) {
-
-        //find the game from which a player should be removed and remove it
-        Game game = gameRepository.findGameByGameId(GameId);
-
-        //throw an error if too many players want to join the game
-        if (game.getPlayerList().size() == 0) {
-            String baseErrorMessage = "The lobby is already empty";
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
-        }
-
-        game.removePlayer(playerToBeRemoved);
-
-        //save the game in the repository
-        gameRepository.save(game);
-
-        return playerToBeRemoved;
-    }
-
 
     //TODO diese können rausgeworfen werden
     public Card getCurrentCard() {

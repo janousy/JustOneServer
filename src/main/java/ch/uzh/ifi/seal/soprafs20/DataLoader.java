@@ -12,6 +12,7 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
+import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,6 @@ public class DataLoader implements ApplicationRunner {
         for (int i = 1; i <= 3; i++) {
             Game testGame = new Game();
             GameStatus gameStatus = GameStatus.LOBBY;
-            //GameState gameState = new LobbyState(testGame);
 
             testGame.setName("testGame" + i);
             testGame.setCorrectCards(0);
