@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,12 +44,6 @@ public class RoundService {
         return this.roundRepository.findAll();
     }
 
-    public Guess addGuessToRound(Guess guess, Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
-        guess.setRoundId(currentRound.getId());
-        currentRound.setGuess(guess);
-        return guess;
-    }
 
     //TODO: restrict number of hints accorinding to number of players
     //TODO: check status of game such that it is actually acepting hints
@@ -60,13 +55,36 @@ public class RoundService {
         return hint;
     }
 
-    public Term addTermToRound(Term newTerm, Long gameId) {
+    public List<Hint> getAllHintsFromRound(Long gameId) {
+        Round currentRound = findRoundByGameId(gameId);
+        return currentRound.getHintList();
+    }
+
+    public Guess addGuessToRound(Guess guess, Long gameId) {
+        Round currentRound = findRoundByGameId(gameId);
+        guess.setRoundId(currentRound.getId());
+        currentRound.setGuess(guess);
+        return guess;
+    }
+
+    public Guess getGuessOfCurrentRound(Long gameId) {
+        Round currentRound = findRoundByGameId(gameId);
+        return currentRound.getGuess();
+    }
+
+    public Term getCurrentTermFromRound(Long gameId) {
+        Round currentRound = findRoundByGameId(gameId);
+        return currentRound.getTerm();
+    }
+
+    public Term addTermToRound(Long gameId, Long wordId) {
 
         Round currentRound = roundRepository.findRoundByGameGameId(gameId);
         String[] wordsOfCards = currentRound.getCard().getTerms();
-        int relWordId = Math.toIntExact(newTerm.getWordId()) - 1;
+        int relWordId = Math.toIntExact(wordId) - 1;
 
         if (relWordId >= 0 && relWordId < CONSTANTS.MAX_WORDS_PER_CARD) {
+            Term newTerm = new Term();
             newTerm.setContent(wordsOfCards[Math.toIntExact(relWordId)]);
             newTerm.setWordId((long) relWordId);
             newTerm.setRoundId(currentRound.getId());
@@ -138,6 +156,13 @@ public class RoundService {
         newRound = roundRepository.save(newRound);
 
         return game;
+    }
+
+    private Round findRoundByGameId(Long gameId) {
+        Game game = gameService.getGameById(gameId);
+        int indexOfCurrentRound = game.getRoundNr() - 1;
+
+        return game.getRoundList().get(indexOfCurrentRound);
     }
 
 

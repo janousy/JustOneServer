@@ -28,7 +28,6 @@ public class RoundGetDTO {
         this.id = id;
     }
 
-
     public Guess getGuess() {
         return guess;
     }
@@ -36,7 +35,6 @@ public class RoundGetDTO {
     public void setGuess(Guess guess) {
         this.guess = guess;
     }
-
 
     public List<Hint> getHintList() {
         return hintList;
@@ -46,8 +44,6 @@ public class RoundGetDTO {
         this.hintList = hintList;
     }
 
-
-
     public Term getTerm() {
         return term;
     }
@@ -55,8 +51,6 @@ public class RoundGetDTO {
     public void setTerm(Term term) {
         this.term = term;
     }
-
-
 
     public Card getCard() {
         return card;

@@ -28,7 +28,7 @@ public class RoundController {
         this.roundService = roundService;
     }
 
-    //returns a list with all games http method: get, mapping: /games
+    //returns a list with all rounds http method
     @GetMapping("/games/rounds")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -44,12 +44,39 @@ public class RoundController {
         return roundGetDTOS;
     }
 
+    //returns a list with all rounds of a specific game
+    @GetMapping("/games/{gameId}/rounds")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId) {
+        // fetch all rounds in the internal representation
+        List<Round> rounds = roundService.getAllRounds();
+        List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
+
+        for (Round round : rounds) {
+            if (round.getGame().getGameId().equals(gameId)) {
+                roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
+            }
+
+        }
+
+        return roundGetDTOS;
+    }
+
     @GetMapping("/games/{gameId}/terms")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public TermGetDTO getCurrentTermOfGame(@PathVariable Long gameId) {
         Term currentTerm = roundService.getCurrentTermFromRound(gameId);
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(currentTerm);
+    }
+
+    @GetMapping("/games/{gameId}/guesses")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GuessGetDTO getCurrentGuessOfGame(@PathVariable Long gameId) {
+        Guess currentGuess = roundService.getGuessOfCurrentRound(gameId);
+        return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(currentGuess);
     }
 
     @GetMapping("/games/{gameId}/hints")
@@ -89,7 +116,7 @@ public class RoundController {
     public GuessGetDTO createGuess(@RequestBody GuessPostDTO guessPostDTO, @PathVariable Long gameId) {
         Guess inputGuess = GuessDTOMapper.INSTANCE.convertGuessPostDTOtoEntity(guessPostDTO);
         Guess createdGuess = roundService.addGuessToRound(inputGuess, gameId);
-        return GuessDTOMapper.INSTANCE.convertEntitytoGuessGetDTO(createdGuess);
+        return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(createdGuess);
     }
 
     @PostMapping("/games/{gameId}/terms")

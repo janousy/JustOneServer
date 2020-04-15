@@ -88,7 +88,7 @@ public class GameService {
         return newGame;
     }
 
-
+    //TODO hier noch anpassen das beim löschen keine foreign keys vereltzt werden
     //delete a specific game with its id
     //param: Long gameId
     //return: returns the deleted game Game
@@ -197,6 +197,7 @@ public class GameService {
     }
 
     //TODO hier schauen was besser zurückgegeben werden soll, besser ein game oder besser eine neue Round?
+    //TODO diese methode aufrufen wenn ein clue gegeben wurde
     //method adds a round to a game
     //param: Game game
     //return: returns the game to which the round has been added
@@ -255,7 +256,7 @@ public class GameService {
             boolean unique = false;
             //loop to check uniqueness of card
             while (!unique) {
-                randomNum = (long) (Math.random() * totalNrOfCards);
+                randomNum = 1L + (long) (Math.random() * (totalNrOfCards - 1L));
                 unique = true;
                 for (int j = 0; j < i; j++) {
                     if (pickedNrs[j].equals(randomNum)) {
