@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
@@ -136,11 +137,18 @@ public class RoundController {
         return null;
     }
 
+    @DeleteMapping("/games/{gameId}/guesses")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GuessGetDTO skipGuess(@PathVariable Long gameId) {
+        Guess skippedGuess = roundService.skipGuess(gameId);
+        return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(skippedGuess);
+    }
 
-/*
+
     //returns a list with all games http method: get, mapping: /games
 
-    /*
+/*
     //adds a new round to a game
     @PostMapping("/games/{id}/rounds")
     @ResponseStatus(HttpStatus.CREATED)
@@ -148,7 +156,9 @@ public class RoundController {
     public RoundGetDTO createRound(@PathVariable Long id) {
         // fetch all rounds in the internal representation
 
-        //Round round = gameService.addRound(id);
+        Game testgame = new Game();
+
+        Round round = roundService.addRound();
 
         return RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round);
     }

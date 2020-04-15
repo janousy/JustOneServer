@@ -100,8 +100,6 @@ public class RoundService {
 
             String guesscontent = guess.getContent();
             guess.setContent("Guessed correctly " + guesscontent);
-
-            addRound(currentGame);
         }
         else {
             int currentRoundNr = currentGame.getRoundNr();
@@ -110,9 +108,10 @@ public class RoundService {
             String guesscontent = guess.getContent();
             guess.setContent("Guessed wrongly " + guesscontent);
 
-            addRound(currentGame);
+
         }
 
+        addRound(currentGame);
 
         return guess;
     }
@@ -174,6 +173,24 @@ public class RoundService {
 
         currentRound.setTerm(null);
         return deletedTerm;
+    }
+
+    //method skips the current card
+    //param:
+    //return: Guess guess
+    public Guess skipGuess(Long gameId) {
+        validateGameState(GameStatus.RECEIVINGGUESS, gameId);
+
+        Round currentRound = findRoundByGameId(gameId);
+        Guess guess = new Guess();
+        guess.setContent("You skipped the guess");
+        guess.setRoundId(currentRound.getId());
+
+
+        Game game = gameRepository.findGameByGameId(gameId);
+        addRound(game);
+
+        return guess;
     }
 
 

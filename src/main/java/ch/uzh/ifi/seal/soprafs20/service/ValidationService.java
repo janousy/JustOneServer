@@ -38,10 +38,9 @@ public class ValidationService {
         String termContent = currentRound.getTerm().getContent();
         String guessContent = guess.getContent();
 
-        termContent = termContent.toLowerCase();
-        guessContent = guessContent.toLowerCase();
+        termContent = termContent.replaceAll("\r", "");
 
-        return termContent.equals(guessContent);
+        return termContent.equalsIgnoreCase(guessContent);
     }
 
 
