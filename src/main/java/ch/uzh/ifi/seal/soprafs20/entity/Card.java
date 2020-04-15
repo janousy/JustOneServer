@@ -91,11 +91,4 @@ public class Card {
         this.gameList = gameList;
     }
 
-    public Card(String[] wordBatch) {
-        this.word1 = wordBatch[0];
-        this.word2 = wordBatch[1];
-        this.word3 = wordBatch[2];
-        this.word4 = wordBatch[3];
-        this.word5 = wordBatch[4];
-    }
 }
