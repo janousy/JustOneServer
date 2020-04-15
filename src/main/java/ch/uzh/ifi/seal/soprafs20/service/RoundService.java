@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +31,13 @@ public class RoundService {
 
     private final RoundRepository roundRepository;
 
+    private final GameService gameService;
+
 
     @Autowired
-    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository) {
+    public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository, @Lazy GameService gameService) {
         this.roundRepository = roundRepository;
+        this.gameService = gameService;
     }
 
     //get all rounds as a list
@@ -47,7 +51,7 @@ public class RoundService {
     //TODO: restrict number of hints accorinding to number of players
     //TODO: check status of game such that it is actually acepting hints
     public Hint addHintToRound(Hint hint, Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         hint.setRoundId(currentRound.getId()); //TODO neccessary to set ID?
         currentRound.addHint(hint);
         roundRepository.save(currentRound); //TODO check if save is necessary on entitiy update
@@ -55,30 +59,30 @@ public class RoundService {
     }
 
     public List<Hint> getAllHintsFromRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         return currentRound.getHintList();
     }
 
     public Guess addGuessToRound(Guess guess, Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         guess.setRoundId(currentRound.getId());
         currentRound.setGuess(guess);
         return guess;
     }
 
     public Guess getGuessOfCurrentRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         return currentRound.getGuess();
     }
 
     public Term getCurrentTermFromRound(Long gameId) {
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         return currentRound.getTerm();
     }
 
     public Term addTermToRound(Long gameId, Long wordId) {
 
-        Round currentRound = roundRepository.findRoundByGameGameId(gameId);
+        Round currentRound = findRoundByGameId(gameId);
         String[] wordsOfCards = currentRound.getCard().getTerms();
         int relWordId = Math.toIntExact(wordId) - 1;
 
@@ -139,6 +143,13 @@ public class RoundService {
         newRound = roundRepository.save(newRound);
 
         return game;
+    }
+
+    private Round findRoundByGameId(Long gameId) {
+        Game game = gameService.getGameById(gameId);
+        int indexOfCurrentRound = game.getRoundNr() - 1;
+
+        return game.getRoundList().get(indexOfCurrentRound);
     }
 
 

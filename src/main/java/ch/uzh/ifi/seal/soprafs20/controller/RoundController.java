@@ -28,7 +28,7 @@ public class RoundController {
         this.roundService = roundService;
     }
 
-    //returns a list with all games http method: get, mapping: /games
+    //returns a list with all rounds http method
     @GetMapping("/games/rounds")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -39,6 +39,25 @@ public class RoundController {
 
         for (Round round : rounds) {
             roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
+        }
+
+        return roundGetDTOS;
+    }
+
+    //returns a list with all rounds of a specific game
+    @GetMapping("/games/{gameId}/rounds")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId) {
+        // fetch all rounds in the internal representation
+        List<Round> rounds = roundService.getAllRounds();
+        List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
+
+        for (Round round : rounds) {
+            if (round.getGame().getGameId().equals(gameId)) {
+                roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
+            }
+
         }
 
         return roundGetDTOS;
