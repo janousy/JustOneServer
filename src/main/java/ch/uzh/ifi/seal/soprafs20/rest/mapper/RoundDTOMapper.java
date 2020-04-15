@@ -15,6 +15,6 @@ public interface RoundDTOMapper {
     @Mapping(source = "guess", target = "guess")
     @Mapping(source = "term", target = "term")
     @Mapping(source = "hintList", target = "hintList")
-    @Mapping(source = "card", target = "card")
+    //@Mapping(source = "card", target = "card")
     RoundGetDTO convertEntityToRoundGetDTO(Round round);
 }

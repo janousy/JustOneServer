@@ -17,14 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -33,8 +30,8 @@ public class RoundService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final RoundRepository roundRepository;
-    private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final GameRepository gameRepository;
 
 
     @Autowired
@@ -169,9 +166,10 @@ public class RoundService {
 
     private Round findRoundByGameId(Long gameId) {
         Game game = gameRepository.findGameByGameId(gameId);
-        if (game == null) {
+        if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("game by ID %d not found", gameId));
         }
+
         int indexOfCurrentRound = game.getRoundNr() - 1;
         return game.getRoundList().get(indexOfCurrentRound);
     }
