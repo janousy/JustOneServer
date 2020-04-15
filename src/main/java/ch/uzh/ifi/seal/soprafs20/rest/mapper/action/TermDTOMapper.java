@@ -20,5 +20,5 @@ public interface TermDTOMapper {
     @Mapping(source = "content", target = "content")
     @Mapping(source = "roundId", target = "roundId")
     @Mapping(source = "wordId", target = "wordId")
-    TermGetDTO convertEntityToTermGetDTO(TermGetDTO termGetDTO);
+    TermGetDTO convertEntityToTermGetDTO(Term term);
 }

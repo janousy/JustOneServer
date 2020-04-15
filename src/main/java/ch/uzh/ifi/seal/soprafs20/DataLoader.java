@@ -135,11 +135,11 @@ public class DataLoader implements ApplicationRunner {
             String[] termBatch = Arrays.copyOfRange(termsSplitted, i - BATCHSIZE, i);
             log.info(String.format("Init new Card with terms: %s, %s, %s, %s, %s", (Object[]) termBatch));
             Card card = new Card();
-            card.setTerm1(termBatch[0]);
-            card.setTerm2(termBatch[1]);
-            card.setTerm3(termBatch[2]);
-            card.setTerm4(termBatch[3]);
-            card.setTerm5(termBatch[4]);
+            card.setWord1(termBatch[0]);
+            card.setWord2(termBatch[1]);
+            card.setWord3(termBatch[2]);
+            card.setWord4(termBatch[3]);
+            card.setWord5(termBatch[4]);
             cardRepository.save(card);
         }
         cardRepository.flush();

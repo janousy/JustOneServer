@@ -2,13 +2,15 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.action.ActionTypeDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintPostDTO;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.action.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.round.RoundGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.RoundDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.GuessDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.HintDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.TermDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
@@ -41,13 +43,39 @@ public class RoundController {
         return roundGetDTOS;
     }
 
+    @GetMapping("/games/{gameId}/terms")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public TermGetDTO getCurrentHintofGame(@PathVariable Long gameId) {
+        Term currentTerm = roundService.getCurrentTermFromRound(gameId);
+        return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(currentTerm);
+    }
+
     @PostMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public HintGetDTO createHint(@RequestBody HintPostDTO hintPostDTO, @PathVariable String gameId) {
+    public HintGetDTO createHint(@RequestBody HintPostDTO hintPostDTO, @PathVariable Long gameId) {
         Hint inputHint = HintDTOMapper.INSTANCE.convertHintPostDTOToEntity(hintPostDTO);
-        return null;
+        Hint createdHint = roundService.addHintToRound(inputHint, gameId);
+        return HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(createdHint);
+    }
 
+    @PostMapping("/games/{gameId}/guesses")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public GuessGetDTO createGuess(@RequestBody GuessPostDTO guessPostDTO, @PathVariable Long gameId) {
+        Guess inputGuess = GuessDTOMapper.INSTANCE.convertGuessPostDTOtoEntity(guessPostDTO);
+        Guess createdGuess = roundService.addGuessToRound(inputGuess, gameId);
+        return GuessDTOMapper.INSTANCE.convertEntitytoGuessGetDTO(createdGuess);
+    }
+
+    @PostMapping("/games/{gameId}/terms")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public TermGetDTO createTerm(@RequestBody TermPostDTO termPostDTO, @PathVariable Long gameId) {
+        Term inputTerm = TermDTOMapper.INSTANCE.convertTermPostDTOToEntity(termPostDTO);
+        Term createdTerm = roundService.addTermToRound(inputTerm.getWordId(), gameId);
+        return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(createdTerm);
     }
 
 /*
