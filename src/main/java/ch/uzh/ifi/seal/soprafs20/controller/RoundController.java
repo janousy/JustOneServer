@@ -127,6 +127,15 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
     }
 
+    //TODO hier noch report hints einbauen
+    @PutMapping("/games/{gameId}/hints")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public HintGetDTO reportHint(@PathVariable Long gameId) {
+
+        return null;
+    }
+
 
 /*
     //returns a list with all games http method: get, mapping: /games

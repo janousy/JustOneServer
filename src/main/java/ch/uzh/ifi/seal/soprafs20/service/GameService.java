@@ -164,6 +164,7 @@ public class GameService {
 
     //TODO hier schauen was besser zurückgegeben werden soll, besser ein game oder besser eine neue Round?
     //TODO diese methode aufrufen wenn ein clue gegeben wurde
+    /*
     //method adds a round to a game
     //param: Game game
     //return: returns the game to which the round has been added
@@ -185,6 +186,8 @@ public class GameService {
         return game;
     }
 
+
+     */
     public void updateScores() {
 
     }
@@ -197,7 +200,7 @@ public class GameService {
         addCardsToGame(game);
 
         //adding a new round to the game
-        game = addRound(game);
+        game = roundService.addRound(game);
 
         //setting the new player status
         settingPlayerStatus(game);
