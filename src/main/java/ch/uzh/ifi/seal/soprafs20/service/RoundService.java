@@ -80,11 +80,12 @@ public class RoundService {
 
         Round currentRound = roundRepository.findRoundByGameGameId(gameId);
         String[] wordsOfCards = currentRound.getCard().getTerms();
+        int relWordId = Math.toIntExact(wordId) - 1;
 
-        if (wordId >= 0 && wordId < CONSTANTS.MAX_WORDS_PER_CARD) {
+        if (relWordId >= 0 && relWordId < CONSTANTS.MAX_WORDS_PER_CARD) {
             Term newTerm = new Term();
-            newTerm.setContent(wordsOfCards[Math.toIntExact(wordId)]);
-            newTerm.setWordId(wordId);
+            newTerm.setContent(wordsOfCards[Math.toIntExact(relWordId)]);
+            newTerm.setWordId((long) relWordId);
             newTerm.setRoundId(currentRound.getId());
 
             currentRound.setTerm(newTerm);

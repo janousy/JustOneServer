@@ -47,9 +47,22 @@ public class RoundController {
     @GetMapping("/games/{gameId}/terms")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public TermGetDTO getCurrentHintofGame(@PathVariable Long gameId) {
+    public TermGetDTO getCurrentTermOfGame(@PathVariable Long gameId) {
         Term currentTerm = roundService.getCurrentTermFromRound(gameId);
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(currentTerm);
+    }
+
+    @GetMapping("/games/{gameId}/hints")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<HintGetDTO> getCurrentHintsOfGame(@PathVariable Long gameId) {
+        List<Hint> currentHints = roundService.getAllHintsFromRound(gameId);
+        List<HintGetDTO> hintGetDTOs = new ArrayList<>();
+
+        for (Hint hint : currentHints) {
+            hintGetDTOs.add(HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(hint));
+        }
+        return hintGetDTOs;
     }
 
     @PostMapping("/games/{gameId}/hints")
