@@ -21,6 +21,6 @@ public interface GuessDTOMapper {
 
     @Mapping(source = "content", target = "content")
     @Mapping(source = "roundId", target = "roundId")
-    GuessGetDTO convertEntitytoGuessGetDTO(Guess guess);
+    GuessGetDTO convertEntityToGuessGetDTO(Guess guess);
 
 }

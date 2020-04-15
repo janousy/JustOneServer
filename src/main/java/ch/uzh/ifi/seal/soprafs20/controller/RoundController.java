@@ -71,6 +71,14 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(currentTerm);
     }
 
+    @GetMapping("/games/{gameId}/guesses")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GuessGetDTO getCurrentGuessOfGame(@PathVariable Long gameId) {
+        Guess currentGuess = roundService.getGuessOfCurrentRound(gameId);
+        return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(currentGuess);
+    }
+
     @GetMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -99,7 +107,7 @@ public class RoundController {
     public GuessGetDTO createGuess(@RequestBody GuessPostDTO guessPostDTO, @PathVariable Long gameId) {
         Guess inputGuess = GuessDTOMapper.INSTANCE.convertGuessPostDTOtoEntity(guessPostDTO);
         Guess createdGuess = roundService.addGuessToRound(inputGuess, gameId);
-        return GuessDTOMapper.INSTANCE.convertEntitytoGuessGetDTO(createdGuess);
+        return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(createdGuess);
     }
 
     @PostMapping("/games/{gameId}/terms")
