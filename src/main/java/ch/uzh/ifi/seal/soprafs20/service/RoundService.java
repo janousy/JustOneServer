@@ -77,14 +77,13 @@ public class RoundService {
         return guess;
     }
 
-
     public Term addTermToRound(Term newTerm, Long gameId) {
         checkIfTokenValid(newTerm.getToken());
         validateGameState(GameStatus.RECEIVINGTERM, gameId);
 
         Round currentRound = roundRepository.findRoundByGameGameId(gameId);
         String[] wordsOfCards = currentRound.getCard().getTerms();
-        int relWordId = Math.toIntExact(newTerm.getWordId()) - 1;
+        int relWordId = Math.toIntExact(newTerm.getWordId());
 
         if (relWordId >= 0 && relWordId < CONSTANTS.MAX_WORDS_PER_CARD) {
             newTerm.setContent(wordsOfCards[Math.toIntExact(relWordId)]);
@@ -124,6 +123,12 @@ public class RoundService {
         }
         currentRound.setTerm(null);
         return deletedTerm;
+    }
+
+    public Guess skipTermToBeGuessed(Long gameId) {
+        Round currentRound = findRoundByGameId(gameId);
+        //TODO: skip round, call game
+        return null;
     }
 
 /*
