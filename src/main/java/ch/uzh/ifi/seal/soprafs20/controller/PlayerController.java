@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -46,7 +47,8 @@ public class PlayerController {
     @GetMapping("/games/{gameId}/players")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<PlayerGetDTO> getAllPlayersFromGame(@PathVariable long gameId) {
+    public List<PlayerGetDTO> getAllPlayersFromGame(@PathVariable long gameId,
+                                                    @RequestParam(required = false, name = "sort_by") String sortMethod) {
 
         List<PlayerGetDTO> playerGetDTOs = new ArrayList<>();
         List<Player> playersByGameId = playerService.getPlayersFromGame(gameId);
@@ -54,6 +56,11 @@ public class PlayerController {
         for (Player player : playersByGameId) {
             playerGetDTOs.add(PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(player));
         }
+
+        if (sortMethod != null) {
+            playerGetDTOs.sort(Comparator.comparing(PlayerGetDTO::getScore).reversed());
+        }
+
         return playerGetDTOs;
     }
 
