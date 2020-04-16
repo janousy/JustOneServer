@@ -210,12 +210,10 @@ public class RoundService {
             game.setStatus(GameStatus.FINISHED);
             gameRepository.save(game);
             return null;
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game has already finished 13 rounds");
         }
 
         //adding a new round to the game
         Card card = game.getCardList().get(roundNr);
-        //game = addRoundToGame(game, card);
 
         //adding the new round to the game
         Round newRound = new Round();
@@ -228,6 +226,9 @@ public class RoundService {
         //increasing the Round number of the game
         game.setRoundNr(roundNr + 1);
         gameRepository.save(game);
+
+        //setting the playerStatus correctly
+        settingPlayerStatus(game);
 
         return game;
     }
@@ -317,6 +318,36 @@ public class RoundService {
             }
         }
 
+    }
+
+    private void updateUserScores(Game game) {
+
+    }
+
+    //this method sets the player roles
+    //param: Game game
+    //return void
+    private void settingPlayerStatus(Game game) {
+
+        List<Player> playerList = game.getPlayerList();
+
+        int numberOfPlayers = playerList.size();
+        int roundNr = game.getRoundNr();
+
+        int nextGuesser = roundNr % numberOfPlayers;
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (i == nextGuesser) {
+                Player player = playerList.get(i);
+                player.setStatus(PlayerStatus.GUESSER);
+                playerRepository.save(player);
+            }
+            else {
+                Player player = playerList.get(i);
+                player.setStatus(PlayerStatus.CLUE_GIVER);
+                playerRepository.save(player);
+            }
+        }
     }
 
 }

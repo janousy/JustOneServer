@@ -155,9 +155,6 @@ public class GameService {
         //adding a new round to the game
         game = roundService.addRound(game);
 
-        //setting the new player status
-        settingPlayerStatus(game);
-
         gameRepository.save(game);
     }
 
@@ -196,27 +193,6 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    //this method sets the player roles
-    //param: Game game
-    //return void
-    private void settingPlayerStatus(Game game) {
-
-        List<Player> playerList = game.getPlayerList();
-
-        int numberOfPlayers = playerList.size();
-        int roundNr = game.getRoundNr();
-
-        int nextGuesser = roundNr % numberOfPlayers;
-
-        for (int i = 0; i < numberOfPlayers; i++) {
-            if (i == nextGuesser) {
-                playerService.setPlayerStatus(playerList.get(i), PlayerStatus.GUESSER);
-            }
-            else {
-                playerService.setPlayerStatus(playerList.get(i), PlayerStatus.CLUE_GIVER);
-            }
-        }
-    }
 
     //This is a helper method to check whether the provided name is unique, throws an exception if not
     //param: Game newGame
