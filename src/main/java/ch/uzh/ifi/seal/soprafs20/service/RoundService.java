@@ -78,17 +78,15 @@ public class RoundService {
         calculateElapsedTime(hint);
 
 
+        Game game = gameRepository.findGameByGameId(gameId);
         //go into if when all hints have arrived
         if (nrOfHints == (nrOfPlayers - 1)) {
             game.setStatus(GameStatus.VALIDATION);
             //TODO zeit starten evtl noch an einen anderen ort bringen, je nachdem wo und wie die clues validiert werden
             //starting the time of the guesser after all clue_givers entered their clue
-            startingTimeforGuesser(gameId);
 
             //TODO dieses behaviour noch an einen anderen ort packen
             //setting the gameStatus to receiving guesses if enough hints have arrived
-            Game game = gameRepository.findGameByGameId(gameId);
-            game.setStatus(GameStatus.RECEIVINGGUESS);
             gameRepository.save(game);
         }
         return hint;
@@ -189,6 +187,11 @@ public class RoundService {
         hintByToken.setMarked(inputHint.getMarked());
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
+
+
+        //TODO check that all hints are validated and reported
+        startingTimeforGuesser(gameId);
+
 
         return hintByToken;
         //TODO wenn alle verifiziert, ganze liste an validator schicken
