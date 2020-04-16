@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Guess {
+public class Guess implements ActionType {
 
     @Column(name = "roundId_Guess")
     private Long roundId;

@@ -50,7 +50,7 @@ public class PlayerControllerTest {
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        testPlayer.setElapsedTime(0L);
 
         List<Player> allPlayers = Collections.singletonList(testPlayer);
 
@@ -65,7 +65,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$[0].score", is(testPlayer.getScore())))
                 .andExpect(jsonPath("$[0].role", is(testPlayer.getRole().toString())))
                 .andExpect(jsonPath("$[0].userToken", is(testPlayer.getUserToken())))
-                .andExpect(jsonPath("$[0].elapsedTime", is(testPlayer.getElapsedTime().intValue())));
+                .andExpect(jsonPath("$[0].elapsedTime", is((int) testPlayer.getElapsedTime())));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class PlayerControllerTest {
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        testPlayer.setElapsedTime(0L);
 
         List<Player> allPlayers = Collections.singletonList(testPlayer);
 
@@ -93,7 +93,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$[0].score", is(testPlayer.getScore())))
                 .andExpect(jsonPath("$[0].role", is(testPlayer.getRole().toString())))
                 .andExpect(jsonPath("$[0].userToken", is(testPlayer.getUserToken())))
-                .andExpect(jsonPath("$[0].elapsedTime", is(testPlayer.getElapsedTime().intValue())));
+                .andExpect(jsonPath("$[0].elapsedTime", is((int) testPlayer.getElapsedTime())));
 
     }
 
@@ -107,7 +107,7 @@ public class PlayerControllerTest {
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        testPlayer.setElapsedTime(0L);
 
         given(playerService.getPlayerById(Mockito.anyLong())).willReturn(testPlayer);
 
@@ -119,7 +119,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.role", is(testPlayer.getRole().toString())))
                 .andExpect(jsonPath("$.score", is(testPlayer.getScore())))
                 .andExpect(jsonPath("$.userToken", is(testPlayer.getUserToken())))
-                .andExpect(jsonPath("$.elapsedTime", is(testPlayer.getElapsedTime().intValue())));
+                .andExpect(jsonPath("$.elapsedTime", is((int) testPlayer.getElapsedTime())));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class PlayerControllerTest {
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        testPlayer.setElapsedTime(0L);
 
         PlayerPostDTO playerPostDTO = new PlayerPostDTO();
         playerPostDTO.setName("testPlayer");
@@ -151,7 +151,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.score", is(testPlayer.getScore())))
                 .andExpect(jsonPath("$.role", is(testPlayer.getRole().toString())))
                 .andExpect(jsonPath("$.userToken", is(testPlayer.getUserToken())))
-                .andExpect(jsonPath("$.elapsedTime", is(testPlayer.getElapsedTime().intValue())));
+                .andExpect(jsonPath("$.elapsedTime", is((int) testPlayer.getElapsedTime())));
     }
 
     @Test
@@ -164,7 +164,7 @@ public class PlayerControllerTest {
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        testPlayer.setElapsedTime(0L);
 
         given(playerService.deletePlayer(Mockito.anyLong(), Mockito.anyLong())).willReturn(testPlayer);
 
@@ -178,7 +178,7 @@ public class PlayerControllerTest {
                 .andExpect(jsonPath("$.score", is(testPlayer.getScore())))
                 .andExpect(jsonPath("$.role", is(testPlayer.getRole().toString())))
                 .andExpect(jsonPath("$.userToken", is(testPlayer.getUserToken())))
-                .andExpect(jsonPath("$.elapsedTime", is(testPlayer.getElapsedTime().intValue())));
+                .andExpect(jsonPath("$.elapsedTime", is((int) testPlayer.getElapsedTime())));
     }
 
     /* HELPER METHOD*/

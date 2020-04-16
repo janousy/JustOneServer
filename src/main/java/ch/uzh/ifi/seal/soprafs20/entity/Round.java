@@ -29,7 +29,6 @@ public class Round {
     private Term term;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
     private Card card;
 
     @ManyToOne(fetch = FetchType.LAZY)

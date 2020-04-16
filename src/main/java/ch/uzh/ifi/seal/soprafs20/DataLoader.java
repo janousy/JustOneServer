@@ -12,7 +12,6 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import ch.uzh.ifi.seal.soprafs20.service.GameStatus.GameState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,7 @@ public class DataLoader implements ApplicationRunner {
             //defining a Host for each game
             testPlayer.setRole(i % 2 == 0 ? PlayerRole.GUEST : PlayerRole.HOST);
             testPlayer.setUserToken(testUser.getToken());
-            testPlayer.setElapsedTime(0.00);
+            testPlayer.setElapsedTime(0L);
             //put two player player into each game, leave third game empty
             testPlayer.setGame(i < 3 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
 

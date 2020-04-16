@@ -9,7 +9,7 @@ public class PlayerPutDTO {
     private PlayerStatus status;
     private int score;
     private PlayerRole role;
-    private int elapsedTime;
+    private long elapsedTime;
 
     public String getName() {
         return name;
@@ -43,11 +43,11 @@ public class PlayerPutDTO {
         this.role = role;
     }
 
-    public int getElapsedTime() {
+    public long getElapsedTime() {
         return elapsedTime;
     }
 
-    public void setElapsedTime(int elapsedTime) {
+    public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
     }
 }

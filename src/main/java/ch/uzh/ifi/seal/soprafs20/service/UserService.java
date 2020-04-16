@@ -62,7 +62,7 @@ public class UserService {
         return newUser;
     }
 
-    //login user test
+    //login user
     public User loginUser(User userInput){
         User userByUsername = userRepository.findByUsername(userInput.getUsername());
 

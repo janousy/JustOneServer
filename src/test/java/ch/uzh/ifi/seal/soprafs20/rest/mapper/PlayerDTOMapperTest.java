@@ -35,7 +35,7 @@ public class PlayerDTOMapperTest {
         testPlayer.setScore(0);
         testPlayer.setRole(PlayerRole.HOST);
         testPlayer.setUserToken("12345");
-        testPlayer.setElapsedTime(0.00);
+        testPlayer.setElapsedTime(0L);
 
         PlayerGetDTO playerGetDTO = PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(testPlayer);
 

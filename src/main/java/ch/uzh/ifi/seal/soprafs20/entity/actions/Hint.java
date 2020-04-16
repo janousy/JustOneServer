@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 import java.util.ArrayList;
 
 @Embeddable
-public class Hint {
+public class Hint implements ActionType {
 
     @Column(name = "roundId_Hint")
     private Long roundId;
