@@ -70,7 +70,7 @@ public class PlayerService {
         newPlayer.setScore(0); //score initially zero
         newPlayer.setUser(userByToken);
         newPlayer.setUserToken(userByToken.getToken());
-        newPlayer.setElapsedTime(0.00);
+        newPlayer.setElapsedTime(0L);
         if (!checkIfGameHasHost(gameId)) {
             newPlayer.setRole(PlayerRole.HOST);
         }
@@ -123,12 +123,16 @@ public class PlayerService {
     /* Update player status */
     public Player updatePlayer(Player playerInput, Long playerId, Long gameId) {
         Optional<Player> playerById = playerRepository.findById(playerId);
-        if (playerById.isPresent()) {
 
+        if (playerById.isPresent()) {
+            Player updatedPlayer = playerById.get();
             if (!checkIfPlayerStatusExists(playerInput.getStatus())) {
                 throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid player status");
             }
-            Player updatedPlayer = playerById.get();
+            if (updatedPlayer.getStatus() != PlayerStatus.READY && updatedPlayer.getStatus() != PlayerStatus.NOT_READY) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status can not be changed anymore, player is in active");
+            }
+
             updatedPlayer.setStatus(playerInput.getStatus());
             playerRepository.save(updatedPlayer);
             return updatedPlayer;

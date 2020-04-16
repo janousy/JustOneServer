@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Hint {
+public class Hint implements ActionType {
 
     @Column(name = "roundId_Hint")
     private Long roundId;

@@ -42,6 +42,8 @@ public class GameService {
         this.playerService = playerService;
     }
 
+    //TODO hier nachdem alle runden durch sind sollten noch die userscores updated werden
+    //oder userscore könnte auch gleich mit dem playerscore angepasst werden
 
     //get all Games as a list
     //param:
@@ -49,7 +51,6 @@ public class GameService {
     public List<Game> getAllGames() {
         return this.gameRepository.findAll();
     }
-
 
     //method returns the game which is found by its Id
     //param: Long gameId
@@ -66,7 +67,6 @@ public class GameService {
 
         return gameById;
     }
-
 
     //creates a game and saves it in the repository
     //param: takes a Game newGame
@@ -95,7 +95,7 @@ public class GameService {
     public Game deleteGameById(Long gameId) {
         Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
 
-        if (gameToBeDeleted.getStatus() != GameStatus.LOBBY && gameToBeDeleted.getStatus() != GameStatus.IDLE) {
+        if (gameToBeDeleted.getStatus() != GameStatus.LOBBY && gameToBeDeleted.getStatus() != GameStatus.FINISHED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game is not in the correct status to delete");
         }
 
@@ -123,23 +123,6 @@ public class GameService {
         return gameToBeDeleted;
     }
 
-    //TODO diese können rausgeworfen werden
-    public Card getCurrentCard() {
-        return null;
-    }
-
-    public Card getNextCard() {
-        return null;
-    }
-
-    public Card removeCard() {
-        return null;
-    }
-
-    public void updateCorrectCards() {
-
-    }
-
     //checks whether a game is ready and returns the game
     //param: Long gameId
     //returns the game which has been checked on its Status
@@ -160,36 +143,6 @@ public class GameService {
         prepareGameToPlay(game);
 
         return game;
-    }
-
-    //TODO hier schauen was besser zurückgegeben werden soll, besser ein game oder besser eine neue Round?
-    //TODO diese methode aufrufen wenn ein clue gegeben wurde
-    /*
-    //method adds a round to a game
-    //param: Game game
-    //return: returns the game to which the round has been added
-    public Game addRound(Game game) {
-
-        int roundNr = game.getRoundNr();
-        if (roundNr > 13) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game has already finished 13 rounds");
-        }
-
-        //adding a new round to the game
-        Card card = game.getCardList().get(roundNr);
-        game = roundService.addRoundToGame(game, card);
-        game.setStatus(GameStatus.RECEIVINGTERM);
-
-        game.setRoundNr(roundNr + 1);
-        gameRepository.save(game);
-
-        return game;
-    }
-
-
-     */
-    public void updateScores() {
-
     }
 
     //this method finish the preparation of a game to start playing

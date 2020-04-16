@@ -43,7 +43,7 @@ public class Player implements Serializable {
     private String userToken; //is equal to the user's token
 
     @Column(nullable = false)
-    private Double elapsedTime;
+    private long elapsedTime;
 
 
     public Long getId() {
@@ -110,11 +110,11 @@ public class Player implements Serializable {
         this.userToken = userToken;
     }
 
-    public Double getElapsedTime() {
+    public long getElapsedTime() {
         return elapsedTime;
     }
 
-    public void setElapsedTime(Double elapsedTime) {
+    public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
     }
 }

@@ -12,7 +12,7 @@ public class PlayerGetDTO {
     private int score;
     private PlayerRole role;
     private String userToken;
-    private int elapsedTime;
+    private long elapsedTime;
 
     public String getName() {
         return name;
@@ -62,11 +62,11 @@ public class PlayerGetDTO {
         this.userToken = userToken;
     }
 
-    public int getElapsedTime() {
+    public long getElapsedTime() {
         return elapsedTime;
     }
 
-    public void setElapsedTime(int elapsedTime) {
+    public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
     }
 }
