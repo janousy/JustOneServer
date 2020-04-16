@@ -128,13 +128,14 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
     }
 
-    //TODO hier noch report hints einbauen
+    //TODO vielleicht sollte das besser eine Liste von HintsPutDTOs annehmen? Ansonsten request jeder einzeln
     @PutMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public HintGetDTO reportHint(@PathVariable Long gameId) {
-
-        return null;
+    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) {
+        Hint inputHint = HintDTOMapper.INSTANCE.convertHintPutDTOToEntity(hintPutDTO);
+        Hint updatedHint = roundService.updateHint(inputHint, gameId);
+        return HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(updatedHint);
     }
 
     @DeleteMapping("/games/{gameId}/guesses")
@@ -145,45 +146,4 @@ public class RoundController {
         Guess deletedGuess = roundService.skipTermToBeGuessed(gameId);
         return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(deletedGuess);
     }
-
-
-/*
-    //returns a list with all games http method: get, mapping: /games
-
-    /*
-    //adds a new round to a game
-    @PostMapping("/games/{id}/rounds")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
-    public RoundGetDTO createRound(@PathVariable Long id) {
-        // fetch all rounds in the internal representation
-
-        //Round round = gameService.addRound(id);
-
-        return RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round);
-    }
-
-/*
-
-    //returns a list with all games http method: get, mapping: /games
-    @GetMapping("/games/{id}/rounds")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId) {
-
-        List<Round> rounds = roundService.getAllRoundsOfGame(gameId);
-        List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
-
-        for(Round round : rounds){
-            roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
-        }
-
-        return roundGetDTOS;
-
-    }
-
-
- */
-
-
 }

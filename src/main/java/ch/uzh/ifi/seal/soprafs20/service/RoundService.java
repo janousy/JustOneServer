@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
@@ -11,18 +12,19 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.codec.Hints;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,18 +35,21 @@ public class RoundService {
     private final RoundRepository roundRepository;
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
-    private final ValidationService validationService;
+    private final HintValidationService hintValidationService;
+    private final GuessValidationService guessValidationService;
 
 
     @Autowired
     public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository,
                         @Qualifier("gameRepository") GameRepository gameRepository,
                         @Qualifier("playerRepository") PlayerRepository playerRepository,
-                        ValidationService validationService) {
+                        HintValidationService hintValidationService,
+                        GuessValidationService guessValidationService) {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
-        this.validationService = validationService;
+        this.hintValidationService = hintValidationService;
+        this.guessValidationService = guessValidationService;
     }
 
     //get all rounds as a list
@@ -54,15 +59,14 @@ public class RoundService {
         return this.roundRepository.findAll();
     }
 
-
-    //TODO: restrict number of hints accorinding to number of players
-    //TODO: check status of game such that it is actually acepting hints
     public Hint addHintToRound(Hint hint, Long gameId) {
         checkIfTokenValid(hint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVINGHINTS, gameId);
 
         Round currentRound = roundRepository.findRoundByGameGameId(gameId);
         hint.setRoundId(currentRound.getId()); //TODO neccessary to set ID?
+        hint.setStatus(ActionTypeStatus.UNKNOWN);
+        hint.setMarked(ActionTypeStatus.UNKNOWN);
         currentRound.addHint(hint);
         roundRepository.save(currentRound); //TODO check if save is necessary on entitiy update
 
@@ -72,10 +76,9 @@ public class RoundService {
 
         //TODO hier nur eine primitive version von check hints um spielfluss zu gewährleisten, anpassen auf etwas anderes evtl
         if (nrOfHints == (nrOfPlayers - 1)) {
-            game.setStatus(GameStatus.RECEIVINGGUESS);
+            game.setStatus(GameStatus.VALIDATION);
             gameRepository.save(game);
         }
-
         return hint;
     }
 
@@ -85,35 +88,25 @@ public class RoundService {
 
         Round currentRound = findRoundByGameId(gameId);
         guess.setRoundId(currentRound.getId());
+        guess.setStatus(ActionTypeStatus.UNKNOWN);
         currentRound.setGuess(guess);
 
-
-        boolean guessTrue = validationService.guessValidation(guess, currentRound);
+        Guess validatedGuess = guessValidationService.guessValidation(guess, currentRound);
 
         //TODO dieses behaviour evtl in andere methode ausbauen damit diese nicht so gross ist
         Game currentGame = gameRepository.findGameByGameId(gameId);
         //this means that the guess is correct and we add some points
-        if (guessTrue) {
+        if (validatedGuess.getStatus().equals(ActionTypeStatus.VALID)) {
             int correctCards = currentGame.getCorrectCards();
             currentGame.setCorrectCards(correctCards + 1);
-
-            String guesscontent = guess.getContent();
-            guess.setContent("Guessed correctly " + guesscontent);
-
             addRound(currentGame);
         }
         else {
             int currentRoundNr = currentGame.getRoundNr();
             currentGame.setRoundNr(currentRoundNr + 1);
-
-            String guesscontent = guess.getContent();
-            guess.setContent("Guessed wrongly " + guesscontent);
-
             addRound(currentGame);
         }
-
-
-        return guess;
+        return validatedGuess;
     }
 
     public Term addTermToRound(Term newTerm, Long gameId) {
@@ -157,6 +150,36 @@ public class RoundService {
         return currentRound.getTerm();
     }
 
+    public Hint updateHint(Hint inputHint, Long gameId) {
+        validateGameState(GameStatus.VALIDATION, gameId);
+        String reporterToken = inputHint.getReporters().get(0);
+        //validate reporterToken, player available
+
+        List<Hint> currentHints = findRoundByGameId(gameId).getHintList();
+        Hint hintByToken = findHintByToken(currentHints, inputHint.getToken());
+
+        hintByToken.getReporters().forEach(token -> {
+            if (token.equals(reporterToken)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "this player has already reporter this hint");
+            }
+        });
+
+        //merge the two arrays
+        var currentSimilarity = hintByToken.getSimilarity();
+        var currentReporters = hintByToken.getReporters();
+
+        currentSimilarity.addAll(inputHint.getSimilarity());
+        currentReporters.addAll(inputHint.getReporters());
+
+        hintByToken.setMarked(inputHint.getMarked());
+        hintByToken.setSimilarity(currentSimilarity);
+        hintByToken.setReporters(currentReporters);
+
+        return hintByToken;
+        //TODO wenn alle verifiziert, ganze liste an validator schicken
+        //TODO reports & gameState
+    }
+
     public Term deleteCurrentTermOfRound(Long gameId) {
         validateGameState(GameStatus.RECEIVINGHINTS, gameId);
 
@@ -180,11 +203,22 @@ public class RoundService {
         return null;
     }
 
-
     //method returns the rounds which belong to a game by the gameId
     //param: Long gameId
     //return: returns all rounds which belong to a game
     public List<Round> getAllRoundsOfGame(Long gameId) {
+
+        List<Round> allRounds = roundRepository.findAll();
+        List<Round> rounds = new ArrayList<Round>();
+
+        for (Round r : allRounds) {
+            if (r.getGame().getGameId().equals(gameId)) {
+                rounds.add(r);
+            }
+        }
+
+        return rounds;
+    }
 
     //method adds a round to a game
     //param: Game game
@@ -228,6 +262,19 @@ public class RoundService {
         newRound = roundRepository.save(newRound);
 
         return game;
+    }
+
+    private Hint findHintByToken(List<Hint> currentHints, String token) {
+        Hint hintByToken = currentHints.stream()
+                .filter(hint -> token.equals(hint.getToken()))
+                .findAny()
+                .orElse(null);
+        if (hintByToken == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "hint by token not found");
+        }
+        else {
+            return hintByToken;
+        }
     }
 
     private Round findRoundByGameId(Long gameId) {

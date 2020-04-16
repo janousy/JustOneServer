@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 
 @Service
 @Transactional
-public class ValidationService {
+public class HintValidationService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final RoundRepository roundRepository;
@@ -24,25 +24,11 @@ public class ValidationService {
 
 
     @Autowired
-    public ValidationService(@Qualifier("roundRepository") RoundRepository roundRepository,
-                             @Qualifier("gameRepository") GameRepository gameRepository,
-                             @Qualifier("playerRepository") PlayerRepository playerRepository) {
+    public HintValidationService(@Qualifier("roundRepository") RoundRepository roundRepository,
+                                 @Qualifier("gameRepository") GameRepository gameRepository,
+                                 @Qualifier("playerRepository") PlayerRepository playerRepository) {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
     }
-
-
-    public boolean guessValidation(Guess guess, Round currentRound) {
-
-        String termContent = currentRound.getTerm().getContent();
-        String guessContent = guess.getContent();
-
-        termContent = termContent.toLowerCase();
-        guessContent = guessContent.toLowerCase();
-
-        return termContent.equals(guessContent);
-    }
-
-
 }

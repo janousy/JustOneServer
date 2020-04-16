@@ -1,9 +1,20 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.action;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
+
 public class GuessGetDTO {
     private Long roundId;
     private String content;
     private String token;
+    private ActionTypeStatus status;
+
+    public ActionTypeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ActionTypeStatus status) {
+        this.status = status;
+    }
 
     public String getToken() {
         return token;

@@ -1,7 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.entity.actions;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.ArrayList;
 
 @Embeddable
 public class Hint {
@@ -15,12 +18,56 @@ public class Hint {
     @Column(name = "token_Hint")
     private String token;
 
+    @Column(name = "status_Hint")
+    private ActionTypeStatus status;
+
+    @Column(name = "marked_Hint")
+    private ActionTypeStatus marked;
+
+    @Column(name = "similarity_Hint")
+    private ArrayList<Integer> similarity = new ArrayList<Integer>();
+
+    @Column(name = "reporters_Hint")
+    private ArrayList<String> reporters = new ArrayList<String>();
+
+    public ActionTypeStatus getMarked() {
+        return marked;
+    }
+
+    public void setMarked(ActionTypeStatus marked) {
+        this.marked = marked;
+    }
+
+    public ArrayList<String> getReporters() {
+        return reporters;
+    }
+
+    public void setReporters(ArrayList<String> reporter) {
+        this.reporters = reporter;
+    }
+
     public String getToken() {
         return token;
     }
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public ArrayList<Integer> getSimilarity() {
+        return similarity;
+    }
+
+    public void setSimilarity(ArrayList<Integer> similarity) {
+        this.similarity = similarity;
+    }
+
+    public ActionTypeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ActionTypeStatus status) {
+        this.status = status;
     }
 
     public Long getRoundId() {

@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity.actions;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -15,7 +17,15 @@ public class Guess {
     @Column(name = "token_Guess")
     private String token;
 
-    public Guess() {
+    @Column(name = "status_GUESS")
+    private ActionTypeStatus status;
+
+    public ActionTypeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ActionTypeStatus status) {
+        this.status = status;
     }
 
     public String getToken() {
@@ -40,5 +50,8 @@ public class Guess {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Guess() {
     }
 }
