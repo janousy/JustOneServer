@@ -51,14 +51,11 @@ public class RoundController {
     @ResponseBody
     public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId) {
         // fetch all rounds in the internal representation
-        List<Round> rounds = roundService.getAllRounds();
+        List<Round> rounds = roundService.getAllRoundsOfGame(gameId);
         List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
 
         for (Round round : rounds) {
-            if (round.getGame().getGameId().equals(gameId)) {
-                roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
-            }
-
+            roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
         }
 
         return roundGetDTOS;

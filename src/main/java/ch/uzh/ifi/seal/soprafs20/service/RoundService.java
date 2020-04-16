@@ -35,6 +35,7 @@ public class RoundService {
     private final GameRepository gameRepository;
     private final HintValidationService hintValidationService;
     private final GuessValidationService guessValidationService;
+    private final ScoringService scoringService;
 
 
     @Autowired
@@ -42,12 +43,14 @@ public class RoundService {
                         @Qualifier("gameRepository") GameRepository gameRepository,
                         @Qualifier("playerRepository") PlayerRepository playerRepository,
                         HintValidationService hintValidationService,
-                        GuessValidationService guessValidationService) {
+                        GuessValidationService guessValidationService,
+                        ScoringService scoringService) {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
         this.hintValidationService = hintValidationService;
         this.guessValidationService = guessValidationService;
+        this.scoringService = scoringService;
     }
 
     //get all rounds as a list
@@ -55,6 +58,23 @@ public class RoundService {
     //return: returns a List<Round> with all rounds in it
     public List<Round> getAllRounds() {
         return this.roundRepository.findAll();
+    }
+
+    //method returns all rounds which belong to a game by the gameId
+    //param: Long gameId
+    //return: List<Round> rounds
+    public List<Round> getAllRoundsOfGame(Long gameId) {
+
+        List<Round> allRounds = roundRepository.findAll();
+        List<Round> rounds = new ArrayList<Round>();
+
+        for (Round r : allRounds) {
+            if (r.getGame().getGameId().equals(gameId)) {
+                rounds.add(r);
+            }
+        }
+
+        return rounds;
     }
 
     public Hint addHintToRound(Hint hint, Long gameId) {
@@ -69,26 +89,19 @@ public class RoundService {
         roundRepository.save(currentRound); //TODO check if save is necessary on entitiy update
 
 
-        //TODO hier nur eine primitive version von check hints um spielfluss zu gewährleisten, anpassen auf etwas anderes evtl
-        int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
-        int nrOfHints = currentRound.getHintList().size();
-
-        //TODO calculation of time noch an einen anderen ort platzieren
-        //calculating time of the player who sent the hint
-        calculateElapsedTime(hint);
+        //stopping the time of the player using the actionType
+        scoringService.stopTimeForPlayer(hint);
 
 
         Game game = gameRepository.findGameByGameId(gameId);
+        int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
+        int nrOfHints = currentRound.getHintList().size();
         //go into if when all hints have arrived
         if (nrOfHints == (nrOfPlayers - 1)) {
             game.setStatus(GameStatus.VALIDATION);
-            //TODO zeit starten evtl noch an einen anderen ort bringen, je nachdem wo und wie die clues validiert werden
-            //starting the time of the guesser after all clue_givers entered their clue
-
-            //TODO dieses behaviour noch an einen anderen ort packen
-            //setting the gameStatus to receiving guesses if enough hints have arrived
             gameRepository.save(game);
         }
+
         return hint;
     }
 
@@ -102,14 +115,12 @@ public class RoundService {
         guess.setStatus(ActionTypeStatus.UNKNOWN);
         currentRound.setGuess(guess);
 
+        //stopping the time of the player using the actionType
+        scoringService.stopTimeForPlayer(guess);
+        //validating the guess
         Guess validatedGuess = guessValidationService.guessValidation(guess, gameId, currentRound);
-        //TODO start der zeit noch richtig setzen
-        //calculating the time for the guesser
-        calculateElapsedTime(guess);
-
-        //guess = validationService.guessValidation(guess, gameId, currentRound);
-        //boolean guessTrue = validationService.guessValidation2(guess, currentRound);
-
+        //updating the score of the guesser
+        scoringService.updateScoreOfGuesser(validatedGuess, gameId);
 
         //starting a new round
         Game currentGame = gameRepository.findGameByGameId(gameId);
@@ -136,9 +147,8 @@ public class RoundService {
             game.setStatus(GameStatus.RECEIVINGHINTS);
             gameRepository.save(game);
 
-            //TODO den start der zeit noch richtig setzen
             //starting the time for all clue_givers
-            startingTimeforClue_Giver(gameId);
+            scoringService.startTimeForClue_Givers(gameId);
 
             currentRound.setTerm(newTerm);
             return newTerm;
@@ -190,8 +200,9 @@ public class RoundService {
 
 
         //TODO check that all hints are validated and reported
-        startingTimeforGuesser(gameId);
-
+        //nachdem alle validiert sind (also dann wenn sie präsentiert werden an guesser)
+        //dann muss noch die zeit für den guesser gestartet werden
+        scoringService.startTimeForGuesser(gameId);
 
         return hintByToken;
         //TODO wenn alle verifiziert, ganze liste an validator schicken
@@ -227,23 +238,6 @@ public class RoundService {
         return guess;
     }
 
-    //method returns the rounds which belong to a game by the gameId
-    //param: Long gameId
-    //return: returns all rounds which belong to a game
-    public List<Round> getAllRoundsOfGame(Long gameId) {
-
-        List<Round> allRounds = roundRepository.findAll();
-        List<Round> rounds = new ArrayList<Round>();
-
-        for (Round r : allRounds) {
-            if (r.getGame().getGameId().equals(gameId)) {
-                rounds.add(r);
-            }
-        }
-
-        return rounds;
-    }
-
     //method adds a round to a game
     //param: Game game
     //return: Game game
@@ -251,9 +245,11 @@ public class RoundService {
 
         int roundNr = game.getRoundNr();
         //if it was the last round we set the gameStatus to finished
-        if (roundNr > 13) {
+        if (roundNr == 13) {
             game.setStatus(GameStatus.FINISHED);
             gameRepository.save(game);
+            scoringService.updateScoresOfUsers(game);
+
             return null;
         }
 
@@ -327,59 +323,6 @@ public class RoundService {
         if (!currentState.equals(checkState)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, currentState, checkState));
         }
-    }
-
-
-    //method calculates the elapsed time it took a player to send the guess
-    //param: ActionType action
-    //return: void
-    private void calculateElapsedTime(ActionType action) {
-
-        Player player = playerRepository.findByUserToken(action.getToken());
-
-        long currentTime = System.currentTimeMillis();
-        long startingTime = player.getElapsedTime();
-
-        long elapsedTime = (currentTime - startingTime) / 1000;
-        player.setElapsedTime(elapsedTime);
-        playerRepository.save(player);
-    }
-
-    //method sets the current time for the player
-    //param: ActionType action
-    //return: void
-    private void startingTimeforGuesser(Long gameId) {
-        //find all the players of the game
-        List<Player> playerList = playerRepository.findByGameGameId(gameId);
-
-        //set the starting time for the guesser
-        for (Player p : playerList) {
-            if (p.getStatus() == PlayerStatus.GUESSER) {
-                p.setElapsedTime(System.currentTimeMillis());
-                playerRepository.save(p);
-            }
-        }
-    }
-
-    //method sets the current time for all clue_givers
-    //param: ActionType action
-    //return: void
-    private void startingTimeforClue_Giver(Long gameId) {
-        //find all the players of the game
-        List<Player> playerList = playerRepository.findByGameGameId(gameId);
-
-        //set starting time for all clue givers
-        for (Player p : playerList) {
-            if (p.getStatus() == PlayerStatus.CLUE_GIVER) {
-                p.setElapsedTime(System.currentTimeMillis());
-                playerRepository.save(p);
-            }
-        }
-
-    }
-
-    private void updateUserScores(Game game) {
-
     }
 
     //this method sets the player roles
