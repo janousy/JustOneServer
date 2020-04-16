@@ -46,6 +46,11 @@ public class ScoringService {
         if (guess.getStatus() == ActionTypeStatus.VALID) {
             earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS - (int) elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
 
+            //to assure that the guesser gets at least 0 points and not negative if too slow
+            if (earnedPoints < 0) {
+                earnedPoints = 0;
+            }
+
             int oldScore = guessingPlayer.getScore();
             guessingPlayer.setScore(oldScore + earnedPoints);
             playerRepository.save(guessingPlayer);
@@ -53,6 +58,10 @@ public class ScoringService {
         //case of guess incorrect points are deducted
         else {
             earnedPoints = -elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+
+            if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1)) {
+                earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1);
+            }
 
             int oldScore = guessingPlayer.getScore();
             int newScore = oldScore + earnedPoints;
@@ -77,6 +86,11 @@ public class ScoringService {
         if (hint.getStatus() == ActionTypeStatus.VALID) {
             earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
 
+            //to assure that the guesser gets at least 0 points and not negative if too slow
+            if (earnedPoints < 0) {
+                earnedPoints = 0;
+            }
+
             int oldScore = cluegivingPlayer.getScore();
             cluegivingPlayer.setScore(oldScore + earnedPoints);
             playerRepository.save(cluegivingPlayer);
@@ -86,6 +100,10 @@ public class ScoringService {
         //case if hint is invalid
         else {
             earnedPoints = -elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+
+            if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1)) {
+                earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1);
+            }
 
             int oldScore = cluegivingPlayer.getScore();
             int newScore = oldScore + earnedPoints;

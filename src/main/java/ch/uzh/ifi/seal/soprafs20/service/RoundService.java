@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
-import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
@@ -331,14 +328,33 @@ public class RoundService {
     private void settingPlayerStatus(Game game) {
 
         List<Player> playerList = game.getPlayerList();
-
         int numberOfPlayers = playerList.size();
-        int roundNr = game.getRoundNr();
 
-        int nextGuesser = roundNr % numberOfPlayers;
+        int indexOfLastGuesser = -1;
+        int indexOfHost = -1;
 
+        //for loop  to get the indexOfLastGuesser and the indexOfHost
         for (int i = 0; i < numberOfPlayers; i++) {
-            if (i == nextGuesser) {
+            Player player = playerList.get(i);
+            if (player.getStatus() == PlayerStatus.GUESSER) {
+                indexOfLastGuesser = i;
+            }
+            if (player.getRole() == PlayerRole.HOST) {
+                indexOfHost = i;
+            }
+        }
+
+        //in case that the game starts(no last guesser, the one after the host gets guesser)
+        //host is always 0
+        if (indexOfLastGuesser < 0) {
+            indexOfLastGuesser = indexOfHost + 1;
+        }
+
+        int indexOfNextGuesser = (indexOfLastGuesser + 1) % numberOfPlayers;
+
+        //for loop to set the new statuses
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (i == indexOfNextGuesser) {
                 Player player = playerList.get(i);
                 player.setStatus(PlayerStatus.GUESSER);
                 playerRepository.save(player);

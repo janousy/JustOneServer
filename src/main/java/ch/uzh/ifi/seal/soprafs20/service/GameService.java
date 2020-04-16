@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,10 @@ public class GameService {
 
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("cardRepository") CardRepository cardRepository, RoundService roundService, PlayerService playerService) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository,
+                       @Qualifier("cardRepository") CardRepository cardRepository,
+                       RoundService roundService,
+                       PlayerService playerService) {
         this.gameRepository = gameRepository;
         this.cardRepository = cardRepository;
         this.roundService = roundService;
@@ -128,10 +130,12 @@ public class GameService {
     //returns the game which has been checked on its Status
     public Game checkGameReady(Game game) {
 
-        if (game.getPlayerList().isEmpty()) {
+        //if the playerlist is empty or only one player in it the game cannot start
+        if (game.getPlayerList().isEmpty() || game.getPlayerList().size() == 1) {
             return game;
         }
 
+        //checking for all players whether they are ready or not
         List<Player> playerList = game.getPlayerList();
         for (Player player : playerList) {
             if (player.getStatus() != PlayerStatus.READY) {

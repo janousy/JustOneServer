@@ -212,7 +212,7 @@ public class PlayerService {
     //removes a Player from a game by using the gameId
     //param: Player playerToBeRemoved, Long GameId
     //returns the Player which has been removed from the game
-    private Player removePlayerFromGame(Player playerToBeRemoved, Long GameId) {
+    private void removePlayerFromGame(Player playerToBeRemoved, Long GameId) {
 
         //find the game from which a player should be removed and remove it
         Game game = gameRepository.findGameByGameId(GameId);
@@ -227,8 +227,6 @@ public class PlayerService {
 
         //save the game in the repository
         gameRepository.save(game);
-
-        return playerToBeRemoved;
     }
 
 

@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * User Controller
@@ -30,7 +32,8 @@ public class UserController {
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<UserGetDTO> getAllUsers() {
+
+    public List<UserGetDTO> getAllUsers(@RequestParam(required = false, name = "sort_by") String sortMethod) {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
@@ -39,6 +42,11 @@ public class UserController {
         for (User user : users) {
             userGetDTOs.add(UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
         }
+
+        if (sortMethod != null) {
+            userGetDTOs.sort(Comparator.comparing(UserGetDTO::getOverallScore).reversed());
+        }
+
         return userGetDTOs;
     }
 
