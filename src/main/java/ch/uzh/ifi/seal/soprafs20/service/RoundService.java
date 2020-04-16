@@ -102,7 +102,7 @@ public class RoundService {
         guess.setStatus(ActionTypeStatus.UNKNOWN);
         currentRound.setGuess(guess);
 
-        Guess validatedGuess = guessValidationService.guessValidation(guess, currentRound);
+        Guess validatedGuess = guessValidationService.guessValidation(guess, gameId, currentRound);
         //TODO start der zeit noch richtig setzen
         //calculating the time for the guesser
         calculateElapsedTime(guess);
