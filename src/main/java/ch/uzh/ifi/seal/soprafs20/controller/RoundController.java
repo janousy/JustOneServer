@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
@@ -80,6 +81,7 @@ public class RoundController {
         return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(currentGuess);
     }
 
+    //gibt alle hints zurück welche nicht invalide sind
     @GetMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -88,7 +90,9 @@ public class RoundController {
         List<HintGetDTO> hintGetDTOs = new ArrayList<>();
 
         for (Hint hint : currentHints) {
-            hintGetDTOs.add(HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(hint));
+            if (!hint.getStatus().equals(ActionTypeStatus.INVALID)) {
+                hintGetDTOs.add(HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(hint));
+            }
         }
         return hintGetDTOs;
     }
@@ -129,7 +133,9 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
     }
 
-    //TODO vielleicht sollte das besser eine Liste von HintsPutDTOs annehmen? Ansonsten request jeder einzeln
+    //nimmt jeden hint einzeln zur validierung an
+    // reports: token des players
+    // similarity: markierte ähnlichkeiten zu anderen hints
     @PutMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

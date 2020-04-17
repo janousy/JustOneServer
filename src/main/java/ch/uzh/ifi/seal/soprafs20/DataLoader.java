@@ -72,8 +72,9 @@ public class DataLoader implements ApplicationRunner {
     private void createInitialUsers() {
 
         String date = new Date().toString();
+        int numberOfPlayers = 8;
 
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= numberOfPlayers; i++) {
             User testUser = new User();
             Player testPlayer = new Player();
 
@@ -85,14 +86,14 @@ public class DataLoader implements ApplicationRunner {
 
 
             testPlayer.setName("testPlayer" + i);
-            testPlayer.setStatus(i % 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
+            testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
             testPlayer.setScore(0);
             //defining a Host for each game
-            testPlayer.setRole(i % 2 == 0 ? PlayerRole.GUEST : PlayerRole.HOST);
+            testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
             testPlayer.setUserToken(testUser.getToken());
             testPlayer.setElapsedTime(0L);
             //put two player player into each game, leave third game empty
-            testPlayer.setGame(i < 3 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
+            testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
 
             testUser.setPlayer(testPlayer);
             testPlayer.setUser(testUser);

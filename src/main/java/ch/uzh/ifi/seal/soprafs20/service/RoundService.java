@@ -57,16 +57,23 @@ public class RoundService {
         return this.roundRepository.findAll();
     }
 
-    public Hint addHintToRound(Hint hint, Long gameId) {
-        checkIfTokenValid(hint.getToken(), PlayerStatus.CLUE_GIVER);
+    public Hint addHintToRound(Hint inputHint, Long gameId) {
+        checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVINGHINTS, gameId);
 
         Round currentRound = findRoundByGameId(gameId);
-        hint.setRoundId(currentRound.getId()); //TODO neccessary to set ID?
-        hint.setStatus(ActionTypeStatus.UNKNOWN);
-        hint.setMarked(ActionTypeStatus.UNKNOWN);
-        currentRound.addHint(hint);
-        roundRepository.save(currentRound); //TODO check if save is necessary on entitiy update
+        var currentHints = currentRound.getHintList();
+        currentHints.forEach(hint -> {
+            if (hint.getToken().equals(inputHint.getToken())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "player has already set a hint");
+            }
+        });
+
+        inputHint.setRoundId(currentRound.getId());
+        inputHint.setStatus(ActionTypeStatus.UNKNOWN);
+        inputHint.setMarked(ActionTypeStatus.UNKNOWN);
+        currentRound.addHint(inputHint);
+        roundRepository.save(currentRound);
 
 
         //TODO hier nur eine primitive version von check hints um spielfluss zu gewährleisten, anpassen auf etwas anderes evtl
@@ -75,7 +82,7 @@ public class RoundService {
 
         //TODO calculation of time noch an einen anderen ort platzieren
         //calculating time of the player who sent the hint
-        calculateElapsedTime(hint);
+        calculateElapsedTime(inputHint);
 
 
         Game game = gameRepository.findGameByGameId(gameId);
@@ -89,7 +96,7 @@ public class RoundService {
             //setting the gameStatus to receiving guesses if enough hints have arrived
             gameRepository.save(game);
         }
-        return hint;
+        return inputHint;
     }
 
     //adds a guess to the round, starts new round,
@@ -164,19 +171,31 @@ public class RoundService {
     }
 
     public Hint updateHint(Hint inputHint, Long gameId) {
-        validateGameState(GameStatus.VALIDATION, gameId);
         String reporterToken = inputHint.getReporters().get(0);
-        //validate reporterToken, player available
-
+        int nrOfClueGivers = playerRepository.findAll().size() - 1;
         List<Hint> currentHints = findRoundByGameId(gameId).getHintList();
+        Game gameById = gameRepository.findGameByGameId(gameId);
+
         Hint hintByToken = findHintByToken(currentHints, inputHint.getToken());
 
+        validateGameState(GameStatus.VALIDATION, gameId);
+        checkIfTokenValid(reporterToken, PlayerStatus.CLUE_GIVER);
+
+
+        //catch if report contains its own hint
+        int hintPosition = currentHints.indexOf(hintByToken);
+        if (inputHint.getSimilarity().contains(hintPosition)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "similarities cannot contain hint itself");
+        }
+
+        //catch if report of player to this hint already exists
         hintByToken.getReporters().forEach(token -> {
             if (token.equals(reporterToken)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "this player has already reporter this hint");
             }
         });
 
+        //TODO: move updateHint to hinvalidationservice
         //merge the two arrays
         var currentSimilarity = hintByToken.getSimilarity();
         var currentReporters = hintByToken.getReporters();
@@ -188,12 +207,11 @@ public class RoundService {
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
 
-
         //TODO check that all hints are validated and reported
-        startingTimeforGuesser(gameId);
 
-
+        gameById.setStatus(GameStatus.RECEIVINGGUESS);
         return hintByToken;
+
         //TODO wenn alle verifiziert, ganze liste an validator schicken
         //TODO reports & gameState
     }
