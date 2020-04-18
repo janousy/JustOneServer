@@ -81,13 +81,17 @@ public class RoundService {
         Game game = gameRepository.findGameByGameId(gameId);
         List<Round> roundList = game.getRoundList();
         //currentRound nr is in external representation(+1)
-        int currentRoundExternal = game.getRoundNr();
+        int currentRoundExternal = roundList.size();
 
         //internalRepresentation of last round is -1 for last round and -1 because of the offset of array mapping
         int lastRoundInternal = currentRoundExternal - 2;
 
         if (lastRoundInternal < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no last round");
+        }
+        //if the game has finished we always want to access the last element of the list
+        if (game.getStatus() == GameStatus.FINISHED) {
+            lastRoundInternal = lastRoundInternal + 1;
         }
 
         return roundList.get(lastRoundInternal);
@@ -315,7 +319,7 @@ public class RoundService {
         }
 
         //adapt the round nr to the representation in the list
-        int indexOfCurrentRound = game.getRoundNr() - 1;
+        int indexOfCurrentRound = game.getRoundList().size() - 1;
         if (indexOfCurrentRound < 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no round in the game");
         }
