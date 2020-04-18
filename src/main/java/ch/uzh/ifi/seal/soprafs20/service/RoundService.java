@@ -74,6 +74,26 @@ public class RoundService {
         return rounds;
     }
 
+    //method returns the last round which was played, if no last round exists it throws an error
+    //param: Long gameId
+    //return: Round round
+    public Round getLastRoundOfGame(Long gameId) {
+        Game game = gameRepository.findGameByGameId(gameId);
+        List<Round> roundList = game.getRoundList();
+        //currentRound nr is in external representation(+1)
+        int currentRoundExternal = game.getRoundNr();
+
+        //internalRepresentation of last round is -1 for last round and -1 because of the offset of array mapping
+        int lastRoundInternal = currentRoundExternal - 2;
+
+        if (lastRoundInternal < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no last round");
+        }
+
+        return roundList.get(lastRoundInternal);
+    }
+
+
     public Hint addHintToRound(Hint hint, Long gameId) {
         checkIfTokenValid(hint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVINGHINTS, gameId);
@@ -271,6 +291,7 @@ public class RoundService {
         return game;
     }
 
+
     private Hint findHintByToken(List<Hint> currentHints, String token) {
         Hint hintByToken = currentHints.stream()
                 .filter(hint -> token.equals(hint.getToken()))
@@ -284,7 +305,7 @@ public class RoundService {
         }
     }
 
-    //method finds the newest round of the game
+    //method finds the current round of the game
     //param: Long gameId
     //return: Round round
     private Round findRoundByGameId(Long gameId) {
@@ -347,7 +368,7 @@ public class RoundService {
         //in case that the game starts(no last guesser, the one after the host gets guesser)
         //host is always 0
         if (indexOfLastGuesser < 0) {
-            indexOfLastGuesser = indexOfHost + 1;
+            indexOfLastGuesser = indexOfHost;
         }
 
         int indexOfNextGuesser = (indexOfLastGuesser + 1) % numberOfPlayers;
