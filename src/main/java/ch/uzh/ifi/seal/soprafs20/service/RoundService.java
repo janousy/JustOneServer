@@ -173,8 +173,8 @@ public class RoundService {
     public Hint updateHint(Hint inputHint, Long gameId) {
         String reporterToken = inputHint.getReporters().get(0);
         int nrOfClueGivers = playerRepository.findAll().size() - 1;
-        List<Hint> currentHints = findRoundByGameId(gameId).getHintList();
         Game gameById = gameRepository.findGameByGameId(gameId);
+        List<Hint> currentHints = findRoundByGameId(gameId).getHintList();
 
         Hint hintByToken = findHintByToken(currentHints, inputHint.getToken());
 
