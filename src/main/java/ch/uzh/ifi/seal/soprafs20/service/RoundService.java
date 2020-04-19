@@ -59,11 +59,9 @@ public class RoundService {
         return this.roundRepository.findAll();
     }
 
-    public Hint addHintToRound(Hint inputHint, Long gameId) throws IOException {
+    public Hint addHintToRound(Hint inputHint, Long gameId) {
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVINGHINTS, gameId);
-
-        hintValidationService.sendPOST();
 
         Round currentRound = findRoundByGameId(gameId);
         var currentHints = currentRound.getHintList();
@@ -76,9 +74,10 @@ public class RoundService {
         inputHint.setRoundId(currentRound.getId());
         inputHint.setStatus(ActionTypeStatus.UNKNOWN);
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
-        currentRound.addHint(inputHint);
-        roundRepository.save(currentRound);
 
+        Hint validatedHint = hintValidationService.validateWithExernalResources(inputHint, currentRound);
+        currentRound.addHint(validatedHint);
+        roundRepository.save(currentRound);
 
         //TODO hier nur eine primitive version von check hints um spielfluss zu gewährleisten, anpassen auf etwas anderes evtl
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();

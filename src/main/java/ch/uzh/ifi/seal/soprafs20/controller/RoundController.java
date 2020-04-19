@@ -99,7 +99,7 @@ public class RoundController {
     @PostMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public HintGetDTO createHint(@RequestBody HintPostDTO hintPostDTO, @PathVariable Long gameId) throws IOException {
+    public HintGetDTO createHint(@RequestBody HintPostDTO hintPostDTO, @PathVariable Long gameId) {
         Hint inputHint = HintDTOMapper.INSTANCE.convertHintPostDTOToEntity(hintPostDTO);
         Hint createdHint = roundService.addHintToRound(inputHint, gameId);
         return HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(createdHint);

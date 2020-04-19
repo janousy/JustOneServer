@@ -8,15 +8,19 @@ import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
+import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.*;
 import javax.transaction.Transactional;
@@ -41,6 +45,8 @@ public class HintValidationService {
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
 
+    private static final String USER_AGENT = "Mozilla/5.0";
+
 
     @Autowired
     public HintValidationService(@Qualifier("roundRepository") RoundRepository roundRepository,
@@ -49,6 +55,69 @@ public class HintValidationService {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+    }
+
+    public Hint validateWithExernalResources(Hint inputHint, Round currentRound) {
+        Term term = currentRound.getTerm();
+        Hint hint = validateWordStem(inputHint, term);
+        return hint;
+    }
+
+    public Hint validateWordStem(Hint inputHint, Term term) {
+        try {
+            final String POST_URL = "http://text-processing.com/api/stem/"; //api for word stem processing
+            final String POST_PARAMS = String.format("text=%s", inputHint.getContent());
+
+            log.info(String.format("connecting to %s", POST_URL));
+            URL obj = new URL(POST_URL);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", USER_AGENT);
+
+            // For POST only - START
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            os.write(POST_PARAMS.getBytes());
+            os.flush();
+            os.close();
+            // For POST only - END
+
+            int responseCode = con.getResponseCode();
+            log.info("POST Response Code :: " + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {//success
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                //decompose response message
+                JSONObject JSON_response = new JSONObject(response.toString());
+                String stemmedWord = JSON_response.getString("text");
+                log.info("stemmed word: " + JSON_response.getString("text") + " || current term: " + term.getContent());
+                //checked if the stemmed hint content is equal to the current term
+                if (term.getContent().toLowerCase().equals(stemmedWord.toLowerCase())) {
+                    inputHint.setStatus(ActionTypeStatus.INVALID);
+                    log.info("setting hint to invalid");
+                }
+                else {
+                    inputHint.setStatus(ActionTypeStatus.UNKNOWN);
+                }
+            }
+            else {
+                log.info("POST request invalid");
+            }
+        }
+        catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "api not available"); //TODO what
+        }
+        return inputHint;
     }
 
     public List<Hint> validateSimilarityAndMarking(List<Hint> currentHints) {
@@ -76,14 +145,7 @@ public class HintValidationService {
         return copyHints;
     }
 
-    private static final String USER_AGENT = "Mozilla/5.0";
-
     private static final String GET_URL = "https://localhost:9090/SpringMVCExample";
-
-    public void sendGetRequest() throws IOException {
-        sendGET();
-        sendPOST();
-    }
 
     public void sendGET() throws IOException {
         log.debug("sent GET");
@@ -109,46 +171,6 @@ public class HintValidationService {
         }
         else {
             System.out.println("GET request not worked");
-        }
-    }
-
-    public void sendPOST() throws IOException {
-        final String POST_URL = "http://text-processing.com/api/stem/";
-        String requestTerm = "processes";
-        final String POST_PARAMS = "text=" + requestTerm + "\"";
-
-        log.info(String.format("connecting to %s", POST_URL));
-        URL obj = new URL(POST_URL);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", USER_AGENT);
-
-        // For POST only - START
-        con.setDoOutput(true);
-        OutputStream os = con.getOutputStream();
-        os.write(POST_PARAMS.getBytes());
-        os.flush();
-        os.close();
-        // For POST only - END
-
-        int responseCode = con.getResponseCode();
-        log.info("POST Response Code :: " + responseCode);
-
-        if (responseCode == HttpURLConnection.HTTP_OK) {//success
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-            log.info(response.toString());
-        }
-        else {
-            log.info("POST request not worked");
         }
     }
 }
