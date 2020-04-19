@@ -12,6 +12,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintPostDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +59,11 @@ public class RoundService {
         return this.roundRepository.findAll();
     }
 
-    public Hint addHintToRound(Hint inputHint, Long gameId) {
+    public Hint addHintToRound(Hint inputHint, Long gameId) throws IOException {
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVINGHINTS, gameId);
+
+        hintValidationService.sendPOST();
 
         Round currentRound = findRoundByGameId(gameId);
         var currentHints = currentRound.getHintList();
@@ -170,9 +174,13 @@ public class RoundService {
         return currentRound.getTerm();
     }
 
-    public Hint updateHint(Hint inputHint, Long gameId) {
+    public Hint updateHint(Hint inputHint, Long gameId) throws IOException {
+
+        if (inputHint.getReporters().size() > 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "invalid reporters, should only be one");
+        }
         String reporterToken = inputHint.getReporters().get(0);
-        int nrOfClueGivers = playerRepository.findAll().size() - 1;
+        int nrOfClueGivers = playerRepository.findByGameGameId(gameId).size() - 1;
         Game gameById = gameRepository.findGameByGameId(gameId);
         List<Hint> currentHints = findRoundByGameId(gameId).getHintList();
 
@@ -207,13 +215,25 @@ public class RoundService {
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
 
-        //TODO check that all hints are validated and reported
+        //check if all hints validated
+        boolean allHintsReported = true;
+        for (Hint hint : currentHints) {
+            if (hint.getReporters().size() != nrOfClueGivers) {
+                allHintsReported = false;
+                break;
+            }
+        }
 
-        gameById.setStatus(GameStatus.RECEIVINGGUESS);
+        if (allHintsReported) {
+            List<Hint> validatedHints = hintValidationService.validateSimilarityAndMarking(currentHints);
+            findRoundByGameId(gameId).setHintList(validatedHints);
+            gameById.setStatus(GameStatus.RECEIVINGGUESS);
+        }
+        else {
+            gameById.setStatus(GameStatus.VALIDATION);
+        }
         return hintByToken;
 
-        //TODO wenn alle verifiziert, ganze liste an validator schicken
-        //TODO reports & gameState
     }
 
     public Term deleteCurrentTermOfRound(Long gameId) {
