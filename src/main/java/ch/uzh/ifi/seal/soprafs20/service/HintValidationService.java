@@ -57,18 +57,28 @@ public class HintValidationService {
         this.playerRepository = playerRepository;
     }
 
+    /* External APIs:
+     *   http://text-processing.com/, stemming and lemmatization, throttled to 1000 calls per day per IP, returns 503 if exceeded
+     * */
     public Hint validateWithExernalResources(Hint inputHint, Round currentRound) {
         Term term = currentRound.getTerm();
-        Hint hint = validateWordStem(inputHint, term);
+        String stemmedTerm = requestTermStem(term);
+        Hint hint = validateWordStem(inputHint, stemmedTerm);
         return hint;
     }
 
-    public Hint validateWordStem(Hint inputHint, Term term) {
+    public Hint validateWordStem(Hint inputHint, String term) {
         try {
             final String POST_URL = "http://text-processing.com/api/stem/"; //api for word stem processing
-            final String POST_PARAMS = String.format("text=%s", inputHint.getContent());
+
+            //stemmer must be wordnet in order to get lemmatization
+            // UPPERCASE NOT WORKING!!!!
+            String requestParameter = inputHint.getContent().toLowerCase();
+            final String POST_PARAMS = String.format("text=%s&stemmer=wordnet", requestParameter);
 
             log.info(String.format("connecting to %s", POST_URL));
+            log.info(String.format("post form data: %s", POST_PARAMS));
+
             URL obj = new URL(POST_URL);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("POST");
@@ -98,11 +108,12 @@ public class HintValidationService {
                 in.close();
 
                 //decompose response message
-                JSONObject JSON_response = new JSONObject(response.toString());
+                JSONObject JSON_response = new JSONObject(response.toString()); //gradlew dependency required! should be in
                 String stemmedWord = JSON_response.getString("text");
-                log.info("stemmed word: " + JSON_response.getString("text") + " || current term: " + term.getContent());
+                log.info("stemmed word: " + JSON_response.getString("text") + " || current term: " + term);
+
                 //checked if the stemmed hint content is equal to the current term
-                if (term.getContent().toLowerCase().equals(stemmedWord.toLowerCase())) {
+                if (term.toLowerCase().equals(stemmedWord.toLowerCase())) {
                     inputHint.setStatus(ActionTypeStatus.INVALID);
                     log.info("setting hint to invalid");
                 }
@@ -118,6 +129,62 @@ public class HintValidationService {
             throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "api not available"); //TODO what
         }
         return inputHint;
+    }
+
+    public String requestTermStem(Term term) {
+        try {
+            final String POST_URL = "http://text-processing.com/api/stem/"; //api for word stem processing
+
+            //stemmer must be wordnet in order to get lemmatization
+            //final String POST_PARAMS = String.format("text=%s&stemmer=wordnet", term.getContent());
+            String request = term.getContent().toLowerCase();
+            final String POST_PARAMS = String.format("text=%s&stemmer=wordnet", request);
+
+            log.info(String.format("connecting to %s", POST_URL));
+            log.info(String.format("post form data: %s", POST_PARAMS));
+
+            URL obj = new URL(POST_URL);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", USER_AGENT);
+
+            // For POST only - START
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            os.write(POST_PARAMS.getBytes());
+            os.flush();
+            os.close();
+            // For POST only - END
+
+            int responseCode = con.getResponseCode();
+            log.info("POST Response Code :: " + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {//success
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                //decompose response message
+                JSONObject JSON_response = new JSONObject(response.toString()); //gradlew dependency required! should be in
+                String stemmedTerm = JSON_response.getString("text");
+                log.info("stemmed term: " + JSON_response.getString("text"));
+                return stemmedTerm;
+            }
+            else {
+                log.info("POST request invalid");
+            }
+        }
+        catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "api not available"); //TODO what
+        }
+        return term.getContent();
     }
 
     public List<Hint> validateSimilarityAndMarking(List<Hint> currentHints) {

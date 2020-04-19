@@ -44,6 +44,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     compile 'org.json:json:20171018' //added for POST requests JSONObject
+    compile 'org.apache.opennlp:opennlp:1.6.0' //added for opennlp supprt and lemmatization
 }
 
 bootJar {
