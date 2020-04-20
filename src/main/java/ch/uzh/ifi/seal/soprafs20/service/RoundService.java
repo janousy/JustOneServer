@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintPostDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,9 @@ public class RoundService {
         inputHint.setRoundId(currentRound.getId());
         inputHint.setStatus(ActionTypeStatus.UNKNOWN);
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
-        currentRound.addHint(inputHint);
+
+        Hint validatedHint = hintValidationService.validateWithExernalResources(inputHint, currentRound);
+        currentRound.addHint(validatedHint);
         roundRepository.save(currentRound);
 
 
@@ -201,8 +204,12 @@ public class RoundService {
     }
 
     public Hint updateHint(Hint inputHint, Long gameId) {
+
+        if (inputHint.getReporters().size() > 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "invalid reporters, should only be one");
+        }
         String reporterToken = inputHint.getReporters().get(0);
-        int nrOfClueGivers = playerRepository.findAll().size() - 1;
+        int nrOfClueGivers = playerRepository.findByGameGameId(gameId).size() - 1;
         Game gameById = gameRepository.findGameByGameId(gameId);
         List<Hint> currentHints = findRoundByGameId(gameId).getHintList();
 
@@ -237,17 +244,28 @@ public class RoundService {
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
 
-        //TODO check that all hints are validated and reported
-        //nachdem alle validiert sind (also dann wenn sie präsentiert werden an guesser)
-        //dann muss noch die zeit für den guesser gestartet werden
-        scoringService.startTimeForGuesser(gameId);
 
 
-        gameById.setStatus(GameStatus.RECEIVINGGUESS);
+        //check if all hints validated
+        boolean allHintsReported = true;
+        for (Hint hint : currentHints) {
+            if (hint.getReporters().size() != nrOfClueGivers) {
+                allHintsReported = false;
+                break;
+            }
+        }
+
+        if (allHintsReported) {
+            List<Hint> validatedHints = hintValidationService.validateSimilarityAndMarking(currentHints);
+            findRoundByGameId(gameId).setHintList(validatedHints);
+            gameById.setStatus(GameStatus.RECEIVINGGUESS);
+            scoringService.startTimeForGuesser(gameId);
+        }
+        else {
+            gameById.setStatus(GameStatus.VALIDATION);
+        }
         return hintByToken;
 
-        //TODO wenn alle verifiziert, ganze liste an validator schicken
-        //TODO reports & gameState
     }
 
     public Term deleteCurrentTermOfRound(Long gameId) {

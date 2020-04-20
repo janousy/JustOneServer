@@ -18,6 +18,7 @@ import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,9 +98,7 @@ public class RoundController {
         List<HintGetDTO> hintGetDTOs = new ArrayList<>();
 
         for (Hint hint : currentHints) {
-            if (!hint.getStatus().equals(ActionTypeStatus.INVALID)) {
                 hintGetDTOs.add(HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(hint));
-            }
         }
         return hintGetDTOs;
     }
@@ -146,7 +145,7 @@ public class RoundController {
     @PutMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) {
+    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) throws IOException {
         Hint inputHint = HintDTOMapper.INSTANCE.convertHintPutDTOToEntity(hintPutDTO);
         Hint updatedHint = roundService.updateHint(inputHint, gameId);
         return HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(updatedHint);

@@ -12,6 +12,7 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
+import ch.uzh.ifi.seal.soprafs20.service.HintValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,12 @@ executed upon application startup. Comment out both methods in run() to get an e
 @Component
 public class DataLoader implements ApplicationRunner {
 
+    private final Logger log = LoggerFactory.getLogger(DataLoader.class);
+
     private UserRepository userRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
     private CardRepository cardRepository;
-    private final Logger log = LoggerFactory.getLogger(DataLoader.class);
 
     @Autowired
     public DataLoader(@Qualifier("userRepository") UserRepository userRepository,
