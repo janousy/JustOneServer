@@ -118,19 +118,12 @@ public class RoundService {
 
 
         //stopping the time of the player using the actionType
-        scoringService.stopTimeForPlayer(hint);
-
+        scoringService.stopTimeForPlayer(inputHint);
 
         Game game = gameRepository.findGameByGameId(gameId);
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
         int nrOfHints = currentRound.getHintList().size();
 
-        //TODO calculation of time noch an einen anderen ort platzieren
-        //calculating time of the player who sent the hint
-        calculateElapsedTime(inputHint);
-
-
-        Game game = gameRepository.findGameByGameId(gameId);
         //go into if when all hints have arrived
         if (nrOfHints == (nrOfPlayers - 1)) {
             game.setStatus(GameStatus.VALIDATION);
