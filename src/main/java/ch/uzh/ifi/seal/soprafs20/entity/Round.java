@@ -91,12 +91,10 @@ public class Round {
 
     public void addHint(Hint hint) {
         hintList.add(hint);
-        //hint.setRoundId(id);
     }
 
     public void removeHint(Hint hint) {
         hintList.remove(hint);
-        //hint.setRoundId(null);
     }
 
 

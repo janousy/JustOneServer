@@ -47,19 +47,26 @@ public class RoundController {
     }
 
     //returns a list with all rounds of a specific game
+    //if lastRound=true the method returns the last, finished played round
     @GetMapping("/games/{gameId}/rounds")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId) {
-        // fetch all rounds in the internal representation
-        List<Round> rounds = roundService.getAllRounds();
+    public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId,
+                                                @RequestParam(required = false, name = "lastRound", defaultValue = "false") String lastRound) {
         List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
 
-        for (Round round : rounds) {
-            if (round.getGame().getGameId().equals(gameId)) {
+        //returns the last finished round
+        if (lastRound.equals("true")) {
+            Round round = roundService.getLastRoundOfGame(gameId);
+            roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
+        }
+
+        else {
+            List<Round> rounds = roundService.getAllRoundsOfGame(gameId);
+
+            for (Round round : rounds) {
                 roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));
             }
-
         }
 
         return roundGetDTOS;
