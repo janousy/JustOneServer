@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
-import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
@@ -97,9 +94,9 @@ public class DataLoader implements ApplicationRunner {
             testPlayer.setElapsedTime(0L);
             //put two player player into each game, leave third game empty
             testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
-
             testUser.setPlayer(testPlayer);
             testPlayer.setUser(testUser);
+            testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
 
             userRepository.save(testUser);
             playerRepository.save(testPlayer);

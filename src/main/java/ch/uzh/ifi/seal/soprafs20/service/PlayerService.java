@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerTermStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
@@ -71,6 +72,7 @@ public class PlayerService {
         newPlayer.setUser(userByToken);
         newPlayer.setUserToken(userByToken.getToken());
         newPlayer.setElapsedTime(0L);
+        newPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
         if (!checkIfGameHasHost(gameId)) {
             newPlayer.setRole(PlayerRole.HOST);
         }
@@ -126,14 +128,26 @@ public class PlayerService {
 
         if (playerById.isPresent()) {
             Player updatedPlayer = playerById.get();
-            if (!checkIfPlayerStatusExists(playerInput.getStatus())) {
-                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid player status");
-            }
-            if (updatedPlayer.getStatus() != PlayerStatus.READY && updatedPlayer.getStatus() != PlayerStatus.NOT_READY) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status can not be changed anymore, player is in active");
+            if (playerInput.getStatus() != null) {
+                if (!checkIfPlayerStatusExists(playerInput.getStatus())) {
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid player status");
+                }
+                if (updatedPlayer.getStatus() != PlayerStatus.READY &&
+                        updatedPlayer.getStatus() != PlayerStatus.NOT_READY &&
+                        playerInput.getPlayerTermStatus() != PlayerTermStatus.NOT_SET) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status cannot be changed anymore, player is in action");
+                }
+                updatedPlayer.setStatus(playerInput.getStatus());
             }
 
-            updatedPlayer.setStatus(playerInput.getStatus());
+            if ((playerInput.getPlayerTermStatus() != null)) {
+                if (updatedPlayer.getStatus() == PlayerStatus.CLUE_GIVER) {
+                    updatedPlayer.setPlayerTermStatus(playerInput.getPlayerTermStatus());
+                }
+                else {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "this player is currently not giving hints");
+                }
+            }
             playerRepository.save(updatedPlayer);
             return updatedPlayer;
         }
