@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -29,6 +31,7 @@ public class GuessValidationService {
     public Guess guessValidation(Guess guess, Long gameId, Round currentRound) {
 
         Game currentGame = gameRepository.findGameByGameId(gameId);
+        List<Card> cardList = currentGame.getCardList();
 
         String termContent = currentRound.getTerm().getContent();
         String guessContent = guess.getContent();
@@ -45,11 +48,18 @@ public class GuessValidationService {
             guess.setStatus(ActionTypeStatus.VALID);
         }
         else {
-            int currentRoundNr = currentGame.getRoundNr();
+            /*int currentRoundNr = currentGame.getRoundNr();
 
             //set one round extra because it was false
             currentGame.setRoundNr(currentRoundNr + 1);
+
+             */
+
+            cardList.remove(0);
             guess.setStatus(ActionTypeStatus.INVALID);
+        }
+        if (!cardList.isEmpty()) {
+            cardList.remove(0);
         }
 
         return guess;

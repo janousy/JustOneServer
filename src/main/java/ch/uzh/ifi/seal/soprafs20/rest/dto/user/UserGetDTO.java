@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.user;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-
-import java.util.Date;
 
 public class UserGetDTO {
 

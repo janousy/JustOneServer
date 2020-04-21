@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 
+import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
@@ -44,9 +45,6 @@ public class GameService {
         this.playerService = playerService;
     }
 
-    //TODO hier nachdem alle runden durch sind sollten noch die userscores updated werden
-    //oder userscore könnte auch gleich mit dem playerscore angepasst werden
-
     //get all Games as a list
     //param:
     //return: returns a List<Game> with all games in it
@@ -80,7 +78,7 @@ public class GameService {
 
         //setting status and cards
         newGame.setStatus(GameStatus.LOBBY);
-        newGame.setRoundNr(0);
+        //newGame.setRoundNr(0);
         newGame.setCorrectCards(0);
 
         newGame = gameRepository.save(newGame);
@@ -170,11 +168,11 @@ public class GameService {
         List<Card> cardList = cardRepository.findAll();
 
         int totalNrOfCards = cardList.size();
-        Long[] pickedNrs = new Long[13];
+        Long[] pickedNrs = new Long[CONSTANTS.NUMBER_OF_ROUNDS];
         Arrays.fill(pickedNrs, -1L);
 
         //adding 13 unique cards to the game
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < CONSTANTS.NUMBER_OF_ROUNDS; i++) {
             long randomNum = 0;
             boolean unique = false;
             //loop to check uniqueness of card
@@ -200,6 +198,7 @@ public class GameService {
 
     //This is a helper method to check whether the provided name is unique, throws an exception if not
     //param: Game newGame
+    //return: void
     private void checkIfGameExists(Game newGame) {
         Game gameByName = gameRepository.findByName(newGame.getName());
 

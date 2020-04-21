@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO hier noch alle roundNR sachen rauswerfen
+
 @Entity
 @Table(name = "GAME")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "gameId")

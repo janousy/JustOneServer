@@ -182,6 +182,9 @@ public class PlayerService {
         return false;
     }
 
+    //takes a player and sets the player field of the corresponding user to null
+    //param: Player playerToBeRemoved
+    //return: void
     public void removePlayerFromUser(Player playerToBeRemoved) {
         User userToDeletePlayerFrom = userRepository.findByToken(playerToBeRemoved.getUserToken());
         userToDeletePlayerFrom.setPlayer(null);

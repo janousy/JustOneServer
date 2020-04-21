@@ -156,7 +156,7 @@ public class RoundController {
     @ResponseBody
     public GuessGetDTO deleteGuess(@PathVariable Long gameId) {
         //guesser skips his guess
-        Guess deletedGuess = roundService.skipTermToBeGuessed(gameId);
+        Guess deletedGuess = roundService.skipGuessToBeGuessed(gameId);
         return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(deletedGuess);
     }
 }
