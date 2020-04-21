@@ -20,6 +20,7 @@ public interface PlayerDTOMapper {
     @Mapping(source = "role", target = "role")
     @Mapping(source = "userToken", target = "userToken")
     @Mapping(source = "elapsedTime", target = "elapsedTime")
+    @Mapping(source = "playerTermStatus", target = "playerTermStatus")
     PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 
     @Mapping(source = "name", target = "name")
@@ -27,5 +28,6 @@ public interface PlayerDTOMapper {
     Player convertPlayerPostDTOtoEntity(PlayerPostDTO playerPostDTO);
 
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "playerTermStatus", target = "playerTermStatus")
     Player convertPlayerPutDTOtoEntity(PlayerPutDTO playerPutDTO);
 }

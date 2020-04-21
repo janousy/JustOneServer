@@ -129,7 +129,7 @@ public class RoundService {
 
         //go into if when all hints have arrived
         if (nrOfHints == (nrOfPlayers - 1)) {
-            game.setStatus(GameStatus.VALIDATION);
+            game.setStatus(GameStatus.VALIDATING_HINTS);
             gameRepository.save(game);
         }
         return inputHint;
@@ -174,7 +174,7 @@ public class RoundService {
 
             //setting the gamestatus to receiving hints
             Game game = gameRepository.findGameByGameId(gameId);
-            game.setStatus(GameStatus.RECEIVINGHINTS);
+            game.setStatus(GameStatus.VALIDATING_TERM);
             gameRepository.save(game);
 
             //starting the time for all clue_givers
@@ -215,7 +215,7 @@ public class RoundService {
 
         Hint hintByToken = findHintByToken(currentHints, inputHint.getToken());
 
-        validateGameState(GameStatus.VALIDATION, gameId);
+        validateGameState(GameStatus.VALIDATING_HINTS, gameId);
         checkIfTokenValid(reporterToken, PlayerStatus.CLUE_GIVER);
 
 
@@ -262,7 +262,7 @@ public class RoundService {
             scoringService.startTimeForGuesser(gameId);
         }
         else {
-            gameById.setStatus(GameStatus.VALIDATION);
+            gameById.setStatus(GameStatus.VALIDATING_HINTS);
         }
         return hintByToken;
 
@@ -279,9 +279,9 @@ public class RoundService {
 
         //setting the gamestatus back to receiving term
         Game game = gameRepository.findGameByGameId(gameId);
+        currentRound.setTerm(null);
         game.setStatus(GameStatus.RECEIVINGTERM);
 
-        currentRound.setTerm(null);
         return deletedTerm;
     }
 

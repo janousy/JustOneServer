@@ -3,12 +3,14 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerTermStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +30,21 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final CardRepository cardRepository;
+    private final PlayerRepository playerRepository;
 
     private final RoundService roundService;
     private final PlayerService playerService;
 
-
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository,
                        @Qualifier("cardRepository") CardRepository cardRepository,
+                       @Qualifier("playerRepository") PlayerRepository playerRepository,
                        RoundService roundService,
-                       PlayerService playerService) {
+                       PlayerService playerService
+    ) {
         this.gameRepository = gameRepository;
         this.cardRepository = cardRepository;
+        this.playerRepository = playerRepository;
         this.roundService = roundService;
         this.playerService = playerService;
     }
@@ -66,6 +71,10 @@ public class GameService {
         }
 
         gameById = checkGameReady(gameById);
+
+        if (gameById.getStatus() == GameStatus.VALIDATING_TERM) {
+            gameById = checkIfPlayersKnowTerm(gameById);
+        }
 
         return gameById;
     }
@@ -146,6 +155,32 @@ public class GameService {
         //if all players are ready invoke the final preparation of the game
         prepareGameToPlay(game);
 
+        return game;
+    }
+
+    public Game checkIfPlayersKnowTerm(Game game) {
+        List<Player> playersInGame = playerRepository.findByGameGameId(game.getGameId());
+
+        //check if all clue givers have reporter whether they know the term
+        //if they did not yet, return game
+        boolean allClueGiversReported = true;
+        for (Player player : playersInGame) {
+            if (player.getPlayerTermStatus() == PlayerTermStatus.NOT_SET && player.getStatus() == PlayerStatus.CLUE_GIVER) {
+                allClueGiversReported = false;
+                return game;
+            }
+        }
+
+        //if all players have reporter whether they know the word, check if anybody does not know the term
+        //if yes, reset the game state to receiving term to get a new term
+        //otherwise set the game state to receiving hints
+        for (Player player : playersInGame) {
+            if (player.getPlayerTermStatus() == PlayerTermStatus.UNKNOWN && player.getStatus() == PlayerStatus.CLUE_GIVER) {
+                game.setStatus(GameStatus.RECEIVINGTERM);
+                return game;
+            }
+        }
+        game.setStatus(GameStatus.RECEIVINGHINTS);
         return game;
     }
 

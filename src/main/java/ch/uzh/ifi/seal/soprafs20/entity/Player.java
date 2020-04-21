@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
+import ch.uzh.ifi.seal.soprafs20.constant.PlayerTermStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -45,6 +46,16 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private long elapsedTime;
 
+    @Column
+    private PlayerTermStatus playerTermStatus;
+
+    public PlayerTermStatus getPlayerTermStatus() {
+        return playerTermStatus;
+    }
+
+    public void setPlayerTermStatus(PlayerTermStatus playerTermStatus) {
+        this.playerTermStatus = playerTermStatus;
+    }
 
     public Long getId() {
         return id;
