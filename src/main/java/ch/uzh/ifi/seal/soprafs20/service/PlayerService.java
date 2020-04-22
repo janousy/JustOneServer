@@ -134,7 +134,7 @@ public class PlayerService {
                 }
                 if (updatedPlayer.getStatus() != PlayerStatus.READY &&
                         updatedPlayer.getStatus() != PlayerStatus.NOT_READY &&
-                        playerInput.getPlayerTermStatus() != PlayerTermStatus.NOT_SET) {
+                        updatedPlayer.getPlayerTermStatus() != PlayerTermStatus.NOT_SET) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status cannot be changed anymore, player is in action");
                 }
                 updatedPlayer.setStatus(playerInput.getStatus());
@@ -145,7 +145,7 @@ public class PlayerService {
                     updatedPlayer.setPlayerTermStatus(playerInput.getPlayerTermStatus());
                 }
                 else {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "this player is currently not giving hints");
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("invalid player status, current: %s, must be %s", updatedPlayer.getStatus(), PlayerStatus.CLUE_GIVER));
                 }
             }
             playerRepository.save(updatedPlayer);

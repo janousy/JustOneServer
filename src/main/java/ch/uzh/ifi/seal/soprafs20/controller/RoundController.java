@@ -8,7 +8,9 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.action.*;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.round.RoundGetDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.mapper.GameDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.RoundDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.GuessDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.HintDTOMapper;
@@ -133,9 +135,10 @@ public class RoundController {
     @DeleteMapping("/games/{gameId}/terms")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public TermGetDTO deleteTerm(@PathVariable Long gameId) {
+    public TermGetDTO deleteTerm(@RequestBody TermPostDTO termPostDTO, @PathVariable Long gameId) {
         //clue givers report the word to be unknown
-        Term deletedTerm = roundService.deleteCurrentTermOfRound(gameId);
+        Term inputTerm = TermDTOMapper.INSTANCE.convertTermPostDTOToEntity(termPostDTO);
+        Term deletedTerm = roundService.deleteCurrentTermOfRound(inputTerm, gameId);
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
     }
 
@@ -154,9 +157,10 @@ public class RoundController {
     @DeleteMapping("/games/{gameId}/guesses")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GuessGetDTO deleteGuess(@PathVariable Long gameId) {
+    public GameGetDTO deleteGuess(@RequestBody GuessPostDTO guessPostDTO, @PathVariable Long gameId) {
         //guesser skips his guess
-        Guess deletedGuess = roundService.skipTermToBeGuessed(gameId);
-        return GuessDTOMapper.INSTANCE.convertEntityToGuessGetDTO(deletedGuess);
+        Guess inputGuess = GuessDTOMapper.INSTANCE.convertGuessPostDTOtoEntity(guessPostDTO);
+        Game currentGame = roundService.skipTermToBeGuessed(inputGuess, gameId);
+        return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(currentGame);
     }
 }

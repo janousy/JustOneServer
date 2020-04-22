@@ -176,11 +176,13 @@ public class GameService {
         //otherwise set the game state to receiving hints
         for (Player player : playersInGame) {
             if (player.getPlayerTermStatus() == PlayerTermStatus.UNKNOWN && player.getStatus() == PlayerStatus.CLUE_GIVER) {
-                game.setStatus(GameStatus.RECEIVINGTERM);
+                Round currentRound = findRoundByGameId(game.getGameId());
+                currentRound.setTerm(null);
+                game.setStatus(GameStatus.RECEIVING_TERM);
                 return game;
             }
         }
-        game.setStatus(GameStatus.RECEIVINGHINTS);
+        game.setStatus(GameStatus.RECEIVING_HINTS);
         return game;
     }
 
@@ -243,5 +245,20 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "unique", "created"));
         }
 
+    }
+
+    private Round findRoundByGameId(Long gameId) {
+        Game game = gameRepository.findGameByGameId(gameId);
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("game by ID %d not found", gameId));
+        }
+
+        //adapt the round nr to the representation in the list
+        int indexOfCurrentRound = game.getRoundList().size() - 1;
+        if (indexOfCurrentRound < 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no round in the game");
+        }
+
+        return game.getRoundList().get(indexOfCurrentRound);
     }
 }

@@ -101,7 +101,7 @@ public class RoundService {
 
     public Hint addHintToRound(Hint inputHint, Long gameId) {
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
-        validateGameState(GameStatus.RECEIVINGHINTS, gameId);
+        validateGameState(GameStatus.RECEIVING_HINTS, gameId);
 
         Round currentRound = findRoundByGameId(gameId);
         var currentHints = currentRound.getHintList();
@@ -138,7 +138,7 @@ public class RoundService {
     //adds a guess to the round, starts new round,
     public Guess addGuessToRound(Guess guess, Long gameId) {
         checkIfTokenValid(guess.getToken(), PlayerStatus.GUESSER);
-        validateGameState(GameStatus.RECEIVINGGUESS, gameId);
+        validateGameState(GameStatus.RECEIVING_GUESS, gameId);
 
         Round currentRound = findRoundByGameId(gameId);
         guess.setRoundId(currentRound.getId());
@@ -161,7 +161,7 @@ public class RoundService {
 
     public Term addTermToRound(Term newTerm, Long gameId) {
         checkIfTokenValid(newTerm.getToken(), PlayerStatus.GUESSER);
-        validateGameState(GameStatus.RECEIVINGTERM, gameId);
+        validateGameState(GameStatus.RECEIVING_TERM, gameId);
 
         Round currentRound = findRoundByGameId(gameId);
         String[] wordsOfCards = currentRound.getCard().getTerms();
@@ -177,7 +177,13 @@ public class RoundService {
             game.setStatus(GameStatus.VALIDATING_TERM);
             gameRepository.save(game);
 
+            //as soon as a new term is set, the playertermstatus must be reset
+            playerRepository.findByGameGameId(gameId).forEach(player -> {
+                player.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+            });
+
             //starting the time for all clue_givers
+            //TODO needs to be moved
             scoringService.startTimeForClue_Givers(gameId);
 
             currentRound.setTerm(newTerm);
@@ -258,7 +264,7 @@ public class RoundService {
         if (allHintsReported) {
             List<Hint> validatedHints = hintValidationService.validateSimilarityAndMarking(currentHints);
             findRoundByGameId(gameId).setHintList(validatedHints);
-            gameById.setStatus(GameStatus.RECEIVINGGUESS);
+            gameById.setStatus(GameStatus.RECEIVING_GUESS);
             scoringService.startTimeForGuesser(gameId);
         }
         else {
@@ -268,8 +274,15 @@ public class RoundService {
 
     }
 
-    public Term deleteCurrentTermOfRound(Long gameId) {
-        validateGameState(GameStatus.RECEIVINGHINTS, gameId);
+    public Term deleteCurrentTermOfRound(Term inputTerm, Long gameId) {
+
+        validateGameState(GameStatus.VALIDATING_TERM, gameId);
+
+        PlayerStatus senderStatus = playerRepository.findByUserToken(inputTerm.getToken()).getStatus();
+        if (!senderStatus.equals(PlayerStatus.GUESSER)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
+                    "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
+        }
 
         Round currentRound = findRoundByGameId(gameId);
         Term deletedTerm = currentRound.getTerm();
@@ -280,21 +293,24 @@ public class RoundService {
         //setting the gamestatus back to receiving term
         Game game = gameRepository.findGameByGameId(gameId);
         currentRound.setTerm(null);
-        game.setStatus(GameStatus.RECEIVINGTERM);
+        game.setStatus(GameStatus.RECEIVING_TERM);
 
         return deletedTerm;
     }
 
-    public Guess skipTermToBeGuessed(Long gameId) {
-        validateGameState(GameStatus.RECEIVINGGUESS, gameId);
+    public Game skipTermToBeGuessed(Guess inputGuess, Long gameId) {
+        validateGameState(GameStatus.RECEIVING_GUESS, gameId);
 
+        PlayerStatus senderStatus = playerRepository.findByUserToken(inputGuess.getToken()).getStatus();
+        if (!senderStatus.equals(PlayerStatus.GUESSER)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
+                    "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
+        }
         Round currentRound = findRoundByGameId(gameId);
-        Guess guess = new Guess();
-
         //add a new round to the game
         Game game = gameRepository.findGameByGameId(gameId);
         addRound(game);
-        return guess;
+        return game;
     }
 
     //method adds a round to a game
@@ -321,7 +337,7 @@ public class RoundService {
         game.addRound(newRound);
         newRound = roundRepository.save(newRound);
 
-        game.setStatus(GameStatus.RECEIVINGTERM);
+        game.setStatus(GameStatus.RECEIVING_TERM);
 
         //increasing the Round number of the game
         game.setRoundNr(roundNr + 1);
