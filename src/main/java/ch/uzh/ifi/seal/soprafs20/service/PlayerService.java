@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
@@ -203,6 +204,11 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }
 
+        if (game.getStatus() != GameStatus.LOBBY) {
+            String baseErrorMessage = "The Game has already started, thus you cannot join anymore";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
         game.addPlayer(playerToBeAdded);
 
         gameRepository.save(game);
@@ -223,6 +229,11 @@ public class PlayerService {
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 0) {
             String baseErrorMessage = "The lobby is already empty";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
+        if (game.getStatus() != GameStatus.LOBBY) {
+            String baseErrorMessage = "The Game has already started, thus you cannot remove a player anymore";
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }
 
