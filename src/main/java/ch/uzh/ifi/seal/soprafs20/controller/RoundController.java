@@ -132,16 +132,6 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(createdTerm);
     }
 
-    @DeleteMapping("/games/{gameId}/terms")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public TermGetDTO deleteTerm(@RequestBody TermPostDTO termPostDTO, @PathVariable Long gameId) {
-        //clue givers report the word to be unknown
-        Term inputTerm = TermDTOMapper.INSTANCE.convertTermPostDTOToEntity(termPostDTO);
-        Term deletedTerm = roundService.deleteCurrentTermOfRound(inputTerm, gameId);
-        return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
-    }
-
     //nimmt jeden hint einzeln zur validierung an
     // reports: token des players
     // similarity: markierte ähnlichkeiten zu anderen hints
