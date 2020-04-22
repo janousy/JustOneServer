@@ -16,9 +16,7 @@ public class GameGetDTO {
 
     private int correctCards;
 
-    private int roundNr;
-
-    //private List<Player> playerList;
+    //private int roundNr;
 
 
     public Long getGameId() {
@@ -52,7 +50,7 @@ public class GameGetDTO {
     public void setCorrectCards(int correctCards) {
         this.correctCards = correctCards;
     }
-
+/*
     public int getRoundNr() {
         return roundNr;
     }
@@ -60,14 +58,6 @@ public class GameGetDTO {
     public void setRoundNr(int roundNr) {
         this.roundNr = roundNr;
     }
-/*
-    public List<Player> getPlayerList() {
-        return playerList;
-    }
-
-    public void setPlayerList(List<Player> playerList) {
-        this.playerList = playerList;
-    }
-
  */
+
 }

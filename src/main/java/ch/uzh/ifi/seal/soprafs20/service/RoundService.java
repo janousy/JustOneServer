@@ -81,8 +81,15 @@ public class RoundService {
     public Round getLastRoundOfGame(Long gameId) {
         Game game = gameRepository.findGameByGameId(gameId);
         List<Round> roundList = game.getRoundList();
+
         //currentRound nr is in external representation(+1)
         int currentRoundExternal = roundList.size();
+
+        //for the special case that the game is finished
+        if (game.getStatus() == GameStatus.FINISHED) {
+            return roundList.get(currentRoundExternal - 1);
+        }
+
 
         //internalRepresentation of last round is -1 for last round and -1 because of the offset of array mapping
         int lastRoundInternal = currentRoundExternal - 2;
@@ -149,8 +156,9 @@ public class RoundService {
         scoringService.stopTimeForPlayer(guess);
         //validating the guess
         Guess validatedGuess = guessValidationService.guessValidation(guess, gameId, currentRound);
-        //updating the score of the guesser
-        scoringService.updateScoreOfGuesser(validatedGuess, gameId);
+
+        //updating the score of the guesser and the clueGivers
+        scoringService.updateScoresOfPlayers(gameId);
 
         //starting a new round
         Game currentGame = gameRepository.findGameByGameId(gameId);
@@ -183,7 +191,6 @@ public class RoundService {
             });
 
             //starting the time for all clue_givers
-            //TODO needs to be moved
             scoringService.startTimeForClue_Givers(gameId);
 
             currentRound.setTerm(newTerm);
@@ -265,6 +272,8 @@ public class RoundService {
             List<Hint> validatedHints = hintValidationService.validateSimilarityAndMarking(currentHints);
             findRoundByGameId(gameId).setHintList(validatedHints);
             gameById.setStatus(GameStatus.RECEIVING_GUESS);
+
+            //start the time for the guessing player as he now can see the hints
             scoringService.startTimeForGuesser(gameId);
         }
         else {
@@ -313,14 +322,15 @@ public class RoundService {
         return game;
     }
 
+    //TODO wenn sich die neue methode bewährt kann die auskommentierte noch gelöscht werden
     //method adds a round to a game
     //param: Game game
     //return: Game game
     public Game addRound(Game game) {
-
+/*
         int roundNr = game.getRoundNr();
         //if it was the last round we set the gameStatus to finished
-        if (roundNr == 13) {
+        if (roundNr == CONSTANTS.NUMBER_OF_ROUNDS || roundNr > CONSTANTS.NUMBER_OF_ROUNDS) {
             game.setStatus(GameStatus.FINISHED);
             gameRepository.save(game);
             scoringService.updateScoresOfUsers(game);
@@ -341,6 +351,37 @@ public class RoundService {
 
         //increasing the Round number of the game
         game.setRoundNr(roundNr + 1);
+        gameRepository.save(game);
+
+        //setting the playerStatus correctly
+        settingPlayerStatus(game);
+
+        return game;
+
+ */
+        List<Card> cardList = game.getCardList();
+        //if it was the last round we set the gameStatus to finished
+        if (cardList.isEmpty()) {
+            game.setStatus(GameStatus.FINISHED);
+            gameRepository.save(game);
+            scoringService.updateScoresOfUsers(game);
+
+            return null;
+        }
+
+        //adding a new round to the game
+        Card card = game.getCardList().get(0);
+
+        //adding the new round to the game
+        Round newRound = new Round();
+        newRound.setCard(card);
+        game.addRound(newRound);
+        newRound = roundRepository.save(newRound);
+
+        game.setStatus(GameStatus.RECEIVING_TERM);
+
+        //increasing the Round number of the game
+        //game.setRoundNr(roundNr + 1);
         gameRepository.save(game);
 
         //setting the playerStatus correctly

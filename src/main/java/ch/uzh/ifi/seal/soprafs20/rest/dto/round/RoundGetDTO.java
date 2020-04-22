@@ -17,8 +17,6 @@ public class RoundGetDTO {
 
     private Term term;
 
-    //private Card card;
-
 
     public Long getId() {
         return id;
@@ -51,15 +49,5 @@ public class RoundGetDTO {
     public void setTerm(Term term) {
         this.term = term;
     }
-
-    /*public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
-     */
 
 }

@@ -15,6 +15,7 @@ import java.io.Serializable;
  * - nullable = false -> this cannot be left empty
  * - unique = true -> this value must be unqiue across the database -> composes the primary key
  */
+//TODO currentGameScore wird nie benutzt kann also rausgeworfen werden, andere unnötige felder noch rauswerfen
 @Entity
 @Table(name = "USER")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

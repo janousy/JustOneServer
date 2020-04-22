@@ -82,7 +82,6 @@ public class DataLoader implements ApplicationRunner {
             testUser.setCreationDate(date);
             testUser.setUsername("testUser" + i);
             testUser.setPassword("testPassword");
-            testUser.setOverallScore(i);
 
 
             testPlayer.setName("testPlayer" + i);

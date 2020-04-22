@@ -5,10 +5,12 @@ import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
+import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +26,41 @@ public class ScoringService {
 
     private final PlayerRepository playerRepository;
     private final UserRepository userRepository;
+    private final GameRepository gameRepository;
 
     @Autowired
     public ScoringService(@Qualifier("playerRepository") PlayerRepository playerRepository,
-                          @Qualifier("userRepository") UserRepository userRepository) {
+                          @Qualifier("userRepository") UserRepository userRepository,
+                          @Qualifier("gameRepository") GameRepository gameRepository) {
         this.playerRepository = playerRepository;
         this.userRepository = userRepository;
+        this.gameRepository = gameRepository;
     }
 
+
+    //method updates the scores of all players of the game
+    //param Long gameId
+    //return: void
+    public void updateScoresOfPlayers(Long gameId) {
+        Game game = gameRepository.findGameByGameId(gameId);
+        int indexOfLastRound = game.getRoundList().size() - 1;
+        Round currentRound = game.getRoundList().get(indexOfLastRound);
+
+        //update the scores of the guesser
+        Guess guess = currentRound.getGuess();
+        updateScoreOfGuesser(guess);
+
+        //update the scores of all hint_givers
+        List<Hint> hintList = currentRound.getHintList();
+        for (Hint h : hintList) {
+            updateScoreOfClue_Giver(h);
+        }
+    }
 
     //method updates the score of the guesser, adds points for valid guess, deducts points for invalid guess and does nothing if skipped
     //param: Guess guess, Long gameId
     //return void
-    public void updateScoreOfGuesser(Guess guess, Long gameId) {
+    private void updateScoreOfGuesser(Guess guess) {
 
         Player guessingPlayer = playerRepository.findByUserToken(guess.getToken());
         int elapsedTime = (int) guessingPlayer.getElapsedTime();
@@ -71,15 +95,13 @@ public class ScoringService {
         }
     }
 
-
-    //TODO diese methode noch an richtiger stelle aufrufen(am besten nachdem die hints validiert wurden) dann für jeden hint in liste aufrufen
     //method updates the score of the a hint giver
     //param: Hint hint, Long gameId
     //return void
-    public void updateScoreOfClue_Giver(Hint hint, Long gameId) {
+    private void updateScoreOfClue_Giver(Hint hint) {
 
-        Player cluegivingPlayer = playerRepository.findByUserToken(hint.getToken());
-        int elapsedTime = (int) cluegivingPlayer.getElapsedTime();
+        Player clueGivingPlayer = playerRepository.findByUserToken(hint.getToken());
+        int elapsedTime = (int) clueGivingPlayer.getElapsedTime();
         int earnedPoints;
 
         //case if hint is unique/valid
@@ -91,9 +113,9 @@ public class ScoringService {
                 earnedPoints = 0;
             }
 
-            int oldScore = cluegivingPlayer.getScore();
-            cluegivingPlayer.setScore(oldScore + earnedPoints);
-            playerRepository.save(cluegivingPlayer);
+            int oldScore = clueGivingPlayer.getScore();
+            clueGivingPlayer.setScore(oldScore + earnedPoints);
+            playerRepository.save(clueGivingPlayer);
 
         }
 
@@ -105,11 +127,11 @@ public class ScoringService {
                 earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1);
             }
 
-            int oldScore = cluegivingPlayer.getScore();
+            int oldScore = clueGivingPlayer.getScore();
             int newScore = oldScore + earnedPoints;
 
-            cluegivingPlayer.setScore(newScore);
-            playerRepository.save(cluegivingPlayer);
+            clueGivingPlayer.setScore(newScore);
+            playerRepository.save(clueGivingPlayer);
         }
     }
 
