@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,7 +40,15 @@ public class RoundControllerTest {
     @MockBean
     private RoundService roundService;
 
+    Game game1;
+
+    @BeforeEach
+    public void setup() {
+        game1 = new Game();
+    }
+
     //get all rounds
+    @Test
     public void givenRounds_whenGetAllRounds_thenReturnJsonArray() throws Exception {
 
         Round testRound = new Round();
@@ -54,6 +63,24 @@ public class RoundControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(testRound.getId())));
     }
+
+    @Test
+    public void givenRound_whenGetRoundsFromGame_thenReturnJsonArray() throws Exception {
+
+        Round testRound = new Round();
+        testRound.setGame(game1);
+
+        List<Round> allRounds = Collections.singletonList(testRound);
+
+        given(roundService.getAllRoundsOfGame(1L)).willReturn(allRounds);
+
+        MockHttpServletRequestBuilder getRequest = get("/games/1/rounds").contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(testRound.getId())));
+    }
+
 
 
     private String asJsonString(final Object object) {
