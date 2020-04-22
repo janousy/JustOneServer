@@ -104,6 +104,7 @@ public class DataLoader implements ApplicationRunner {
         playerRepository.flush();
     }
 
+
     private void createInitialCards() throws IOException {
         int BATCHSIZE = 5;
         FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
