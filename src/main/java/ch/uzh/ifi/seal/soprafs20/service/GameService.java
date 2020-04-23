@@ -176,6 +176,7 @@ public class GameService {
             if (player.getPlayerTermStatus() == PlayerTermStatus.UNKNOWN && player.getStatus() == PlayerStatus.CLUE_GIVER) {
                 Round currentRound = findRoundByGameId(game.getGameId());
                 currentRound.setTerm(null);
+                log.info("term reset");
                 game.setStatus(GameStatus.RECEIVING_TERM);
                 return game;
             }
