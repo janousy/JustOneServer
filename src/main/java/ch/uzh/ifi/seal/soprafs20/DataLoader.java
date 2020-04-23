@@ -104,8 +104,43 @@ public class DataLoader implements ApplicationRunner {
         playerRepository.flush();
     }
 
+
     private void createInitialCards() throws IOException {
+
         int BATCHSIZE = 5;
+        //InputStream inputStream = getClass().getResourceAsStream("cards-EN.txt");
+        InputStream inputStream = DataLoader.class.getClassLoader().getResourceAsStream("cards-EN.txt");
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        StringBuffer stringBuffer = new StringBuffer();
+        String line = bufferedReader.readLine();
+
+        while (line != null) {
+            if (!line.equals("")) {
+                stringBuffer.append(line);
+                stringBuffer.append(System.lineSeparator());
+            }
+            line = bufferedReader.readLine();
+        }
+        String everything = stringBuffer.toString();
+        String[] termsSplitted = everything.split("\n");
+
+        for (int i = BATCHSIZE; i < termsSplitted.length + BATCHSIZE; i = i + BATCHSIZE) {
+            String[] termBatch = Arrays.copyOfRange(termsSplitted, i - BATCHSIZE, i);
+            //log.info(String.format("Init new Card with terms: %s, %s, %s, %s, %s", (Object[]) termBatch));
+            Card card = new Card();
+            card.setWord1(termBatch[0]);
+            card.setWord2(termBatch[1]);
+            card.setWord3(termBatch[2]);
+            card.setWord4(termBatch[3]);
+            card.setWord5(termBatch[4]);
+            cardRepository.save(card);
+        }
+        cardRepository.flush();
+
+
+
+        /*int BATCHSIZE = 5;
         FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
 
         String[] termsSplitted;
@@ -136,5 +171,7 @@ public class DataLoader implements ApplicationRunner {
             cardRepository.save(card);
         }
         cardRepository.flush();
+
+         */
     }
 }
