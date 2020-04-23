@@ -9,16 +9,17 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import ch.uzh.ifi.seal.soprafs20.service.HintValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /*
@@ -36,10 +37,11 @@ public class DataLoader implements ApplicationRunner {
     private CardRepository cardRepository;
 
     @Autowired
-    public DataLoader(@Qualifier("userRepository") UserRepository userRepository,
+    public DataLoader(ResourceLoader resourceLoader, @Qualifier("userRepository") UserRepository userRepository,
                       @Qualifier("gameRepository") GameRepository gameRepository,
                       @Qualifier("playerRepository") PlayerRepository playerRepository,
                       @Qualifier("cardRepository") CardRepository cardRepository) {
+
 
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
@@ -106,10 +108,14 @@ public class DataLoader implements ApplicationRunner {
 
     private void createInitialCards() throws IOException {
         int BATCHSIZE = 5;
-        FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
+        // InputStream fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResourceAsStream("cards-EN.txt")));
+        ClassLoader cl = this.getClass().getClassLoader();
 
         String[] termsSplitted;
-        try (BufferedReader br = new BufferedReader(fileName)) {
+        try {
+            InputStream inputStream = cl.getResourceAsStream("cards-EN.txt");
+            assert inputStream != null;
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -122,6 +128,9 @@ public class DataLoader implements ApplicationRunner {
             }
             String everything = sb.toString();
             termsSplitted = everything.split("\n");
+        }
+        catch (Exception e) {
+            throw new FileNotFoundException();
         }
 
         for (int i = BATCHSIZE; i < termsSplitted.length + BATCHSIZE; i = i + BATCHSIZE) {
