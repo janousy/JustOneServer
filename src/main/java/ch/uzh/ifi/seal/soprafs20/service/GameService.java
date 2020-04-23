@@ -172,16 +172,24 @@ public class GameService {
         //if all players have reporter whether they know the word, check if anybody does not know the term
         //if yes, reset the game state to receiving term to get a new term
         //otherwise set the game state to receiving hints
+        int nrOfUnknowns = 0;
         for (Player player : playersInGame) {
             if (player.getPlayerTermStatus() == PlayerTermStatus.UNKNOWN && player.getStatus() == PlayerStatus.CLUE_GIVER) {
-                Round currentRound = findRoundByGameId(game.getGameId());
-                currentRound.setTerm(null);
-                game.setStatus(GameStatus.RECEIVING_TERM);
-                return game;
+                nrOfUnknowns += 1;
+
             }
         }
-        game.setStatus(GameStatus.RECEIVING_HINTS);
-        return game;
+
+        if (nrOfUnknowns > ((playersInGame.size() - 1) / 2)) {
+            Round currentRound = findRoundByGameId(game.getGameId());
+            currentRound.setTerm(null);
+            game.setStatus(GameStatus.RECEIVING_TERM);
+            return game;
+        }
+        else {
+            game.setStatus(GameStatus.RECEIVING_HINTS);
+            return game;
+        }
     }
 
     //this method finish the preparation of a game to start playing
