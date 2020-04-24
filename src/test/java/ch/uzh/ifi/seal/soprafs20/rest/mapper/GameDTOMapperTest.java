@@ -33,7 +33,7 @@ public class GameDTOMapperTest {
 
     @Test
     public void testGetGame_fromGame_toGameGetDTO_success() {
-        // create User
+        // create Game
         Game game = new Game();
         game.setName("TestGame 1");
         game.setStatus(GameStatus.LOBBY);

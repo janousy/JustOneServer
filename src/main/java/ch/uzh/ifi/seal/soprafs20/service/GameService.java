@@ -116,11 +116,16 @@ public class GameService {
         List<Round> roundList = gameToBeDeleted.getRoundList();
         List<Card> cardList = gameToBeDeleted.getCardList();
 
-        //remove all players from the list
+        /*
         int sizePlayerList = playerList.size();
         for (int i = 0; i < sizePlayerList; i++) {
             gameToBeDeleted.removePlayer(playerList.get(i));
             playerService.removePlayerFromUser(playerList.get(i));
+        }*/
+        //remove all players from the list
+        for (Player p : playerList) {
+            gameToBeDeleted.removePlayer(p);
+            playerService.removePlayerFromUser(p);
         }
 
         for (Round r : roundList) {
