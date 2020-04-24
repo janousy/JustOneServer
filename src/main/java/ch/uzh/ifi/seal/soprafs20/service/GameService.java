@@ -104,7 +104,7 @@ public class GameService {
     public Game deleteGameById(Long gameId) {
         Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
 
-        if (gameToBeDeleted.getStatus() != GameStatus.LOBBY && gameToBeDeleted.getStatus() != GameStatus.FINISHED) {
+        if (gameToBeDeleted.getStatus() != GameStatus.FINISHED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game is not in the correct status to delete");
         }
 
