@@ -89,7 +89,6 @@ public class PlayerService {
         return addedPlayer;
     }
 
-    //TODO löschen player aus playerrepository
     public Player deletePlayer(Long gameId, Long playerId) {
         Game game = gameRepository.findGameByGameId(gameId);
 
