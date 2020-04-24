@@ -9,7 +9,6 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import ch.uzh.ifi.seal.soprafs20.service.HintValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,25 +103,26 @@ public class DataLoader implements ApplicationRunner {
         playerRepository.flush();
     }
 
+
     private void createInitialCards() throws IOException {
+
         int BATCHSIZE = 5;
-        FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
+        //InputStream inputStream = getClass().getResourceAsStream("cards-EN.txt");
+        InputStream inputStream = DataLoader.class.getClassLoader().getResourceAsStream("cards-EN.txt");
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        StringBuffer stringBuffer = new StringBuffer();
+        String line = bufferedReader.readLine();
 
-        String[] termsSplitted;
-        try (BufferedReader br = new BufferedReader(fileName)) {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                if (!line.equals("")) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                }
-                line = br.readLine();
+        while (line != null) {
+            if (!line.equals("")) {
+                stringBuffer.append(line);
+                stringBuffer.append(System.lineSeparator());
             }
-            String everything = sb.toString();
-            termsSplitted = everything.split("\n");
+            line = bufferedReader.readLine();
         }
+        String everything = stringBuffer.toString();
+        String[] termsSplitted = everything.split("\n");
 
         for (int i = BATCHSIZE; i < termsSplitted.length + BATCHSIZE; i = i + BATCHSIZE) {
             String[] termBatch = Arrays.copyOfRange(termsSplitted, i - BATCHSIZE, i);
@@ -136,5 +136,6 @@ public class DataLoader implements ApplicationRunner {
             cardRepository.save(card);
         }
         cardRepository.flush();
+
     }
 }

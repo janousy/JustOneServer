@@ -90,7 +90,7 @@ public class PlayerService {
     }
 
     public Player deletePlayer(Long gameId, Long playerId) {
-        Game game1 = gameRepository.findGameByGameId(gameId);
+        Game game = gameRepository.findGameByGameId(gameId);
 
         Player playerById = playerRepository.findPlayerById(playerId);
 
@@ -102,12 +102,18 @@ public class PlayerService {
             //delete the player from the user
             removePlayerFromUser(playerById);
 
+
             playerRepository.flush();
 
-            //a new host must be set if the deleted player was a host
+            //check if game is empty now and invoke the delete method
+            List<Player> playerList = game.getPlayerList();
+            if (playerList.size() == 0) {
+                game.setStatus(GameStatus.FINISHED);
+                return playerById;
+            }
+
+            //a new host must be set if the deleted player was a host and the game is not empty
             if (playerById.getRole().equals(PlayerRole.HOST)) {
-                Game game = gameRepository.findGameByGameId(gameId);
-                List<Player> playerList = game.getPlayerList();
                 //List<Player> playerList = playerRepository.findByGameGameId(gameId);
                 Random rand = new Random();
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
@@ -239,6 +245,12 @@ public class PlayerService {
 
         //find the game from which a player should be removed and remove it
         Game game = gameRepository.findGameByGameId(GameId);
+
+        //throw an error if the player is not part of the game
+        if (!game.getPlayerList().contains(playerToBeRemoved)) {
+            String baseErrorMessage = "The Player you want to delete is not part of the specified game";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
 
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 0) {

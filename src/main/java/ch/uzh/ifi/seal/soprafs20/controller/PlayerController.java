@@ -1,10 +1,12 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.PlayerDTOMapper;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +21,11 @@ public class PlayerController {
 
 
     private final PlayerService playerService;
+    private final GameService gameService;
 
-    PlayerController(PlayerService playerService) {
+    PlayerController(PlayerService playerService, GameService gameService) {
         this.playerService = playerService;
+        this.gameService = gameService;
     }
 
     //GET all players from every game
@@ -98,7 +102,7 @@ public class PlayerController {
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(updatedPlayer);
     }
 
-    //DELETE delete player TODO: fix, delete repository not working correctly
+    //DELETE delete player
     @DeleteMapping("/games/{gameId}/players/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -106,6 +110,7 @@ public class PlayerController {
                                      @PathVariable Long playerId) {
 
         Player deletedPlayer = playerService.deletePlayer(gameId, playerId);
+        Game deletedGame = gameService.deleteGameById(gameId);
 
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(deletedPlayer);
     }
