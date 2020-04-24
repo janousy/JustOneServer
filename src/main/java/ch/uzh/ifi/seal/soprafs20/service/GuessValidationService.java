@@ -38,7 +38,9 @@ public class GuessValidationService {
 
         //check if the guess and the term match
         termContent = termContent.replaceAll("\r", "");
-        termContent = termContent.replaceAll("\\s", "");
+
+        guessContent = guessContent.replaceAll("\r", "");
+        guessContent = guessContent.replaceAll("\\s", "");
         boolean guessTrue = termContent.equalsIgnoreCase(guessContent);
 
         if (guessTrue) {
