@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.player.PlayerPostDTO;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,8 @@ public class PlayerControllerTest {
 
     @MockBean
     private PlayerService playerService;
+    @MockBean
+    private GameService gameService;
 
     @Test
     public void givenPlayers_whenGetAllPlayers_thenReturnJsonArray() throws Exception {
