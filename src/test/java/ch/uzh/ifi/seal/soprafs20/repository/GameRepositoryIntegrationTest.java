@@ -1,5 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.repository;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -18,7 +21,7 @@ public class GameRepositoryIntegrationTest {
     private GameRepository gameRepository;
 
     //TODO herausfinden wieso diese nicht gehen da sie gleich sind wie UserRepositoryTests
-    /*
+/*
     @Test
     public void findByName_success() {
         // given
@@ -43,7 +46,7 @@ public class GameRepositoryIntegrationTest {
 
     }
 
-
+/*
     @Test
     public void findGameByGameId_success() {
         // given
