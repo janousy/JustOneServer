@@ -28,7 +28,7 @@ public class GuessValidationService {
         this.gameRepository = gameRepository;
     }
 
-    public Guess guessValidation(Guess guess, Long gameId, Round currentRound) {
+    public Guess guessValidationGuessGiven(Guess guess, Long gameId, Round currentRound) {
 
         Game currentGame = gameRepository.findGameByGameId(gameId);
         List<Card> cardList = currentGame.getCardList();
@@ -62,11 +62,22 @@ public class GuessValidationService {
             cardList.remove(0);
             guess.setStatus(ActionTypeStatus.INVALID);
         }
+
         if (!cardList.isEmpty()) {
             cardList.remove(0);
         }
 
         return guess;
+    }
+
+
+    public void guessValidationGuessSkipped(Long gameId) {
+
+        Game game = gameRepository.findGameByGameId(gameId);
+        List<Card> cardList = game.getCardList();
+        if (!cardList.isEmpty()) {
+            cardList.remove(0);
+        }
     }
 
 }
