@@ -147,7 +147,7 @@ public class GameService {
     public Game checkGameReady(Game game) {
 
         //if the playerlist is empty or only one player in it the game cannot start
-        if (game.getPlayerList().isEmpty() || game.getPlayerList().size() == 1) {
+        if (game.getPlayerList().size() < 3) {
             return game;
         }
 
