@@ -255,7 +255,9 @@ public class RoundService {
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
 
-
+        if (inputHint.getMarked() != null) {
+            hintByToken.setStatus(inputHint.getMarked());
+        }
 
         //check if all hints validated
         boolean allHintsReported = true;
