@@ -291,7 +291,7 @@ public class RoundService {
         validateGameState(GameStatus.VALIDATING_TERM, gameId);
 
         PlayerStatus senderStatus = playerRepository.findByUserToken(inputTerm.getToken()).getStatus();
-        if (!senderStatus.equals(PlayerStatus.GUESSER)) {
+        if (senderStatus != PlayerStatus.GUESSER) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
                     "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
         }
@@ -314,7 +314,7 @@ public class RoundService {
         validateGameState(GameStatus.RECEIVING_GUESS, gameId);
 
         PlayerStatus senderStatus = playerRepository.findByUserToken(inputGuess.getToken()).getStatus();
-        if (!senderStatus.equals(PlayerStatus.GUESSER)) {
+        if (senderStatus != PlayerStatus.GUESSER) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
                     "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
         }
@@ -442,7 +442,7 @@ public class RoundService {
     private void validateGameState(GameStatus checkState, Long gameId) {
         String baseErrorMessage = "invalid game status, current: %s, must be: %s";
         GameStatus currentState = gameRepository.findGameByGameId(gameId).getStatus();
-        if (!currentState.equals(checkState)) {
+        if (currentState != checkState) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, currentState, checkState));
         }
     }

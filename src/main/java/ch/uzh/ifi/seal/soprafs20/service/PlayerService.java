@@ -117,7 +117,7 @@ public class PlayerService {
             }
 
             //a new host must be set if the deleted player was a host and the game is not empty
-            if (playerById.getRole().equals(PlayerRole.HOST)) {
+            if (playerById.getRole() == PlayerRole.HOST) {
                 //List<Player> playerList = playerRepository.findByGameGameId(gameId);
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
                 randomPlayer.setRole(PlayerRole.HOST);
@@ -189,7 +189,7 @@ public class PlayerService {
         boolean hasHost = false;
         List<Player> playersInGameById = playerRepository.findByGameGameId(gameId);
         for (Player player : playersInGameById) {
-            if (player.getRole().equals(PlayerRole.HOST)) {
+            if (player.getRole() == PlayerRole.HOST) {
                 hasHost = true;
                 break;
             }
