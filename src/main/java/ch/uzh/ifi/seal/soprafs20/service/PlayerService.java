@@ -65,7 +65,7 @@ public class PlayerService {
 
         //TODO how to check if gameByID exists? cannot ask gameService
 
-        checkIfPlayerExistsByName(newPlayer);
+        //checkIfPlayerExistsByName(newPlayer);
         User userByToken = userRepository.findByToken(newPlayer.getUserToken());
 
         newPlayer.setStatus(PlayerStatus.NOT_READY);
@@ -258,7 +258,7 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }
 
-        if (game.getStatus() != GameStatus.LOBBY) {
+        if (game.getStatus() != GameStatus.LOBBY && game.getStatus() != GameStatus.FINISHED) {
             String baseErrorMessage = "The Game has already started, thus you cannot remove a player anymore";
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }

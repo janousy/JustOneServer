@@ -54,9 +54,7 @@ public class User implements Serializable {
     @Column(nullable = true)
     private int currentGameScore;
 
-    @OneToOne(mappedBy = "user",
-            cascade = CascadeType.ALL
-    )
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Player player;
 
     public void setPlayer(Player player) {

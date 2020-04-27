@@ -116,11 +116,16 @@ public class GameService {
         List<Round> roundList = gameToBeDeleted.getRoundList();
         List<Card> cardList = gameToBeDeleted.getCardList();
 
-        //remove all players from the list
+        /*
         int sizePlayerList = playerList.size();
         for (int i = 0; i < sizePlayerList; i++) {
             gameToBeDeleted.removePlayer(playerList.get(i));
             playerService.removePlayerFromUser(playerList.get(i));
+        }*/
+        //remove all players from the list
+        for (Player p : playerList) {
+            gameToBeDeleted.removePlayer(p);
+            playerService.removePlayerFromUser(p);
         }
 
         for (Round r : roundList) {
@@ -142,7 +147,7 @@ public class GameService {
     public Game checkGameReady(Game game) {
 
         //if the playerlist is empty or only one player in it the game cannot start
-        if (game.getPlayerList().isEmpty() || game.getPlayerList().size() == 1) {
+        if (game.getPlayerList().size() < 3) {
             return game;
         }
 

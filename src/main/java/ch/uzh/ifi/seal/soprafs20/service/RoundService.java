@@ -153,7 +153,7 @@ public class RoundService {
         //stopping the time of the player using the actionType
         scoringService.stopTimeForPlayer(guess);
         //validating the guess
-        Guess validatedGuess = guessValidationService.guessValidation(guess, gameId, currentRound);
+        Guess validatedGuess = guessValidationService.guessValidationGuessGiven(guess, gameId, currentRound);
 
         //updating the score of the guesser and the clueGivers
         scoringService.updateScoresOfPlayers(gameId);
@@ -316,8 +316,11 @@ public class RoundService {
                     "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
         }
         Round currentRound = findRoundByGameId(gameId);
+
         //add a new round to the game
         Game game = gameRepository.findGameByGameId(gameId);
+        guessValidationService.guessValidationGuessSkipped(gameId);
+
         addRound(game);
         return game;
     }

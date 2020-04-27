@@ -35,13 +35,19 @@ public class Card {
     private String word5;
 
     public Card() {
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getWord1() {
         return word1;
     }
-
 
     public void setWord1(String word1) {
         this.word1 = word1;
