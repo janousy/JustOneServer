@@ -95,10 +95,10 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public PlayerGetDTO updatePlayer(@RequestBody PlayerPutDTO playerPutDTO,
-                                     @PathVariable Long gameId,
-                                     @PathVariable Long playerId) {
+                                     @PathVariable Long playerId,
+                                     @PathVariable String gameId) {
         Player playerInput = PlayerDTOMapper.INSTANCE.convertPlayerPutDTOtoEntity(playerPutDTO);
-        Player updatedPlayer = playerService.updatePlayer(playerInput, playerId, gameId);
+        Player updatedPlayer = playerService.updatePlayer(playerInput, playerId);
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(updatedPlayer);
     }
 

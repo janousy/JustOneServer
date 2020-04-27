@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -31,10 +33,12 @@ public class PlayerService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
 
+    private Random rand = SecureRandom.getInstanceStrong();  // SecureRandom is preferred to Random
+
     @Autowired
     public PlayerService(@Qualifier("playerRepository") PlayerRepository playerRepository,
                          @Qualifier("gameRepository") GameRepository gameRepository,
-                         @Qualifier("userRepository") UserRepository userRepository) {
+                         @Qualifier("userRepository") UserRepository userRepository) throws NoSuchAlgorithmException {
 
         this.playerRepository = playerRepository;
         this.gameRepository = gameRepository;
@@ -115,7 +119,6 @@ public class PlayerService {
             //a new host must be set if the deleted player was a host and the game is not empty
             if (playerById.getRole().equals(PlayerRole.HOST)) {
                 //List<Player> playerList = playerRepository.findByGameGameId(gameId);
-                Random rand = new Random();
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
                 randomPlayer.setRole(PlayerRole.HOST);
                 playerRepository.save(randomPlayer);
@@ -130,7 +133,7 @@ public class PlayerService {
     }
 
     /* Update player status */
-    public Player updatePlayer(Player playerInput, Long playerId, Long gameId) {
+    public Player updatePlayer(Player playerInput, Long playerId) {
         Optional<Player> playerById = playerRepository.findById(playerId);
 
         if (playerById.isPresent()) {
