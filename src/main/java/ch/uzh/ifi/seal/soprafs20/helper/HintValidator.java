@@ -1,12 +1,7 @@
-package ch.uzh.ifi.seal.soprafs20.service;
+package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
@@ -22,15 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -38,8 +30,8 @@ import java.net.URL;
 
 @Service
 @Transactional
-public class HintValidationService {
-    private final Logger log = LoggerFactory.getLogger(HintValidationService.class);
+public class HintValidator {
+    private final Logger log = LoggerFactory.getLogger(HintValidator.class);
 
     private final RoundRepository roundRepository;
     private final PlayerRepository playerRepository;
@@ -49,9 +41,9 @@ public class HintValidationService {
 
 
     @Autowired
-    public HintValidationService(@Qualifier("roundRepository") RoundRepository roundRepository,
-                                 @Qualifier("gameRepository") GameRepository gameRepository,
-                                 @Qualifier("playerRepository") PlayerRepository playerRepository) {
+    public HintValidator(@Qualifier("roundRepository") RoundRepository roundRepository,
+                         @Qualifier("gameRepository") GameRepository gameRepository,
+                         @Qualifier("playerRepository") PlayerRepository playerRepository) {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;

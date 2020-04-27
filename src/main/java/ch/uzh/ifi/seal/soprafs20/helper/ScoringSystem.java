@@ -1,4 +1,4 @@
-package ch.uzh.ifi.seal.soprafs20.service;
+package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
@@ -22,16 +22,16 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ScoringService {
+public class ScoringSystem {
 
     private final PlayerRepository playerRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
 
     @Autowired
-    public ScoringService(@Qualifier("playerRepository") PlayerRepository playerRepository,
-                          @Qualifier("userRepository") UserRepository userRepository,
-                          @Qualifier("gameRepository") GameRepository gameRepository) {
+    public ScoringSystem(@Qualifier("playerRepository") PlayerRepository playerRepository,
+                         @Qualifier("userRepository") UserRepository userRepository,
+                         @Qualifier("gameRepository") GameRepository gameRepository) {
         this.playerRepository = playerRepository;
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;

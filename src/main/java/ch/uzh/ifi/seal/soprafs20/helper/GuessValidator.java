@@ -1,4 +1,4 @@
-package ch.uzh.ifi.seal.soprafs20.service;
+package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,14 @@ import java.util.List;
 
 @Service
 @Transactional
-public class GuessValidationService {
+public class GuessValidator {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
 
     @Autowired
-    public GuessValidationService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GuessValidator(@Qualifier("gameRepository") GameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
 

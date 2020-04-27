@@ -6,6 +6,9 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.*;
+import ch.uzh.ifi.seal.soprafs20.helper.GuessValidator;
+import ch.uzh.ifi.seal.soprafs20.helper.HintValidator;
+import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
@@ -29,24 +32,24 @@ public class RoundService {
     private final RoundRepository roundRepository;
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
-    private final HintValidationService hintValidationService;
-    private final GuessValidationService guessValidationService;
-    private final ScoringService scoringService;
+    private final HintValidator hintValidator;
+    private final GuessValidator guessValidator;
+    private final ScoringSystem scoringSystem;
 
 
     @Autowired
     public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository,
                         @Qualifier("gameRepository") GameRepository gameRepository,
                         @Qualifier("playerRepository") PlayerRepository playerRepository,
-                        HintValidationService hintValidationService,
-                        GuessValidationService guessValidationService,
-                        ScoringService scoringService) {
+                        HintValidator hintValidator,
+                        GuessValidator guessValidator,
+                        ScoringSystem scoringSystem) {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
-        this.hintValidationService = hintValidationService;
-        this.guessValidationService = guessValidationService;
-        this.scoringService = scoringService;
+        this.hintValidator = hintValidator;
+        this.guessValidator = guessValidator;
+        this.scoringSystem = scoringSystem;
     }
 
     //get all rounds as a list
@@ -120,13 +123,13 @@ public class RoundService {
         inputHint.setStatus(ActionTypeStatus.UNKNOWN);
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
 
-        Hint validatedHint = hintValidationService.validateWithExernalResources(inputHint, currentRound);
+        Hint validatedHint = hintValidator.validateWithExernalResources(inputHint, currentRound);
         currentRound.addHint(validatedHint);
         roundRepository.save(currentRound);
 
 
         //stopping the time of the player using the actionType
-        scoringService.stopTimeForPlayer(inputHint);
+        scoringSystem.stopTimeForPlayer(inputHint);
 
         Game game = gameRepository.findGameByGameId(gameId);
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
@@ -151,12 +154,12 @@ public class RoundService {
         currentRound.setGuess(guess);
 
         //stopping the time of the player using the actionType
-        scoringService.stopTimeForPlayer(guess);
+        scoringSystem.stopTimeForPlayer(guess);
         //validating the guess
-        Guess validatedGuess = guessValidationService.guessValidationGuessGiven(guess, gameId, currentRound);
+        Guess validatedGuess = guessValidator.guessValidationGuessGiven(guess, gameId, currentRound);
 
         //updating the score of the guesser and the clueGivers
-        scoringService.updateScoresOfPlayers(gameId);
+        scoringSystem.updateScoresOfPlayers(gameId);
 
         //starting a new round
         Game currentGame = gameRepository.findGameByGameId(gameId);
@@ -189,7 +192,7 @@ public class RoundService {
             });
 
             //starting the time for all clue_givers
-            scoringService.startTimeForClue_Givers(gameId);
+            scoringSystem.startTimeForClue_Givers(gameId);
 
             currentRound.setTerm(newTerm);
             return newTerm;
@@ -269,12 +272,12 @@ public class RoundService {
         }
 
         if (allHintsReported) {
-            List<Hint> validatedHints = hintValidationService.validateSimilarityAndMarking(currentHints);
+            List<Hint> validatedHints = hintValidator.validateSimilarityAndMarking(currentHints);
             findRoundByGameId(gameId).setHintList(validatedHints);
             gameById.setStatus(GameStatus.RECEIVING_GUESS);
 
             //start the time for the guessing player as he now can see the hints
-            scoringService.startTimeForGuesser(gameId);
+            scoringSystem.startTimeForGuesser(gameId);
         }
         else {
             gameById.setStatus(GameStatus.VALIDATING_HINTS);
@@ -319,7 +322,7 @@ public class RoundService {
 
         //add a new round to the game
         Game game = gameRepository.findGameByGameId(gameId);
-        guessValidationService.guessValidationGuessSkipped(gameId);
+        guessValidator.guessValidationGuessSkipped(gameId);
 
         addRound(game);
         return game;
@@ -367,7 +370,7 @@ public class RoundService {
         if (cardList.isEmpty()) {
             game.setStatus(GameStatus.FINISHED);
             gameRepository.save(game);
-            scoringService.updateScoresOfUsers(game);
+            scoringSystem.updateScoresOfUsers(game);
 
             return null;
         }
