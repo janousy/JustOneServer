@@ -108,7 +108,7 @@ public class PlayerService {
             //check if game is empty now and invoke the delete method
             List<Player> playerList = game.getPlayerList();
             if (playerList.size() == 0) {
-                game.setStatus(GameStatus.FINISHED);
+                game.setStatus(GameStatus.DELETE);
                 return playerById;
             }
 
@@ -208,7 +208,9 @@ public class PlayerService {
     //return: void
     public void removePlayerFromUser(Player playerToBeRemoved) {
         User userToDeletePlayerFrom = userRepository.findByToken(playerToBeRemoved.getUserToken());
-        userToDeletePlayerFrom.setPlayer(null);
+        if (userToDeletePlayerFrom != null) {
+            userToDeletePlayerFrom.setPlayer(null);
+        }
     }
 
 

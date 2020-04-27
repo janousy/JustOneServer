@@ -47,63 +47,63 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) throws IOException {
-        createInitialGames();
-        createInitialUsers();
+        //createInitialGames();
+        //createInitialUsers();
         createInitialCards();
     }
 
+    /*
+        private void createInitialGames() {
 
-    private void createInitialGames() {
+            for (int i = 1; i <= 3; i++) {
+                Game testGame = new Game();
+                GameStatus gameStatus = GameStatus.LOBBY;
 
-        for (int i = 1; i <= 3; i++) {
-            Game testGame = new Game();
-            GameStatus gameStatus = GameStatus.LOBBY;
-
-            testGame.setName("testGame" + i);
-            testGame.setCorrectCards(0);
-            testGame.setStatus(gameStatus);
-            gameRepository.save(testGame);
+                testGame.setName("testGame" + i);
+                testGame.setCorrectCards(0);
+                testGame.setStatus(gameStatus);
+                gameRepository.save(testGame);
+            }
+            gameRepository.flush();
         }
-        gameRepository.flush();
-    }
 
-    private void createInitialUsers() {
+        private void createInitialUsers() {
 
-        String date = new Date().toString();
-        int numberOfPlayers = 8;
+            String date = new Date().toString();
+            int numberOfPlayers = 8;
 
-        for (int i = 1; i <= numberOfPlayers; i++) {
-            User testUser = new User();
-            Player testPlayer = new Player();
+            for (int i = 1; i <= numberOfPlayers; i++) {
+                User testUser = new User();
+                Player testPlayer = new Player();
 
-            testUser.setToken("abcdef-" + i);
-            testUser.setStatus(UserStatus.ONLINE);
-            testUser.setCreationDate(date);
-            testUser.setUsername("testUser" + i);
-            testUser.setPassword("testPassword");
+                testUser.setToken("abcdef-" + i);
+                testUser.setStatus(UserStatus.ONLINE);
+                testUser.setCreationDate(date);
+                testUser.setUsername("testUser" + i);
+                testUser.setPassword("testPassword");
 
 
-            testPlayer.setName("testPlayer" + i);
-            testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
-            testPlayer.setScore(0);
-            //defining a Host for each game
-            testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
-            testPlayer.setUserToken(testUser.getToken());
-            testPlayer.setElapsedTime(0L);
-            //put two player player into each game, leave third game empty
-            testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
-            testUser.setPlayer(testPlayer);
-            testPlayer.setUser(testUser);
-            testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+                testPlayer.setName("testPlayer" + i);
+                testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
+                testPlayer.setScore(0);
+                //defining a Host for each game
+                testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
+                testPlayer.setUserToken(testUser.getToken());
+                testPlayer.setElapsedTime(0L);
+                //put two player player into each game, leave third game empty
+                testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
+                testUser.setPlayer(testPlayer);
+                testPlayer.setUser(testUser);
+                testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
 
-            userRepository.save(testUser);
-            playerRepository.save(testPlayer);
+                userRepository.save(testUser);
+                playerRepository.save(testPlayer);
+            }
+            userRepository.flush();
+            playerRepository.flush();
         }
-        userRepository.flush();
-        playerRepository.flush();
-    }
 
-
+    */
     private void createInitialCards() throws IOException {
 
         int BATCHSIZE = 5;

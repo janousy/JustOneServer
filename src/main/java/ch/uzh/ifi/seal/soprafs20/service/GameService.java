@@ -104,36 +104,32 @@ public class GameService {
     public Game deleteGameById(Long gameId) {
         Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
 
-        if (gameToBeDeleted.getStatus() == GameStatus.LOBBY) {
+        if (gameToBeDeleted.getStatus() != GameStatus.DELETE) {
             return gameToBeDeleted;
-        }
-
-        if (gameToBeDeleted.getStatus() != GameStatus.FINISHED) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game is not in the correct status to delete");
         }
 
         List<Player> playerList = gameToBeDeleted.getPlayerList();
         List<Round> roundList = gameToBeDeleted.getRoundList();
         List<Card> cardList = gameToBeDeleted.getCardList();
 
-        /*
-        int sizePlayerList = playerList.size();
-        for (int i = 0; i < sizePlayerList; i++) {
-            gameToBeDeleted.removePlayer(playerList.get(i));
-            playerService.removePlayerFromUser(playerList.get(i));
-        }*/
-        //remove all players from the list
-        for (Player p : playerList) {
-            gameToBeDeleted.removePlayer(p);
-            playerService.removePlayerFromUser(p);
+        int sizeOfPlayerList = playerList.size();
+        if (sizeOfPlayerList != 0) {
+            for (int i = 0; i < sizeOfPlayerList; i++) {
+                Player player = playerList.get(0);
+                playerService.removePlayerFromUser(player);
+                gameToBeDeleted.removePlayer(player);
+
+            }
         }
 
-        for (Round r : roundList) {
-            gameToBeDeleted.removeRound(r);
+        int sizeOfRoundList = roundList.size();
+        for (int i = 0; i < sizeOfRoundList; i++) {
+            gameToBeDeleted.removeRound(roundList.get(0));
         }
 
-        for (Card c : cardList) {
-            gameToBeDeleted.removeCard(c);
+        int sizeOfCardList = cardList.size();
+        for (int i = 0; i < sizeOfCardList; i++) {
+            gameToBeDeleted.removeCard(cardList.get(0));
         }
 
         gameRepository.delete(gameToBeDeleted);
@@ -166,7 +162,9 @@ public class GameService {
     }
 
     public Game checkIfPlayersKnowTerm(Game game) {
-        List<Player> playersInGame = playerRepository.findByGameGameId(game.getGameId());
+        List<Player> playersInGame = game.getPlayerList();
+
+        Game test = gameRepository.findGameByGameId(game.getGameId());
 
         //check if all clue givers have reporter whether they know the term
         //if they did not yet, return game
@@ -190,8 +188,10 @@ public class GameService {
         }
 
         if (nrOfUnknowns > ((playersInGame.size() - 1) / 2)) {
-            Round currentRound = findRoundByGameId(game.getGameId());
-            currentRound.setTerm(null);
+            Round currentRound = findRoundByGameId(game);
+            if (currentRound != null) {
+                currentRound.setTerm(null);
+            }
             game.setStatus(GameStatus.RECEIVING_TERM);
             return game;
         }
@@ -204,7 +204,7 @@ public class GameService {
     //this method finish the preparation of a game to start playing
     //param: Game game
     //return: void
-    private void prepareGameToPlay(Game game) {
+    void prepareGameToPlay(Game game) {
         //add cards to game and sets it status
         addCardsToGame(game);
 
@@ -217,7 +217,7 @@ public class GameService {
     //This methods adds 13 unique cards to a game
     //param: Game game
     //return: void
-    private void addCardsToGame(Game game) {
+    void addCardsToGame(Game game) {
 
         List<Card> cardList = cardRepository.findAll();
 
@@ -263,10 +263,9 @@ public class GameService {
 
     }
 
-    private Round findRoundByGameId(Long gameId) {
-        Game game = gameRepository.findGameByGameId(gameId);
+    Round findRoundByGameId(Game game) {
         if (game == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("game by ID %d not found", gameId));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game by ID not found");
         }
 
         //adapt the round nr to the representation in the list

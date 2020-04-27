@@ -22,8 +22,6 @@ public class GameRepositoryIntegrationTest {
     @Autowired
     private GameRepository gameRepository;
 
-    //TODO herausfinden wieso diese nicht gehen da sie gleich sind wie UserRepositoryTests
-
     @Test
     public void findByName_success() {
         // given

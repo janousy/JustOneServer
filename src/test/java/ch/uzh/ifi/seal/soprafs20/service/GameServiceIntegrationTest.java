@@ -1,18 +1,20 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,11 +33,16 @@ public class GameServiceIntegrationTest {
 
     @BeforeEach
     public void setup() {
-        gameRepository.deleteAll();
+        List<Game> gameList = gameRepository.findAll();
+        for (Game game : gameList) {
+            game.setStatus(GameStatus.DELETE);
+            gameRepository.save(game);
+            gameService.deleteGameById(game.getGameId());
+        }
+
     }
 
-    //TODO diese test gehen nicht da mit repository fehler, debuggen nicht möglich
-/*
+
     @Test
     public void createGame_validInputs_success() {
         // given
@@ -45,7 +52,6 @@ public class GameServiceIntegrationTest {
         testGame.setName("testGame 1");
         testGame.setStatus(GameStatus.LOBBY);
         testGame.setCorrectCards(0);
-        testGame.setGameId(2L);
 
         // when
         Game createdGame = gameService.createGame(testGame);
@@ -56,10 +62,8 @@ public class GameServiceIntegrationTest {
         assertEquals(testGame.getCorrectCards(), createdGame.getCorrectCards());
         assertEquals(GameStatus.LOBBY, createdGame.getStatus());
         assertEquals(testGame.getPlayerList(), createdGame.getPlayerList());
-        //assertEquals(testGame.getRoundList(), createdGame.getRoundList());
         assertEquals(testGame.getCardList(), createdGame.getCardList());
     }
-
 
     @Test
     public void createGame_duplicateName_throwsException() {
@@ -69,7 +73,6 @@ public class GameServiceIntegrationTest {
         testGame.setName("testGame 1");
         testGame.setStatus(GameStatus.LOBBY);
         testGame.setCorrectCards(0);
-        testGame.setGameId(1L);
 
         Game createdGame = gameService.createGame(testGame);
 
@@ -83,6 +86,321 @@ public class GameServiceIntegrationTest {
         assertThrows(ResponseStatusException.class, () -> gameService.createGame(testGame2));
     }
 
- */
+    @Test
+    public void getGameById_validInputs_success() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setStatus(GameStatus.LOBBY);
+        testGame.setCorrectCards(0);
+
+        // when
+        Game createdGame = gameService.createGame(testGame);
+        long idOfGame = createdGame.getGameId();
+
+        // when -> any object is being save in the gameRepository
+        Game gameById = gameService.getGameById(idOfGame);
+
+        // then
+        assertEquals(testGame.getGameId(), gameById.getGameId());
+        assertEquals(testGame.getName(), gameById.getName());
+        assertEquals(GameStatus.LOBBY, gameById.getStatus());
+        assertEquals(testGame.getCorrectCards(), gameById.getCorrectCards());
+    }
+
+    @Test
+    public void getGameById_wrongInputs_throwsException() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        // when
+        assertThrows(ResponseStatusException.class, () -> gameService.getGameById(0L));
+    }
+
+    @Test
+    public void deleteGameById_validInput_success() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+        testGame.setStatus(GameStatus.DELETE);
+        gameRepository.save(testGame);
+        long idOfGame = testGame.getGameId();
+
+        Game deletedGame = gameService.deleteGameById(idOfGame);
+
+        // then
+        assertEquals(testGame.getGameId(), deletedGame.getGameId());
+        assertEquals(testGame.getName(), deletedGame.getName());
+        assertEquals(GameStatus.DELETE, deletedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), deletedGame.getCorrectCards());
+    }
+
+    @Test
+    public void deleteGameById_wrongInput_returnsTheSame() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+        long idOfGame = testGame.getGameId();
+
+        Game deletedGame = gameService.deleteGameById(idOfGame);
+
+
+        // then
+        assertEquals(testGame.getGameId(), deletedGame.getGameId());
+        assertEquals(testGame.getName(), deletedGame.getName());
+        assertEquals(GameStatus.LOBBY, deletedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), deletedGame.getCorrectCards());
+    }
+
+    @Test
+    public void checkGameReady_validInput_success() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+
+        //adjusting the testgame in order to let it start
+        Player player1 = new Player();
+        player1.setName("player1");
+        player1.setStatus(PlayerStatus.READY);
+        player1.setScore(0);
+        player1.setRole(PlayerRole.GUEST);
+        player1.setUserToken("player1");
+        player1.setElapsedTime(0L);
+
+        Player player2 = new Player();
+        player2.setName("player2");
+        player2.setStatus(PlayerStatus.READY);
+        player2.setScore(0);
+        player2.setRole(PlayerRole.GUEST);
+        player2.setUserToken("player2");
+        player2.setElapsedTime(0L);
+
+        Player player3 = new Player();
+        player3.setName("player3");
+        player3.setStatus(PlayerStatus.READY);
+        player3.setScore(0);
+        player3.setRole(PlayerRole.GUEST);
+        player3.setUserToken("player3");
+        player3.setElapsedTime(0L);
+
+        testGame.addPlayer(player1);
+        testGame.addPlayer(player2);
+        testGame.addPlayer(player3);
+
+        //call method we want to test
+        Game checkedGame = gameService.checkGameReady(testGame);
+
+
+        // then
+        assertEquals(testGame.getGameId(), checkedGame.getGameId());
+        assertEquals(testGame.getName(), checkedGame.getName());
+        assertEquals(GameStatus.RECEIVING_TERM, checkedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
+
+    }
+
+    @Test
+    public void checkGameReady_playerListSmaller3_returnsTheSame() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+
+        //call method we want to test
+        Game checkedGame = gameService.checkGameReady(testGame);
+
+        // then
+        assertEquals(testGame.getGameId(), checkedGame.getGameId());
+        assertEquals(testGame.getName(), checkedGame.getName());
+        assertEquals(GameStatus.LOBBY, checkedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
+
+    }
+
+    @Test
+    public void checkGameReady_playerListNotReady_returnsTheSame() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+
+        //adjusting the testgame in order to let it start
+        Player player1 = new Player();
+        Player player2 = new Player();
+        Player player3 = new Player();
+        testGame.addPlayer(player1);
+        testGame.addPlayer(player2);
+        testGame.addPlayer(player3);
+
+        //call method we want to test
+        Game checkedGame = gameService.checkGameReady(testGame);
+
+        // then
+        assertEquals(testGame.getGameId(), checkedGame.getGameId());
+        assertEquals(testGame.getName(), checkedGame.getName());
+        assertEquals(GameStatus.LOBBY, checkedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
+
+    }
+
+    @Test
+    public void checkIfPlayersKnowTerm_success() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+
+        //prepare the game
+        Player player1 = new Player();
+        player1.setName("player1");
+        player1.setStatus(PlayerStatus.CLUE_GIVER);
+        player1.setScore(0);
+        player1.setRole(PlayerRole.GUEST);
+        player1.setPlayerTermStatus(PlayerTermStatus.KNOWN);
+        player1.setUserToken("player1");
+        player1.setElapsedTime(0L);
+        testGame.addPlayer(player1);
+
+        Player player2 = new Player();
+        player2.setName("player2");
+        player2.setStatus(PlayerStatus.CLUE_GIVER);
+        player2.setScore(0);
+        player2.setRole(PlayerRole.GUEST);
+        player2.setPlayerTermStatus(PlayerTermStatus.KNOWN);
+        player2.setUserToken("player2");
+        player2.setElapsedTime(0L);
+        testGame.addPlayer(player2);
+
+
+        //call the to test method
+        Game checkedGame = gameService.checkIfPlayersKnowTerm(testGame);
+
+
+        // then
+        assertEquals(testGame.getGameId(), checkedGame.getGameId());
+        assertEquals(testGame.getName(), checkedGame.getName());
+        assertEquals(GameStatus.RECEIVING_HINTS, checkedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
+
+    }
+
+    @Test
+    public void checkIfPlayersKnowTerm_nrOfUnknownsToLarge() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+
+        //prepare the game
+        Player player1 = new Player();
+        player1.setName("player1");
+        player1.setStatus(PlayerStatus.CLUE_GIVER);
+        player1.setScore(0);
+        player1.setRole(PlayerRole.GUEST);
+        player1.setPlayerTermStatus(PlayerTermStatus.KNOWN);
+        player1.setUserToken("player1");
+        player1.setElapsedTime(0L);
+        testGame.addPlayer(player1);
+
+        Player player2 = new Player();
+        player2.setName("player2");
+        player2.setStatus(PlayerStatus.CLUE_GIVER);
+        player2.setScore(0);
+        player2.setRole(PlayerRole.GUEST);
+        player2.setPlayerTermStatus(PlayerTermStatus.UNKNOWN);
+        player2.setUserToken("player2");
+        player2.setElapsedTime(0L);
+        testGame.addPlayer(player2);
+
+        Round round = new Round();
+        round.setId(1L);
+        testGame.addRound(round);
+
+        //call the to be tested method
+        Game checkedGame = gameService.checkIfPlayersKnowTerm(testGame);
+
+
+        // then
+        assertEquals(testGame.getGameId(), checkedGame.getGameId());
+        assertEquals(testGame.getName(), checkedGame.getName());
+        assertEquals(GameStatus.RECEIVING_TERM, checkedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
+    }
+
+    @Test
+    public void checkIfPlayersKnowTerm_NotAllClueGiversHaveReported() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setCorrectCards(0);
+
+        testGame = gameService.createGame(testGame);
+
+        //prepare the game
+        Player player1 = new Player();
+        player1.setName("player1");
+        player1.setStatus(PlayerStatus.CLUE_GIVER);
+        player1.setScore(0);
+        player1.setRole(PlayerRole.GUEST);
+        player1.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+        player1.setUserToken("player1");
+        player1.setElapsedTime(0L);
+        testGame.addPlayer(player1);
+
+        Player player2 = new Player();
+        player2.setName("player2");
+        player2.setStatus(PlayerStatus.CLUE_GIVER);
+        player2.setScore(0);
+        player2.setRole(PlayerRole.GUEST);
+        player2.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+        player2.setUserToken("player2");
+        player2.setElapsedTime(0L);
+        testGame.addPlayer(player2);
+
+        //call the to be tested method
+        Game checkedGame = gameService.checkIfPlayersKnowTerm(testGame);
+
+
+        // then
+        assertEquals(testGame.getGameId(), checkedGame.getGameId());
+        assertEquals(testGame.getName(), checkedGame.getName());
+        assertEquals(GameStatus.LOBBY, checkedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
+    }
 
 }
