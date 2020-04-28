@@ -74,6 +74,16 @@ public class GameService {
             gameById = checkIfPlayersKnowTerm(gameById);
         }
 
+        //TODO remove and make other method addHint synchronized
+        if (gameById.getStatus() == GameStatus.RECEIVING_HINTS) {
+            int nrOfPlayers = gameById.getPlayerList().size();
+            int lastRoundIndex = gameById.getRoundList().size() - 1;
+            int nrOfHints = gameById.getRoundList().get(lastRoundIndex).getHintList().size();
+            if (nrOfHints == nrOfPlayers - 1) {
+                gameById.setStatus(GameStatus.VALIDATING_HINTS);
+            }
+        }
+
         return gameById;
     }
 
