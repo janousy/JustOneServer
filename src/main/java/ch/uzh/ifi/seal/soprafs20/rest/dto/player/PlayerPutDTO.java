@@ -3,7 +3,6 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto.player;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.PlayerTermStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
 
 public class PlayerPutDTO {
     private String name;

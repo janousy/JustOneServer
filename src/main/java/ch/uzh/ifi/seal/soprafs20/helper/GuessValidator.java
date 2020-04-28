@@ -53,14 +53,16 @@ public class GuessValidator {
             guess.setStatus(ActionTypeStatus.VALID);
         }
         else {
-            /*int currentRoundNr = currentGame.getRoundNr();
+            //special behaviour if the card was the last we deduct 1 of the correct cards
+            if (cardList.size() == 1) {
+                int correctCards = currentGame.getCorrectCards();
+                currentGame.setCorrectCards(correctCards - 1);
+            }
 
-            //set one round extra because it was false
-            currentGame.setRoundNr(currentRoundNr + 1);
+            if (!cardList.isEmpty()) {
+                cardList.remove(0);
+            }
 
-             */
-
-            cardList.remove(0);
             guess.setStatus(ActionTypeStatus.INVALID);
         }
 

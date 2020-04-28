@@ -1,9 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
@@ -15,7 +13,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.mapper.RoundDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.GuessDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.HintDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.TermDTOMapper;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -60,7 +60,7 @@ public class ScoringSystem {
     //method updates the score of the guesser, adds points for valid guess, deducts points for invalid guess and does nothing if skipped
     //param: Guess guess, Long gameId
     //return void
-    private void updateScoreOfGuesser(Guess guess) {
+    void updateScoreOfGuesser(Guess guess) {
 
         Player guessingPlayer = playerRepository.findByUserToken(guess.getToken());
         int elapsedTime = (int) guessingPlayer.getElapsedTime();
@@ -98,7 +98,7 @@ public class ScoringSystem {
     //method updates the score of the a hint giver
     //param: Hint hint, Long gameId
     //return void
-    private void updateScoreOfClue_Giver(Hint hint) {
+    void updateScoreOfClue_Giver(Hint hint) {
 
         Player clueGivingPlayer = playerRepository.findByUserToken(hint.getToken());
         int elapsedTime = (int) clueGivingPlayer.getElapsedTime();

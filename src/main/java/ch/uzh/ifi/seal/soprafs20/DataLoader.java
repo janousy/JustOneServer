@@ -64,44 +64,44 @@ public class DataLoader implements ApplicationRunner {
             testGame.setStatus(gameStatus);
             gameRepository.save(testGame);
         }
-        gameRepository.flush();
-    }
-
-    private void createInitialUsers() {
-
-        String date = new Date().toString();
-        int numberOfPlayers = 8;
-
-        for (int i = 1; i <= numberOfPlayers; i++) {
-            User testUser = new User();
-            Player testPlayer = new Player();
-
-            testUser.setToken("abcdef-" + i);
-            testUser.setStatus(UserStatus.ONLINE);
-            testUser.setCreationDate(date);
-            testUser.setUsername("testUser" + i);
-            testUser.setPassword("testPassword");
-
-
-            testPlayer.setName("testPlayer" + i);
-            testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
-            testPlayer.setScore(0);
-            //defining a Host for each game
-            testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
-            testPlayer.setUserToken(testUser.getToken());
-            testPlayer.setElapsedTime(0L);
-            //put two player player into each game, leave third game empty
-            testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
-            testUser.setPlayer(testPlayer);
-            testPlayer.setUser(testUser);
-            testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
-
-            userRepository.save(testUser);
-            playerRepository.save(testPlayer);
+            gameRepository.flush();
         }
-        userRepository.flush();
-        playerRepository.flush();
-    }
+
+        private void createInitialUsers() {
+
+            String date = new Date().toString();
+            int numberOfPlayers = 8;
+
+            for (int i = 1; i <= numberOfPlayers; i++) {
+                User testUser = new User();
+                Player testPlayer = new Player();
+
+                testUser.setToken("abcdef-" + i);
+                testUser.setStatus(UserStatus.ONLINE);
+                testUser.setCreationDate(date);
+                testUser.setUsername("testUser" + i);
+                testUser.setPassword("testPassword");
+
+
+                testPlayer.setName("testPlayer" + i);
+                testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
+                testPlayer.setScore(0);
+                //defining a Host for each game
+                testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
+                testPlayer.setUserToken(testUser.getToken());
+                testPlayer.setElapsedTime(0L);
+                //put two player player into each game, leave third game empty
+                testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
+                testUser.setPlayer(testPlayer);
+                testPlayer.setUser(testUser);
+                testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+
+                userRepository.save(testUser);
+                playerRepository.save(testPlayer);
+            }
+            userRepository.flush();
+            playerRepository.flush();
+        }
 
 
     private void createInitialCards() throws IOException {

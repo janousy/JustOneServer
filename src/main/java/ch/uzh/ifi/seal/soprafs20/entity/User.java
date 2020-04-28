@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -15,7 +14,7 @@ import java.io.Serializable;
  * - nullable = false -> this cannot be left empty
  * - unique = true -> this value must be unqiue across the database -> composes the primary key
  */
-//TODO currentGameScore wird nie benutzt kann also rausgeworfen werden, andere unnötige felder noch rauswerfen
+//TODO unnötige felder noch rauswerfen
 @Entity
 @Table(name = "USER")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -51,11 +50,9 @@ public class User implements Serializable {
     @Column(nullable = true)
     private int overallScore;
 
-    @Column(nullable = true)
-    private int currentGameScore;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Player player;
+
 
     public void setPlayer(Player player) {
         if (player == null) {
@@ -68,7 +65,6 @@ public class User implements Serializable {
         }
         this.player = player;
     }
-
 
     public Player getPlayer() {
         return player;
@@ -146,13 +142,4 @@ public class User implements Serializable {
     public void setOverallScore(int overallScore) {
         this.overallScore = overallScore;
     }
-
-    public int getCurrentGameScore() {
-        return currentGameScore;
-    }
-
-    public void setCurrentGameScore(int currentGameScore) {
-        this.currentGameScore = currentGameScore;
-    }
-
 }

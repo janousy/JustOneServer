@@ -106,7 +106,6 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-
     public Hint addHintToRound(Hint inputHint, Long gameId) {
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -328,43 +327,11 @@ public class RoundService {
         return game;
     }
 
-    //TODO wenn sich die neue methode bewährt kann die auskommentierte noch gelöscht werden
     //method adds a round to a game
     //param: Game game
     //return: Game game
     public Game addRound(Game game) {
-/*
-        int roundNr = game.getRoundNr();
-        //if it was the last round we set the gameStatus to finished
-        if (roundNr == CONSTANTS.NUMBER_OF_ROUNDS || roundNr > CONSTANTS.NUMBER_OF_ROUNDS) {
-            game.setStatus(GameStatus.FINISHED);
-            gameRepository.save(game);
-            scoringService.updateScoresOfUsers(game);
 
-            return null;
-        }
-
-        //adding a new round to the game
-        Card card = game.getCardList().get(roundNr);
-
-        //adding the new round to the game
-        Round newRound = new Round();
-        newRound.setCard(card);
-        game.addRound(newRound);
-        newRound = roundRepository.save(newRound);
-
-        game.setStatus(GameStatus.RECEIVING_TERM);
-
-        //increasing the Round number of the game
-        game.setRoundNr(roundNr + 1);
-        gameRepository.save(game);
-
-        //setting the playerStatus correctly
-        settingPlayerStatus(game);
-
-        return game;
-
- */
         List<Card> cardList = game.getCardList();
         //if it was the last round we set the gameStatus to finished
         if (cardList.isEmpty()) {

@@ -1,7 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.player;
 
-import ch.uzh.ifi.seal.soprafs20.constant.PlayerRole;
-
 public class
 PlayerPostDTO {
     private String name;
