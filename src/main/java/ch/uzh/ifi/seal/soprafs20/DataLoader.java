@@ -47,23 +47,23 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) throws IOException {
-        //createInitialGames();
-        //createInitialUsers();
+        createInitialGames();
+        createInitialUsers();
         createInitialCards();
     }
 
-    /*
-        private void createInitialGames() {
 
-            for (int i = 1; i <= 3; i++) {
-                Game testGame = new Game();
-                GameStatus gameStatus = GameStatus.LOBBY;
+    private void createInitialGames() {
 
-                testGame.setName("testGame" + i);
-                testGame.setCorrectCards(0);
-                testGame.setStatus(gameStatus);
-                gameRepository.save(testGame);
-            }
+        for (int i = 1; i <= 3; i++) {
+            Game testGame = new Game();
+            GameStatus gameStatus = GameStatus.LOBBY;
+
+            testGame.setName("testGame" + i);
+            testGame.setCorrectCards(0);
+            testGame.setStatus(gameStatus);
+            gameRepository.save(testGame);
+        }
             gameRepository.flush();
         }
 
@@ -103,7 +103,7 @@ public class DataLoader implements ApplicationRunner {
             playerRepository.flush();
         }
 
-    */
+
     private void createInitialCards() throws IOException {
 
         int BATCHSIZE = 5;
