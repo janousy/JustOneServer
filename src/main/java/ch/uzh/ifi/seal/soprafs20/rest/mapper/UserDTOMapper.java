@@ -31,7 +31,6 @@ public interface UserDTOMapper {
     @Mapping(source = "status", target = "status")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "overallScore", target = "overallScore")
-    @Mapping(source = "currentGameScore", target = "currentGameScore")
     UserGetDTO convertEntityToUserGetDTO(User user);
 
     @Mapping(source = "username", target = "username")

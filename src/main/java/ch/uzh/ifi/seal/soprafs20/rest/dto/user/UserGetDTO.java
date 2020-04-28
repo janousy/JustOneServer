@@ -12,7 +12,6 @@ public class UserGetDTO {
     private String birthDate;
     private String token;
     private int overallScore;
-    private int currentGameScore;
 
     public Long getId() {
         return id;
@@ -76,14 +75,6 @@ public class UserGetDTO {
 
     public void setOverallScore(int overallScore) {
         this.overallScore = overallScore;
-    }
-
-    public int getCurrentGameScore() {
-        return currentGameScore;
-    }
-
-    public void setCurrentGameScore(int currentGameScore) {
-        this.currentGameScore = currentGameScore;
     }
 
 }

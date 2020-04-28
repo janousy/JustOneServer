@@ -106,7 +106,6 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-
     public Hint addHintToRound(Hint inputHint, Long gameId) {
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -328,7 +327,6 @@ public class RoundService {
         return game;
     }
 
-    //TODO wenn sich die neue methode bewährt kann die auskommentierte noch gelöscht werden
     //method adds a round to a game
     //param: Game game
     //return: Game game

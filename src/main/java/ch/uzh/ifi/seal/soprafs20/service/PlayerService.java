@@ -63,8 +63,6 @@ public class PlayerService {
 
     public Player createPlayer(Player newPlayer, Long gameId) {
 
-        //TODO how to check if gameByID exists? cannot ask gameService
-
         //checkIfPlayerExistsByName(newPlayer);
         User userByToken = userRepository.findByToken(newPlayer.getUserToken());
 
@@ -220,6 +218,11 @@ public class PlayerService {
     private Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
         Game game = gameRepository.findGameByGameId(gameId);
 
+        if (game == null) {
+            String baseErrorMessage = "The game you want to add a player does not exist";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 7) {
             String baseErrorMessage = "The lobby has already the maximum amount of players(7)";
@@ -247,6 +250,11 @@ public class PlayerService {
 
         //find the game from which a player should be removed and remove it
         Game game = gameRepository.findGameByGameId(GameId);
+
+        if (game == null) {
+            String baseErrorMessage = "The game you want to add a player does not exist";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
 
         //throw an error if the player is not part of the game
         if (!game.getPlayerList().contains(playerToBeRemoved)) {
