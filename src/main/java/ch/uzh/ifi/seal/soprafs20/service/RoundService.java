@@ -127,7 +127,6 @@ public class RoundService {
         currentRound.addHint(validatedHint);
         roundRepository.save(currentRound);
 
-
         //stopping the time of the player using the actionType
         scoringSystem.stopTimeForPlayer(inputHint);
 

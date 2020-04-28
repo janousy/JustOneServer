@@ -138,7 +138,7 @@ public class RoundController {
     @PutMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) throws IOException {
+    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) {
         Hint inputHint = HintDTOMapper.INSTANCE.convertHintPutDTOToEntity(hintPutDTO);
         Hint updatedHint = roundService.updateHint(inputHint, gameId);
         return HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(updatedHint);
