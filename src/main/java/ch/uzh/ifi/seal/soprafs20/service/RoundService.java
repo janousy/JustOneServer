@@ -284,30 +284,6 @@ public class RoundService {
 
     }
 
-    public Term deleteCurrentTermOfRound(Term inputTerm, Long gameId) {
-
-        validateGameState(GameStatus.VALIDATING_TERM, gameId);
-
-        PlayerStatus senderStatus = playerRepository.findByUserToken(inputTerm.getToken()).getStatus();
-        if (senderStatus != PlayerStatus.GUESSER) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
-                    "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
-        }
-
-        Round currentRound = findRoundByGameId(gameId);
-        Term deletedTerm = currentRound.getTerm();
-        if (deletedTerm == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no term set yet");
-        }
-
-        //setting the gamestatus back to receiving term
-        Game game = gameRepository.findGameByGameId(gameId);
-        currentRound.setTerm(null);
-        game.setStatus(GameStatus.RECEIVING_TERM);
-
-        return deletedTerm;
-    }
-
     public Game skipTermToBeGuessed(Guess inputGuess, Long gameId) {
         validateGameState(GameStatus.RECEIVING_GUESS, gameId);
 
