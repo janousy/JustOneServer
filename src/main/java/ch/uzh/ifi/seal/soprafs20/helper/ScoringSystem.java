@@ -48,19 +48,19 @@ public class ScoringSystem {
 
         //update the scores of the guesser
         Guess guess = currentRound.getGuess();
-        Player guesser = updateScoreOfGuesser(guess);
+        updateScoreOfGuesser(guess);
 
         //update the scores of all hint_givers
         List<Hint> hintList = currentRound.getHintList();
         for (Hint h : hintList) {
-            Player ClueGiver = updateScoreOfClue_Giver(h);
+            updateScoreOfClue_Giver(h);
         }
     }
 
     //method updates the score of the guesser, adds points for valid guess, deducts points for invalid guess and does nothing if skipped
     //param: Guess guess, Long gameId
     //return void
-    Player updateScoreOfGuesser(Guess guess) {
+    void updateScoreOfGuesser(Guess guess) {
 
         Player guessingPlayer = playerRepository.findByUserToken(guess.getToken());
         int elapsedTime = (int) guessingPlayer.getElapsedTime();
@@ -93,14 +93,12 @@ public class ScoringSystem {
             guessingPlayer.setScore(newScore);
             playerRepository.save(guessingPlayer);
         }
-
-        return guessingPlayer;
     }
 
     //method updates the score of the a hint giver
     //param: Hint hint, Long gameId
     //return void
-    Player updateScoreOfClue_Giver(Hint hint) {
+    void updateScoreOfClue_Giver(Hint hint) {
 
         Player clueGivingPlayer = playerRepository.findByUserToken(hint.getToken());
         int elapsedTime = (int) clueGivingPlayer.getElapsedTime();
@@ -135,7 +133,6 @@ public class ScoringSystem {
             clueGivingPlayer.setScore(newScore);
             playerRepository.save(clueGivingPlayer);
         }
-        return clueGivingPlayer;
     }
 
     //method updates the scores of all users at the end of a game

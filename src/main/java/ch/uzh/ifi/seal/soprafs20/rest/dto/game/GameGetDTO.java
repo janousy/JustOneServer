@@ -2,9 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto.game;
 
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
 
-import java.util.List;
 
 public class GameGetDTO {
 
@@ -15,8 +13,6 @@ public class GameGetDTO {
     private GameStatus status;
 
     private int correctCards;
-
-    //private int roundNr;
 
 
     public Long getGameId() {
@@ -50,14 +46,5 @@ public class GameGetDTO {
     public void setCorrectCards(int correctCards) {
         this.correctCards = correctCards;
     }
-/*
-    public int getRoundNr() {
-        return roundNr;
-    }
-
-    public void setRoundNr(int roundNr) {
-        this.roundNr = roundNr;
-    }
- */
 
 }

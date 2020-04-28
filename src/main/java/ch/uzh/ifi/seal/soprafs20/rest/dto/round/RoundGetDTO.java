@@ -1,6 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto.round;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
