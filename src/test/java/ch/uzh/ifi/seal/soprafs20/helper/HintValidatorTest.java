@@ -6,9 +6,13 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +62,7 @@ public class HintValidatorTest {
         assertEquals(testHint2.getMarked(), validatedHints.get(1).getStatus());
     }
 
-    @Test
+
     public void givenListOfHints_validateSimilarity() {
         ArrayList<Integer> similarities1 = new ArrayList<>();
         similarities1.add(2); //hint1 is similar to hint3
@@ -72,16 +76,14 @@ public class HintValidatorTest {
         hintList.add(testHint2);
         hintList.add(testHint3);
 
-        List<Hint> validatedHints = hintValidator.validateSimilarityAndMarking(hintList);
-
-        assertEquals(hintList.size(), validatedHints.size());
-        assertEquals(ActionTypeStatus.INVALID, validatedHints.get(0).getStatus());
-        assertEquals(ActionTypeStatus.VALID, validatedHints.get(1).getStatus());
-        assertEquals(ActionTypeStatus.INVALID, validatedHints.get(2).getStatus());
     }
 
-    @Test
-    public void givenHint_returnWordLemma_success() {
 
+    public void givenHint_returnWordLemma_success() {
+        inputHint1.setContent("better");
+        testTerm.setContent("good");
+        Hint outputHint = hintValidator.validateWordStem(inputHint1, testTerm.getContent());
+
+        assertEquals(inputHint1.getContent(), outputHint.getContent());
     }
 }
