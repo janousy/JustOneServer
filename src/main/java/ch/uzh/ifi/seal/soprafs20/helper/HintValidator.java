@@ -47,8 +47,7 @@ public class HintValidator {
     public Hint validateWithExernalResources(Hint inputHint, Round currentRound) {
         Term term = currentRound.getTerm();
         String stemmedTerm = requestTermStem(term);
-        Hint hint = validateWordStem(inputHint, stemmedTerm);
-        return hint;
+        return validateWordStem(inputHint, stemmedTerm);
     }
 
     public Hint validateWordStem(Hint inputHint, String term) {

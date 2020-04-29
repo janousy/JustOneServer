@@ -160,7 +160,6 @@ public class PlayerControllerTest {
     @Test
     public void deletePlayer_validInput_playerDeleted() throws Exception {
         Player testPlayer = new Player();
-        testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
         testPlayer.setStatus(PlayerStatus.NOT_READY);
