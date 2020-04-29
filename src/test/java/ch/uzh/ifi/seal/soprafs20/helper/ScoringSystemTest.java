@@ -71,7 +71,7 @@ public class ScoringSystemTest {
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS - (10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int scoreAdjustment = (int) (CONSTANTS.MAX_POINTS_PER_ROUND_GUESS - (10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND));
         int expectedScore = oldScore + scoreAdjustment;
 
         //invoke the testMethod
@@ -97,7 +97,7 @@ public class ScoringSystemTest {
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = -(10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int scoreAdjustment = (int) -(10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
         int expectedScore = oldScore + scoreAdjustment;
 
         //invoke the testMethod
@@ -121,7 +121,7 @@ public class ScoringSystemTest {
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = -(int) 10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+        int scoreAdjustment = (int) (-10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
         int expectedScore = oldScore + scoreAdjustment;
 
 
@@ -147,7 +147,7 @@ public class ScoringSystemTest {
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) 10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+        int scoreAdjustment = (int) (CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) 10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
         int expectedScore = oldScore + scoreAdjustment;
 
         //invoke the testMethod
