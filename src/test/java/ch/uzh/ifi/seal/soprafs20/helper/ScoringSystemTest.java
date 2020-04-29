@@ -200,7 +200,7 @@ public class ScoringSystemTest {
         //then
         Mockito.verify(userRepository, Mockito.times(1)).findByToken(Mockito.any());
 
-        assertEquals(0, testUser.getOverallScore());
+        assertEquals(-10, testUser.getOverallScore());
     }
 
     @Test
