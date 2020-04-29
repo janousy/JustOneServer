@@ -147,7 +147,7 @@ public class ScoringSystemTest {
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = (int) (CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) 10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int scoreAdjustment = (int) (CONSTANTS.MAX_POINTS_PER_ROUND_HINT - 10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
         int expectedScore = oldScore + scoreAdjustment;
 
         //invoke the testMethod
@@ -200,7 +200,7 @@ public class ScoringSystemTest {
         //then
         Mockito.verify(userRepository, Mockito.times(1)).findByToken(Mockito.any());
 
-        assertEquals(0, testUser.getOverallScore());
+        assertEquals(-10, testUser.getOverallScore());
     }
 
     @Test
