@@ -47,7 +47,6 @@ public class PlayerControllerTest {
     public void givenPlayers_whenGetAllPlayers_thenReturnJsonArray() throws Exception {
 
         Player testPlayer = new Player();
-        testPlayer = new Player();
         testPlayer.setName("testPlayer");
         testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
@@ -75,7 +74,6 @@ public class PlayerControllerTest {
     public void givenPlayers_whenGetAllPlayerFromGame() throws Exception {
 
         Player testPlayer = new Player();
-        testPlayer = new Player();
         testPlayer.setName("testPlayer");
         testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
@@ -104,7 +102,6 @@ public class PlayerControllerTest {
     public void givenPlayers_whenGetPlayerFromGame_thenReturnJsonArray() throws Exception {
 
         Player testPlayer = new Player();
-        testPlayer = new Player();
         testPlayer.setName("testPlayer");
         testPlayer.setStatus(PlayerStatus.NOT_READY);
         testPlayer.setScore(0);
@@ -128,7 +125,6 @@ public class PlayerControllerTest {
     @Test
     public void createPlayer_validInput_playerCreated() throws Exception {
         Player testPlayer = new Player();
-        testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
         testPlayer.setStatus(PlayerStatus.NOT_READY);
