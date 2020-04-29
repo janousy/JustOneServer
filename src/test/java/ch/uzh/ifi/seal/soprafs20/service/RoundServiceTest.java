@@ -151,7 +151,8 @@ public class RoundServiceTest {
         validatedGuess.setStatus(ActionTypeStatus.VALID);
 
         Mockito.doAnswer((invocation -> null)).when(scoringSystem).stopTimeForPlayer(Mockito.any());
-        Mockito.when(guessValidator.guessValidationGuessGiven(inputGuess, game1.getGameId(), round1)).thenReturn(validatedGuess);
+        Mockito.when(guessValidator.guessValidationGuessGiven(inputGuess,
+                game1.getGameId(), round1)).thenReturn(validatedGuess);
         Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(player1);
         Mockito.when(gameRepository.findGameByGameId(Mockito.anyLong())).thenReturn(game1);
 

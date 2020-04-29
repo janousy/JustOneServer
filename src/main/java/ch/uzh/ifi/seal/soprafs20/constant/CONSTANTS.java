@@ -9,6 +9,8 @@ public final class CONSTANTS {
     //constants for the scoring system
     public static final int MAX_POINTS_PER_ROUND_GUESS = 30;
     public static final int MAX_POINTS_PER_ROUND_HINT = 20;
-    public static final int POINT_DEDUCTION_PER_SECOND = 1;
+    public static final int MAX_POINTS_PER_ROUND_GUESS_DEDUCTION = 15;
+    public static final int MAX_POINTS_PER_ROUND_HINT_DEDUCTION = 10;
+    public static final double POINT_DEDUCTION_PER_SECOND = 0.5;
 
 }
