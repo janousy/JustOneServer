@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +32,19 @@ public class Card {
     private String word5;
 
     public Card() {
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getWord1() {
         return word1;
     }
-
 
     public void setWord1(String word1) {
         this.word1 = word1;

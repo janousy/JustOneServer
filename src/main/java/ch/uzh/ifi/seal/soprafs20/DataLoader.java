@@ -9,7 +9,6 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import ch.uzh.ifi.seal.soprafs20.service.HintValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,44 +64,44 @@ public class DataLoader implements ApplicationRunner {
             testGame.setStatus(gameStatus);
             gameRepository.save(testGame);
         }
-        gameRepository.flush();
-    }
-
-    private void createInitialUsers() {
-
-        String date = new Date().toString();
-        int numberOfPlayers = 8;
-
-        for (int i = 1; i <= numberOfPlayers; i++) {
-            User testUser = new User();
-            Player testPlayer = new Player();
-
-            testUser.setToken("abcdef-" + i);
-            testUser.setStatus(UserStatus.ONLINE);
-            testUser.setCreationDate(date);
-            testUser.setUsername("testUser" + i);
-            testUser.setPassword("testPassword");
-
-
-            testPlayer.setName("testPlayer" + i);
-            testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
-            testPlayer.setScore(0);
-            //defining a Host for each game
-            testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
-            testPlayer.setUserToken(testUser.getToken());
-            testPlayer.setElapsedTime(0L);
-            //put two player player into each game, leave third game empty
-            testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
-            testUser.setPlayer(testPlayer);
-            testPlayer.setUser(testUser);
-            testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
-
-            userRepository.save(testUser);
-            playerRepository.save(testPlayer);
+            gameRepository.flush();
         }
-        userRepository.flush();
-        playerRepository.flush();
-    }
+
+        private void createInitialUsers() {
+
+            String date = new Date().toString();
+            int numberOfPlayers = 8;
+
+            for (int i = 1; i <= numberOfPlayers; i++) {
+                User testUser = new User();
+                Player testPlayer = new Player();
+
+                testUser.setToken("abcdef-" + i);
+                testUser.setStatus(UserStatus.ONLINE);
+                testUser.setCreationDate(date);
+                testUser.setUsername("testUser" + i);
+                testUser.setPassword("testPassword");
+
+
+                testPlayer.setName("testPlayer" + i);
+                testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
+                testPlayer.setScore(0);
+                //defining a Host for each game
+                testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
+                testPlayer.setUserToken(testUser.getToken());
+                testPlayer.setElapsedTime(0L);
+                //put two player player into each game, leave third game empty
+                testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
+                testUser.setPlayer(testPlayer);
+                testPlayer.setUser(testUser);
+                testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+
+                userRepository.save(testUser);
+                playerRepository.save(testPlayer);
+            }
+            userRepository.flush();
+            playerRepository.flush();
+        }
 
 
     private void createInitialCards() throws IOException {
@@ -138,40 +137,5 @@ public class DataLoader implements ApplicationRunner {
         }
         cardRepository.flush();
 
-
-
-        /*int BATCHSIZE = 5;
-        FileReader fileName = new FileReader(Objects.requireNonNull(DataLoader.class.getClassLoader().getResource("cards-EN.txt")).getPath());
-
-        String[] termsSplitted;
-        try (BufferedReader br = new BufferedReader(fileName)) {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                if (!line.equals("")) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                }
-                line = br.readLine();
-            }
-            String everything = sb.toString();
-            termsSplitted = everything.split("\n");
-        }
-
-        for (int i = BATCHSIZE; i < termsSplitted.length + BATCHSIZE; i = i + BATCHSIZE) {
-            String[] termBatch = Arrays.copyOfRange(termsSplitted, i - BATCHSIZE, i);
-            //log.info(String.format("Init new Card with terms: %s, %s, %s, %s, %s", (Object[]) termBatch));
-            Card card = new Card();
-            card.setWord1(termBatch[0]);
-            card.setWord2(termBatch[1]);
-            card.setWord3(termBatch[2]);
-            card.setWord4(termBatch[3]);
-            card.setWord5(termBatch[4]);
-            cardRepository.save(card);
-        }
-        cardRepository.flush();
-
-         */
     }
 }

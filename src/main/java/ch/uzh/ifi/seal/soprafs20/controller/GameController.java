@@ -60,7 +60,6 @@ public class GameController {
 
         Game createdGame = gameService.createGame(newGameInput);
 
-        //TODO der status welcher zurückgegeben wird passt nicht mit dem was gesendet werden sollte überein
         return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
     }
 

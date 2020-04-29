@@ -74,6 +74,16 @@ public class GameService {
             gameById = checkIfPlayersKnowTerm(gameById);
         }
 
+        //TODO remove and make other method addHint synchronized
+        if (gameById.getStatus() == GameStatus.RECEIVING_HINTS) {
+            int nrOfPlayers = gameById.getPlayerList().size();
+            int lastRoundIndex = gameById.getRoundList().size() - 1;
+            int nrOfHints = gameById.getRoundList().get(lastRoundIndex).getHintList().size();
+            if (nrOfHints == nrOfPlayers - 1) {
+                gameById.setStatus(GameStatus.VALIDATING_HINTS);
+            }
+        }
+
         return gameById;
     }
 
@@ -104,27 +114,32 @@ public class GameService {
     public Game deleteGameById(Long gameId) {
         Game gameToBeDeleted = gameRepository.findGameByGameId(gameId);
 
-        if (gameToBeDeleted.getStatus() != GameStatus.LOBBY && gameToBeDeleted.getStatus() != GameStatus.FINISHED) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game is not in the correct status to delete");
+        if (gameToBeDeleted.getStatus() != GameStatus.DELETE) {
+            return gameToBeDeleted;
         }
 
         List<Player> playerList = gameToBeDeleted.getPlayerList();
         List<Round> roundList = gameToBeDeleted.getRoundList();
         List<Card> cardList = gameToBeDeleted.getCardList();
 
-        //remove all players from the list
-        int sizePlayerList = playerList.size();
-        for (int i = 0; i < sizePlayerList; i++) {
-            gameToBeDeleted.removePlayer(playerList.get(i));
-            playerService.removePlayerFromUser(playerList.get(i));
+        int sizeOfPlayerList = playerList.size();
+        if (sizeOfPlayerList != 0) {
+            for (int i = 0; i < sizeOfPlayerList; i++) {
+                Player player = playerList.get(0);
+                playerService.removePlayerFromUser(player);
+                gameToBeDeleted.removePlayer(player);
+
+            }
         }
 
-        for (Round r : roundList) {
-            gameToBeDeleted.removeRound(r);
+        int sizeOfRoundList = roundList.size();
+        for (int i = 0; i < sizeOfRoundList; i++) {
+            gameToBeDeleted.removeRound(roundList.get(0));
         }
 
-        for (Card c : cardList) {
-            gameToBeDeleted.removeCard(c);
+        int sizeOfCardList = cardList.size();
+        for (int i = 0; i < sizeOfCardList; i++) {
+            gameToBeDeleted.removeCard(cardList.get(0));
         }
 
         gameRepository.delete(gameToBeDeleted);
@@ -138,7 +153,7 @@ public class GameService {
     public Game checkGameReady(Game game) {
 
         //if the playerlist is empty or only one player in it the game cannot start
-        if (game.getPlayerList().isEmpty() || game.getPlayerList().size() == 1) {
+        if (game.getPlayerList().size() < 3) {
             return game;
         }
 
@@ -157,7 +172,9 @@ public class GameService {
     }
 
     public Game checkIfPlayersKnowTerm(Game game) {
-        List<Player> playersInGame = playerRepository.findByGameGameId(game.getGameId());
+        List<Player> playersInGame = game.getPlayerList();
+
+        Game test = gameRepository.findGameByGameId(game.getGameId());
 
         //check if all clue givers have reporter whether they know the term
         //if they did not yet, return game
@@ -172,23 +189,32 @@ public class GameService {
         //if all players have reporter whether they know the word, check if anybody does not know the term
         //if yes, reset the game state to receiving term to get a new term
         //otherwise set the game state to receiving hints
+        int nrOfUnknowns = 0;
         for (Player player : playersInGame) {
             if (player.getPlayerTermStatus() == PlayerTermStatus.UNKNOWN && player.getStatus() == PlayerStatus.CLUE_GIVER) {
-                Round currentRound = findRoundByGameId(game.getGameId());
-                currentRound.setTerm(null);
-                log.info("term reset");
-                game.setStatus(GameStatus.RECEIVING_TERM);
-                return game;
+                nrOfUnknowns += 1;
+
             }
         }
-        game.setStatus(GameStatus.RECEIVING_HINTS);
-        return game;
+
+        if (nrOfUnknowns > ((playersInGame.size() - 1) / 2)) {
+            Round currentRound = findRoundByGameId(game);
+            if (currentRound != null) {
+                currentRound.setTerm(null);
+            }
+            game.setStatus(GameStatus.RECEIVING_TERM);
+            return game;
+        }
+        else {
+            game.setStatus(GameStatus.RECEIVING_HINTS);
+            return game;
+        }
     }
 
     //this method finish the preparation of a game to start playing
     //param: Game game
     //return: void
-    private void prepareGameToPlay(Game game) {
+    void prepareGameToPlay(Game game) {
         //add cards to game and sets it status
         addCardsToGame(game);
 
@@ -201,7 +227,7 @@ public class GameService {
     //This methods adds 13 unique cards to a game
     //param: Game game
     //return: void
-    private void addCardsToGame(Game game) {
+    void addCardsToGame(Game game) {
 
         List<Card> cardList = cardRepository.findAll();
 
@@ -247,10 +273,9 @@ public class GameService {
 
     }
 
-    private Round findRoundByGameId(Long gameId) {
-        Game game = gameRepository.findGameByGameId(gameId);
+    Round findRoundByGameId(Game game) {
         if (game == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("game by ID %d not found", gameId));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game by ID not found");
         }
 
         //adapt the round nr to the representation in the list

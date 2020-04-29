@@ -6,15 +6,16 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.*;
+import ch.uzh.ifi.seal.soprafs20.helper.GuessValidator;
+import ch.uzh.ifi.seal.soprafs20.helper.HintValidator;
+import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintPostDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.codec.Hints;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,24 +32,24 @@ public class RoundService {
     private final RoundRepository roundRepository;
     private final PlayerRepository playerRepository;
     private final GameRepository gameRepository;
-    private final HintValidationService hintValidationService;
-    private final GuessValidationService guessValidationService;
-    private final ScoringService scoringService;
+    private final HintValidator hintValidator;
+    private final GuessValidator guessValidator;
+    private final ScoringSystem scoringSystem;
 
 
     @Autowired
     public RoundService(@Qualifier("roundRepository") RoundRepository roundRepository,
                         @Qualifier("gameRepository") GameRepository gameRepository,
                         @Qualifier("playerRepository") PlayerRepository playerRepository,
-                        HintValidationService hintValidationService,
-                        GuessValidationService guessValidationService,
-                        ScoringService scoringService) {
+                        HintValidator hintValidator,
+                        GuessValidator guessValidator,
+                        ScoringSystem scoringSystem) {
         this.roundRepository = roundRepository;
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
-        this.hintValidationService = hintValidationService;
-        this.guessValidationService = guessValidationService;
-        this.scoringService = scoringService;
+        this.hintValidator = hintValidator;
+        this.guessValidator = guessValidator;
+        this.scoringSystem = scoringSystem;
     }
 
     //get all rounds as a list
@@ -105,7 +106,6 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-
     public Hint addHintToRound(Hint inputHint, Long gameId) {
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -122,13 +122,12 @@ public class RoundService {
         inputHint.setStatus(ActionTypeStatus.UNKNOWN);
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
 
-        Hint validatedHint = hintValidationService.validateWithExernalResources(inputHint, currentRound);
+        Hint validatedHint = hintValidator.validateWithExernalResources(inputHint, currentRound);
         currentRound.addHint(validatedHint);
         roundRepository.save(currentRound);
 
-
         //stopping the time of the player using the actionType
-        scoringService.stopTimeForPlayer(inputHint);
+        scoringSystem.stopTimeForPlayer(inputHint);
 
         Game game = gameRepository.findGameByGameId(gameId);
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
@@ -153,12 +152,12 @@ public class RoundService {
         currentRound.setGuess(guess);
 
         //stopping the time of the player using the actionType
-        scoringService.stopTimeForPlayer(guess);
+        scoringSystem.stopTimeForPlayer(guess);
         //validating the guess
-        Guess validatedGuess = guessValidationService.guessValidation(guess, gameId, currentRound);
+        Guess validatedGuess = guessValidator.guessValidationGuessGiven(guess, gameId, currentRound);
 
         //updating the score of the guesser and the clueGivers
-        scoringService.updateScoresOfPlayers(gameId);
+        scoringSystem.updateScoresOfPlayers(gameId);
 
         //starting a new round
         Game currentGame = gameRepository.findGameByGameId(gameId);
@@ -191,7 +190,7 @@ public class RoundService {
             });
 
             //starting the time for all clue_givers
-            scoringService.startTimeForClue_Givers(gameId);
+            scoringSystem.startTimeForClue_Givers(gameId);
 
             currentRound.setTerm(newTerm);
             return newTerm;
@@ -257,7 +256,9 @@ public class RoundService {
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
 
-
+        if (inputHint.getMarked() != null) {
+            hintByToken.setStatus(inputHint.getMarked());
+        }
 
         //check if all hints validated
         boolean allHintsReported = true;
@@ -269,12 +270,12 @@ public class RoundService {
         }
 
         if (allHintsReported) {
-            List<Hint> validatedHints = hintValidationService.validateSimilarityAndMarking(currentHints);
+            List<Hint> validatedHints = hintValidator.validateSimilarityAndMarking(currentHints);
             findRoundByGameId(gameId).setHintList(validatedHints);
             gameById.setStatus(GameStatus.RECEIVING_GUESS);
 
             //start the time for the guessing player as he now can see the hints
-            scoringService.startTimeForGuesser(gameId);
+            scoringSystem.startTimeForGuesser(gameId);
         }
         else {
             gameById.setStatus(GameStatus.VALIDATING_HINTS);
@@ -288,7 +289,7 @@ public class RoundService {
         validateGameState(GameStatus.VALIDATING_TERM, gameId);
 
         PlayerStatus senderStatus = playerRepository.findByUserToken(inputTerm.getToken()).getStatus();
-        if (!senderStatus.equals(PlayerStatus.GUESSER)) {
+        if (senderStatus != PlayerStatus.GUESSER) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
                     "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
         }
@@ -311,60 +312,31 @@ public class RoundService {
         validateGameState(GameStatus.RECEIVING_GUESS, gameId);
 
         PlayerStatus senderStatus = playerRepository.findByUserToken(inputGuess.getToken()).getStatus();
-        if (!senderStatus.equals(PlayerStatus.GUESSER)) {
+        if (senderStatus != PlayerStatus.GUESSER) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
                     "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
         }
         Round currentRound = findRoundByGameId(gameId);
+
         //add a new round to the game
         Game game = gameRepository.findGameByGameId(gameId);
+        guessValidator.guessValidationGuessSkipped(gameId);
+
         addRound(game);
         return game;
     }
 
-    //TODO wenn sich die neue methode bewährt kann die auskommentierte noch gelöscht werden
     //method adds a round to a game
     //param: Game game
     //return: Game game
     public Game addRound(Game game) {
-/*
-        int roundNr = game.getRoundNr();
-        //if it was the last round we set the gameStatus to finished
-        if (roundNr == CONSTANTS.NUMBER_OF_ROUNDS || roundNr > CONSTANTS.NUMBER_OF_ROUNDS) {
-            game.setStatus(GameStatus.FINISHED);
-            gameRepository.save(game);
-            scoringService.updateScoresOfUsers(game);
 
-            return null;
-        }
-
-        //adding a new round to the game
-        Card card = game.getCardList().get(roundNr);
-
-        //adding the new round to the game
-        Round newRound = new Round();
-        newRound.setCard(card);
-        game.addRound(newRound);
-        newRound = roundRepository.save(newRound);
-
-        game.setStatus(GameStatus.RECEIVING_TERM);
-
-        //increasing the Round number of the game
-        game.setRoundNr(roundNr + 1);
-        gameRepository.save(game);
-
-        //setting the playerStatus correctly
-        settingPlayerStatus(game);
-
-        return game;
-
- */
         List<Card> cardList = game.getCardList();
         //if it was the last round we set the gameStatus to finished
         if (cardList.isEmpty()) {
             game.setStatus(GameStatus.FINISHED);
             gameRepository.save(game);
-            scoringService.updateScoresOfUsers(game);
+            scoringSystem.updateScoresOfUsers(game);
 
             return null;
         }
@@ -436,7 +408,7 @@ public class RoundService {
     private void validateGameState(GameStatus checkState, Long gameId) {
         String baseErrorMessage = "invalid game status, current: %s, must be: %s";
         GameStatus currentState = gameRepository.findGameByGameId(gameId).getStatus();
-        if (!currentState.equals(checkState)) {
+        if (currentState != checkState) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, currentState, checkState));
         }
     }

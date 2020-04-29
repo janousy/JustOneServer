@@ -1,9 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
-import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
@@ -15,7 +13,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.mapper.RoundDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.GuessDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.HintDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.TermDTOMapper;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -132,23 +129,13 @@ public class RoundController {
         return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(createdTerm);
     }
 
-    @DeleteMapping("/games/{gameId}/terms")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public TermGetDTO deleteTerm(@RequestBody TermPostDTO termPostDTO, @PathVariable Long gameId) {
-        //clue givers report the word to be unknown
-        Term inputTerm = TermDTOMapper.INSTANCE.convertTermPostDTOToEntity(termPostDTO);
-        Term deletedTerm = roundService.deleteCurrentTermOfRound(inputTerm, gameId);
-        return TermDTOMapper.INSTANCE.convertEntityToTermGetDTO(deletedTerm);
-    }
-
     //nimmt jeden hint einzeln zur validierung an
     // reports: token des players
     // similarity: markierte ähnlichkeiten zu anderen hints
     @PutMapping("/games/{gameId}/hints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) throws IOException {
+    public HintGetDTO reportHints(@RequestBody HintPutDTO hintPutDTO, @PathVariable Long gameId) {
         Hint inputHint = HintDTOMapper.INSTANCE.convertHintPutDTOToEntity(hintPutDTO);
         Hint updatedHint = roundService.updateHint(inputHint, gameId);
         return HintDTOMapper.INSTANCE.convertEntityToHintGetDTO(updatedHint);

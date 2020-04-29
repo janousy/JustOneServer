@@ -1,12 +1,7 @@
-package ch.uzh.ifi.seal.soprafs20.service;
+package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
-import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.ActionType;
-import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
@@ -22,15 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.*;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -38,27 +30,19 @@ import java.net.URL;
 
 @Service
 @Transactional
-public class HintValidationService {
-    private final Logger log = LoggerFactory.getLogger(HintValidationService.class);
-
-    private final RoundRepository roundRepository;
-    private final PlayerRepository playerRepository;
-    private final GameRepository gameRepository;
+public class HintValidator {
+    private final Logger log = LoggerFactory.getLogger(HintValidator.class);
 
     private static final String USER_AGENT = "Mozilla/5.0";
 
 
     @Autowired
-    public HintValidationService(@Qualifier("roundRepository") RoundRepository roundRepository,
-                                 @Qualifier("gameRepository") GameRepository gameRepository,
-                                 @Qualifier("playerRepository") PlayerRepository playerRepository) {
-        this.roundRepository = roundRepository;
-        this.gameRepository = gameRepository;
-        this.playerRepository = playerRepository;
+    public HintValidator() {
+
     }
 
     /* External APIs:
-     *   http://text-processing.com/, stemming and lemmatization, throttled to 1000 calls per day per IP, returns 503 if exceeded
+     *   http://text-processing.com/, stemming and lemmatization, throttled at 1000 calls per day per IP, returns 503 if exceeded
      * */
     public Hint validateWithExernalResources(Hint inputHint, Round currentRound) {
         Term term = currentRound.getTerm();
@@ -110,7 +94,7 @@ public class HintValidationService {
                 //decompose response message
                 JSONObject JSON_response = new JSONObject(response.toString()); //gradlew dependency required! should be in
                 String stemmedWord = JSON_response.getString("text");
-                log.info("stemmed word: " + JSON_response.getString("text") + " || current term: " + term);
+                log.info("lemmatized word: " + JSON_response.getString("text") + " || current term: " + term);
 
                 //checked if the stemmed hint content is equal to the current term
                 if (term.toLowerCase().equals(stemmedWord.toLowerCase())) {
@@ -192,7 +176,7 @@ public class HintValidationService {
         List<Hint> copyHints = currentHints;
 
         for (Hint hint : currentHints) {
-            if (hint.getMarked().equals(ActionTypeStatus.INVALID)) {
+            if (hint.getMarked() == ActionTypeStatus.INVALID) {
                 copyHints.get(currentHints.indexOf(hint)).setStatus(ActionTypeStatus.INVALID);
             }
 
@@ -205,7 +189,7 @@ public class HintValidationService {
             }
         }
         for (Hint hint : copyHints) {
-            if (!hint.getStatus().equals(ActionTypeStatus.INVALID)) {
+            if (hint.getStatus() != (ActionTypeStatus.INVALID)) {
                 hint.setStatus(ActionTypeStatus.VALID);
             }
         }

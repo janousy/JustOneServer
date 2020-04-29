@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -31,10 +33,12 @@ public class PlayerService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
 
+    private Random rand = SecureRandom.getInstanceStrong();  // SecureRandom is preferred to Random
+
     @Autowired
     public PlayerService(@Qualifier("playerRepository") PlayerRepository playerRepository,
                          @Qualifier("gameRepository") GameRepository gameRepository,
-                         @Qualifier("userRepository") UserRepository userRepository) {
+                         @Qualifier("userRepository") UserRepository userRepository) throws NoSuchAlgorithmException {
 
         this.playerRepository = playerRepository;
         this.gameRepository = gameRepository;
@@ -63,9 +67,7 @@ public class PlayerService {
 
     public Player createPlayer(Player newPlayer, Long gameId) {
 
-        //TODO how to check if gameByID exists? cannot ask gameService
-
-        checkIfPlayerExistsByName(newPlayer);
+        //checkIfPlayerExistsByName(newPlayer);
         User userByToken = userRepository.findByToken(newPlayer.getUserToken());
 
         newPlayer.setStatus(PlayerStatus.NOT_READY);
@@ -90,7 +92,7 @@ public class PlayerService {
     }
 
     public Player deletePlayer(Long gameId, Long playerId) {
-        Game game1 = gameRepository.findGameByGameId(gameId);
+        Game game = gameRepository.findGameByGameId(gameId);
 
         Player playerById = playerRepository.findPlayerById(playerId);
 
@@ -102,14 +104,19 @@ public class PlayerService {
             //delete the player from the user
             removePlayerFromUser(playerById);
 
+
             playerRepository.flush();
 
-            //a new host must be set if the deleted player was a host
-            if (playerById.getRole().equals(PlayerRole.HOST)) {
-                Game game = gameRepository.findGameByGameId(gameId);
-                List<Player> playerList = game.getPlayerList();
+            //check if game is empty now and invoke the delete method
+            List<Player> playerList = game.getPlayerList();
+            if (playerList.size() == 0) {
+                game.setStatus(GameStatus.DELETE);
+                return playerById;
+            }
+
+            //a new host must be set if the deleted player was a host and the game is not empty
+            if (playerById.getRole() == PlayerRole.HOST) {
                 //List<Player> playerList = playerRepository.findByGameGameId(gameId);
-                Random rand = new Random();
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
                 randomPlayer.setRole(PlayerRole.HOST);
                 playerRepository.save(randomPlayer);
@@ -124,7 +131,7 @@ public class PlayerService {
     }
 
     /* Update player status */
-    public Player updatePlayer(Player playerInput, Long playerId, Long gameId) {
+    public Player updatePlayer(Player playerInput, Long playerId) {
         Optional<Player> playerById = playerRepository.findById(playerId);
 
         if (playerById.isPresent()) {
@@ -180,7 +187,7 @@ public class PlayerService {
         boolean hasHost = false;
         List<Player> playersInGameById = playerRepository.findByGameGameId(gameId);
         for (Player player : playersInGameById) {
-            if (player.getRole().equals(PlayerRole.HOST)) {
+            if (player.getRole() == PlayerRole.HOST) {
                 hasHost = true;
                 break;
             }
@@ -202,7 +209,9 @@ public class PlayerService {
     //return: void
     public void removePlayerFromUser(Player playerToBeRemoved) {
         User userToDeletePlayerFrom = userRepository.findByToken(playerToBeRemoved.getUserToken());
-        userToDeletePlayerFrom.setPlayer(null);
+        if (userToDeletePlayerFrom != null) {
+            userToDeletePlayerFrom.setPlayer(null);
+        }
     }
 
 
@@ -211,6 +220,11 @@ public class PlayerService {
     //returns the Player which has been added to the game
     private Player addPlayerToGame(Player playerToBeAdded, Long gameId) {
         Game game = gameRepository.findGameByGameId(gameId);
+
+        if (game == null) {
+            String baseErrorMessage = "The game you want to add a player does not exist";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
 
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 7) {
@@ -240,13 +254,24 @@ public class PlayerService {
         //find the game from which a player should be removed and remove it
         Game game = gameRepository.findGameByGameId(GameId);
 
+        if (game == null) {
+            String baseErrorMessage = "The game you want to add a player does not exist";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
+        //throw an error if the player is not part of the game
+        if (!game.getPlayerList().contains(playerToBeRemoved)) {
+            String baseErrorMessage = "The Player you want to delete is not part of the specified game";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
+        }
+
         //throw an error if too many players want to join the game
         if (game.getPlayerList().size() == 0) {
             String baseErrorMessage = "The lobby is already empty";
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }
 
-        if (game.getStatus() != GameStatus.LOBBY) {
+        if (game.getStatus() != GameStatus.LOBBY && game.getStatus() != GameStatus.FINISHED) {
             String baseErrorMessage = "The Game has already started, thus you cannot remove a player anymore";
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }

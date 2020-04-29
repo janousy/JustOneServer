@@ -9,8 +9,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO hier noch alle roundNR sachen rauswerfen
-
 @Entity
 @Table(name = "GAME")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "gameId")
@@ -37,7 +35,7 @@ public class Game implements Serializable {
     @OneToMany(mappedBy = "game")
     private List<Round> roundList = new ArrayList<Round>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "game_card", joinColumns = @JoinColumn(name = "game_gameId"), inverseJoinColumns = @JoinColumn(name = "card_id"))
     private List<Card> cardList = new ArrayList<Card>();
 

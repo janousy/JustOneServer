@@ -1,4 +1,4 @@
-package ch.uzh.ifi.seal.soprafs20.service;
+package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.constant.CONSTANTS;
@@ -22,16 +22,16 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ScoringService {
+public class ScoringSystem {
 
     private final PlayerRepository playerRepository;
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
 
     @Autowired
-    public ScoringService(@Qualifier("playerRepository") PlayerRepository playerRepository,
-                          @Qualifier("userRepository") UserRepository userRepository,
-                          @Qualifier("gameRepository") GameRepository gameRepository) {
+    public ScoringSystem(@Qualifier("playerRepository") PlayerRepository playerRepository,
+                         @Qualifier("userRepository") UserRepository userRepository,
+                         @Qualifier("gameRepository") GameRepository gameRepository) {
         this.playerRepository = playerRepository;
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
@@ -60,7 +60,7 @@ public class ScoringService {
     //method updates the score of the guesser, adds points for valid guess, deducts points for invalid guess and does nothing if skipped
     //param: Guess guess, Long gameId
     //return void
-    private void updateScoreOfGuesser(Guess guess) {
+    void updateScoreOfGuesser(Guess guess) {
 
         Player guessingPlayer = playerRepository.findByUserToken(guess.getToken());
         int elapsedTime = (int) guessingPlayer.getElapsedTime();
@@ -98,7 +98,7 @@ public class ScoringService {
     //method updates the score of the a hint giver
     //param: Hint hint, Long gameId
     //return void
-    private void updateScoreOfClue_Giver(Hint hint) {
+    void updateScoreOfClue_Giver(Hint hint) {
 
         Player clueGivingPlayer = playerRepository.findByUserToken(hint.getToken());
         int elapsedTime = (int) clueGivingPlayer.getElapsedTime();

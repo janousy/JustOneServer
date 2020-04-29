@@ -1,4 +1,4 @@
-package ch.uzh.ifi.seal.soprafs20.service;
+package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,18 @@ import java.util.List;
 
 @Service
 @Transactional
-public class GuessValidationService {
+public class GuessValidator {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
 
     @Autowired
-    public GuessValidationService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GuessValidator(@Qualifier("gameRepository") GameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
 
-    public Guess guessValidation(Guess guess, Long gameId, Round currentRound) {
+    public Guess guessValidationGuessGiven(Guess guess, Long gameId, Round currentRound) {
 
         Game currentGame = gameRepository.findGameByGameId(gameId);
         List<Card> cardList = currentGame.getCardList();
@@ -39,6 +40,9 @@ public class GuessValidationService {
         //check if the guess and the term match
         termContent = termContent.replaceAll("\r", "");
         termContent = termContent.replaceAll("\\s", "");
+
+        guessContent = guessContent.replaceAll("\r", "");
+        guessContent = guessContent.replaceAll("\\s", "");
         boolean guessTrue = termContent.equalsIgnoreCase(guessContent);
 
         if (guessTrue) {
@@ -49,21 +53,34 @@ public class GuessValidationService {
             guess.setStatus(ActionTypeStatus.VALID);
         }
         else {
-            /*int currentRoundNr = currentGame.getRoundNr();
+            //special behaviour if the card was the last we deduct 1 of the correct cards
+            if (cardList.size() == 1) {
+                int correctCards = currentGame.getCorrectCards();
+                currentGame.setCorrectCards(correctCards - 1);
+            }
 
-            //set one round extra because it was false
-            currentGame.setRoundNr(currentRoundNr + 1);
+            if (!cardList.isEmpty()) {
+                cardList.remove(0);
+            }
 
-             */
-
-            cardList.remove(0);
             guess.setStatus(ActionTypeStatus.INVALID);
         }
+
         if (!cardList.isEmpty()) {
             cardList.remove(0);
         }
 
         return guess;
+    }
+
+
+    public void guessValidationGuessSkipped(Long gameId) {
+
+        Game game = gameRepository.findGameByGameId(gameId);
+        List<Card> cardList = game.getCardList();
+        if (!cardList.isEmpty()) {
+            cardList.remove(0);
+        }
     }
 
 }
