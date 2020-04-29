@@ -121,9 +121,11 @@ public class RoundService {
         inputHint.setRoundId(currentRound.getId());
         inputHint.setStatus(ActionTypeStatus.UNKNOWN);
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
+        log.info(String.format("setting hint %s", inputHint.getContent()));
 
-        Hint validatedHint = hintValidator.validateWithExernalResources(inputHint, currentRound);
-        currentRound.addHint(validatedHint);
+        //Hint validatedHint = hintValidator.validateWithExernalResources(inputHint, currentRound);
+        currentRound.addHint(inputHint);
+        //log.info() get hint list size
         roundRepository.save(currentRound);
 
         //stopping the time of the player using the actionType
@@ -132,9 +134,14 @@ public class RoundService {
         Game game = gameRepository.findGameByGameId(gameId);
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
         int nrOfHints = currentRound.getHintList().size();
+        log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
+        log.info(String.format("nr of players: %d", nrOfHints));
 
         //go into if when all hints have arrived
+        //log info
         if (nrOfHints == (nrOfPlayers - 1)) {
+            log.info(String.format("setting hint game status: validate hints"));
+            log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
             game.setStatus(GameStatus.VALIDATING_HINTS);
             gameRepository.save(game);
         }
@@ -282,30 +289,6 @@ public class RoundService {
         }
         return hintByToken;
 
-    }
-
-    public Term deleteCurrentTermOfRound(Term inputTerm, Long gameId) {
-
-        validateGameState(GameStatus.VALIDATING_TERM, gameId);
-
-        PlayerStatus senderStatus = playerRepository.findByUserToken(inputTerm.getToken()).getStatus();
-        if (senderStatus != PlayerStatus.GUESSER) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
-                    "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
-        }
-
-        Round currentRound = findRoundByGameId(gameId);
-        Term deletedTerm = currentRound.getTerm();
-        if (deletedTerm == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no term set yet");
-        }
-
-        //setting the gamestatus back to receiving term
-        Game game = gameRepository.findGameByGameId(gameId);
-        currentRound.setTerm(null);
-        game.setStatus(GameStatus.RECEIVING_TERM);
-
-        return deletedTerm;
     }
 
     public Game skipTermToBeGuessed(Guess inputGuess, Long gameId) {

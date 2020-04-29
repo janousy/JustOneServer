@@ -68,7 +68,7 @@ public class ScoringSystem {
 
         //case if guess correct
         if (guess.getStatus() == ActionTypeStatus.VALID) {
-            earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS - (int) elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+            earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS - (int) (elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
 
             //to assure that the guesser gets at least 0 points and not negative if too slow
             if (earnedPoints < 0) {
@@ -81,10 +81,10 @@ public class ScoringSystem {
         }
         //case of guess incorrect points are deducted
         else {
-            earnedPoints = -elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+            earnedPoints = (int) (-elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
 
-            if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1)) {
-                earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1);
+            if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_GUESS_DEDUCTION * (-1)) {
+                earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS_DEDUCTION * (-1);
             }
 
             int oldScore = guessingPlayer.getScore();
@@ -106,7 +106,7 @@ public class ScoringSystem {
 
         //case if hint is unique/valid
         if (hint.getStatus() == ActionTypeStatus.VALID) {
-            earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+            earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) (elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
 
             //to assure that the guesser gets at least 0 points and not negative if too slow
             if (earnedPoints < 0) {
@@ -121,10 +121,10 @@ public class ScoringSystem {
 
         //case if hint is invalid
         else {
-            earnedPoints = -elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND;
+            earnedPoints = (int) (-elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
 
-            if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1)) {
-                earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS * (-1);
+            if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_HINT_DEDUCTION * (-1)) {
+                earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_HINT_DEDUCTION * (-1);
             }
 
             int oldScore = clueGivingPlayer.getScore();
@@ -144,9 +144,6 @@ public class ScoringSystem {
 
         for (Player p : playerList) {
             int newScore = p.getScore();
-            if (newScore < 0) {
-                newScore = 0;
-            }
 
             //find the user and set the score
             User userOfP = userRepository.findByToken(p.getUserToken());

@@ -47,8 +47,7 @@ public class HintValidator {
     public Hint validateWithExernalResources(Hint inputHint, Round currentRound) {
         Term term = currentRound.getTerm();
         String stemmedTerm = requestTermStem(term);
-        Hint hint = validateWordStem(inputHint, stemmedTerm);
-        return hint;
+        return validateWordStem(inputHint, stemmedTerm);
     }
 
     public Hint validateWordStem(Hint inputHint, String term) {
@@ -182,7 +181,7 @@ public class HintValidator {
 
             List<Integer> similarites = hint.getSimilarity();
             for (int similarity : similarites) {
-                if (Collections.frequency(similarites, similarity) > nrOfClueGivers / 2) {
+                if (Collections.frequency(similarites, similarity) >= nrOfClueGivers / 2) {
                     copyHints.get(similarity).setStatus(ActionTypeStatus.INVALID);
                     copyHints.get(currentHints.indexOf(hint)).setStatus(ActionTypeStatus.INVALID);
                 }
