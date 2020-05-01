@@ -18,14 +18,6 @@ public class HintPutDTO {
         this.marked = marked;
     }
 
-    public ArrayList<String> getReporter() {
-        return reporters;
-    }
-
-    public void setReporter(ArrayList<String> reporter) {
-        this.reporters = reporter;
-    }
-
     public String getToken() {
         return token;
     }
