@@ -107,6 +107,7 @@ public class RoundService {
     }
 
     public Hint addHintToRound(Hint inputHint, Long gameId) {
+        log.info(String.format("adding hint: %s", inputHint.getContent()));
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
 
@@ -124,10 +125,10 @@ public class RoundService {
         log.info(String.format("setting hint %s", inputHint.getContent()));
 
         hintValidator.validateWithExernalResources(inputHint, currentRound.getTerm());
+        log.info(String.format("adding hint to round"));
         currentRound.addHint(inputHint);
 
-        //log.info() get hint list size
-        roundRepository.save(currentRound);
+        //roundRepository.save(currentRound);
 
         //stopping the time of the player using the actionType
         scoringSystem.stopTimeForPlayer(inputHint);
@@ -136,15 +137,19 @@ public class RoundService {
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
         int nrOfHints = currentRound.getHintList().size();
         log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
-        log.info(String.format("nr of players: %d", nrOfHints));
+        log.info(String.format("nr of players: %d", nrOfPlayers));
 
         //go into if when all hints have arrived
         //log info
+        log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
         if (nrOfHints == (nrOfPlayers - 1)) {
-            log.info(String.format("setting hint game status: validate hints"));
-            log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
+            log.info(String.format("setting game status to: %s", GameStatus.VALIDATING_HINTS));
             game.setStatus(GameStatus.VALIDATING_HINTS);
-            gameRepository.save(game);
+            //gameRepository.save(game);
+        }
+        else {
+            log.info(String.format("setting game status to: %s", GameStatus.RECEIVING_HINTS));
+            game.setStatus(GameStatus.RECEIVING_HINTS);
         }
         return inputHint;
     }
