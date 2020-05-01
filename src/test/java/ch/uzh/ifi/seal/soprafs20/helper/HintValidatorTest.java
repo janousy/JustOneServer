@@ -6,6 +6,10 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.w3c.dom.stylesheets.LinkStyle;
@@ -19,19 +23,20 @@ import java.util.List;
 
 public class HintValidatorTest {
 
-    private HintValidator hintValidator = new HintValidator();
     private Term testTerm;
     private Round testRound;
-    private Hint inputHint1;
     private Hint testHint1;
     private Hint testHint2;
     private Hint testHint3;
     private List<Hint> hintList;
 
+    private HintValidator hintValidator;
 
     @BeforeEach
     public void setup() {
-        inputHint1 = new Hint();
+        MockitoAnnotations.initMocks(this);
+        hintValidator = new HintValidator();
+
         testHint1 = new Hint();
         testHint2 = new Hint();
         testHint3 = new Hint();
@@ -62,7 +67,7 @@ public class HintValidatorTest {
         assertEquals(testHint2.getMarked(), validatedHints.get(1).getStatus());
     }
 
-
+    @Test
     public void givenListOfHints_validateSimilarity() {
         ArrayList<Integer> similarities1 = new ArrayList<>();
         similarities1.add(2); //hint1 is similar to hint3
@@ -76,14 +81,26 @@ public class HintValidatorTest {
         hintList.add(testHint2);
         hintList.add(testHint3);
 
+        List<Hint> updatedHints = hintValidator.validateSimilarityAndMarking(hintList);
+
+        assertEquals(ActionTypeStatus.INVALID, updatedHints.get(0).getStatus());
     }
 
+    @Test
+    public void givenHintAndTerm_validateEquality_success() {
+        Hint hint = new Hint();
+        hint.setContent("test");
+        Term term = new Term();
+        term.setContent("test");
 
-    public void givenHint_returnWordLemma_success() {
-        inputHint1.setContent("better");
-        testTerm.setContent("good");
-        Hint outputHint = hintValidator.validateWordStem(inputHint1, testTerm.getContent());
+        HintValidator hintValidatorSpy = Mockito.spy(HintValidator.class);
+        Mockito.when(hintValidatorSpy.getWordLemma(hint.getContent())).thenReturn(hint.getContent());
+        Mockito.when(hintValidatorSpy.getWordLemma(term.getContent())).thenReturn(term.getContent());
 
-        assertEquals(inputHint1.getContent(), outputHint.getContent());
+        hintValidatorSpy.validateWithExernalResources(hint, term);
+
+        Mockito.verify(hintValidatorSpy, Mockito.times(2)).getWordLemma(Mockito.any());
+
+        assertEquals(ActionTypeStatus.INVALID, hint.getStatus());
     }
 }
