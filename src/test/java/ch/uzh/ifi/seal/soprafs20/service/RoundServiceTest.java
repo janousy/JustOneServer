@@ -123,10 +123,8 @@ public class RoundServiceTest {
         Hint validatedHint = inputHint;
         validatedHint.setStatus(ActionTypeStatus.VALID);
 
-        Mockito.doAnswer((invocation -> {
-            return null;
-        })).when(scoringSystem).stopTimeForPlayer(Mockito.any());
-        Mockito.when(hintValidator.validateWithExernalResources(inputHint, round1)).thenReturn(validatedHint);
+        Mockito.doAnswer((invocation -> null)).when(scoringSystem).stopTimeForPlayer(Mockito.any());
+        Mockito.when(hintValidator.validateWithExernalResources(inputHint, round1.getTerm())).thenReturn(validatedHint);
         Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(player1);
         Mockito.when(gameRepository.findGameByGameId(Mockito.anyLong())).thenReturn(game1);
 
@@ -246,8 +244,78 @@ public class RoundServiceTest {
 
     @Test
     public void givenRoundWithHint_updateHint_success() {
-        Hint hint1 = new Hint();
-        Hint hint2 = new Hint();
+        ArrayList<Integer> similarities = new ArrayList<>();
+        ArrayList<String> reporter = new ArrayList<>();
+        reporter.add("testToken");
+        similarities.add(1);
 
+        Hint hint1 = new Hint();
+        hint1.setToken("testToken");
+        Hint hint2 = new Hint();
+        Hint inputHint = new Hint();
+        inputHint.setSimilarity(similarities);
+        inputHint.setToken("testToken");
+        inputHint.setReporters(reporter);
+
+        List<Hint> currentHints = new ArrayList<>();
+        currentHints.add(hint1);
+        currentHints.add(hint2);
+
+        List<Player> playerList = new ArrayList<>();
+        player1.setUserToken("testToken");
+        player1.setStatus(PlayerStatus.CLUE_GIVER);
+        playerList.add(player1);
+        inputHint.setToken("testToken");
+
+        round1.setHintList(currentHints);
+        List<Round> roundList = new ArrayList<>();
+        roundList.add(round1);
+        game1.setRoundList(roundList);
+        game1.setStatus(GameStatus.VALIDATING_HINTS);
+
+        Mockito.when(playerRepository.findByGameGameId(game1.getGameId())).thenReturn(playerList);
+        Mockito.when(gameRepository.findGameByGameId(1L)).thenReturn(game1);
+        Mockito.when(playerRepository.findByUserToken(player1.getUserToken())).thenReturn(player1);
+
+        Hint updatedHint = roundService.updateHint(inputHint, game1.getGameId());
+
+        assertEquals(currentHints.size(), round1.getHintList().size());
+        assertEquals(GameStatus.VALIDATING_HINTS, game1.getStatus());
+        assertEquals(similarities, updatedHint.getSimilarity());
+        assertEquals(reporter, updatedHint.getReporters());
+    }
+
+    @Test
+    public void givenTerm_skipTermByGuesser_success() {
+        player1.setUserToken("testToken");
+        player1.setStatus(PlayerStatus.GUESSER);
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player1);
+
+        Card card = new Card();
+        List<Card> cardList = new ArrayList<>();
+        cardList.add(card);
+
+        Guess inputGuess = new Guess();
+        Guess currentGuess = new Guess();
+        inputGuess.setToken("testToken");
+        round1.setGuess(currentGuess);
+
+        List<Round> roundList = new ArrayList<>();
+        roundList.add(round1);
+        game1.setRoundList(roundList);
+        game1.setCardList(cardList);
+        game1.setStatus(GameStatus.RECEIVING_GUESS);
+        game1.setPlayerList(playerList);
+
+        Mockito.when(gameRepository.findGameByGameId(game1.getGameId())).thenReturn(game1);
+        Mockito.when(playerRepository.findByUserToken("testToken")).thenReturn(player1);
+        Mockito.doAnswer((invocation -> null)).when(guessValidator).guessValidationGuessSkipped(Mockito.any());
+
+        Game updatedGame = roundService.skipTermToBeGuessed(inputGuess, game1.getGameId());
+
+        assertEquals(2, updatedGame.getRoundList().size());
+        assertEquals(2, updatedGame.getRoundList().size());
     }
 }
+

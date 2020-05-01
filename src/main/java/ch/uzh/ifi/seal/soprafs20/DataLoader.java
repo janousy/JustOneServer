@@ -52,7 +52,6 @@ public class DataLoader implements ApplicationRunner {
         createInitialCards();
     }
 
-
     private void createInitialGames() {
 
         for (int i = 1; i <= 3; i++) {

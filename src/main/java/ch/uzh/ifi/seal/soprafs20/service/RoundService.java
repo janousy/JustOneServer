@@ -123,8 +123,9 @@ public class RoundService {
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
         log.info(String.format("setting hint %s", inputHint.getContent()));
 
-        //Hint validatedHint = hintValidator.validateWithExernalResources(inputHint, currentRound);
+        hintValidator.validateWithExernalResources(inputHint, currentRound.getTerm());
         currentRound.addHint(inputHint);
+
         //log.info() get hint list size
         roundRepository.save(currentRound);
 
@@ -294,12 +295,12 @@ public class RoundService {
     public Game skipTermToBeGuessed(Guess inputGuess, Long gameId) {
         validateGameState(GameStatus.RECEIVING_GUESS, gameId);
 
-        PlayerStatus senderStatus = playerRepository.findByUserToken(inputGuess.getToken()).getStatus();
+        String inputToken = inputGuess.getToken();
+        PlayerStatus senderStatus = playerRepository.findByUserToken(inputToken).getStatus();
         if (senderStatus != PlayerStatus.GUESSER) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(
                     "invalid player role, current: %s, must be %s", senderStatus, PlayerStatus.GUESSER));
         }
-        Round currentRound = findRoundByGameId(gameId);
 
         //add a new round to the game
         Game game = gameRepository.findGameByGameId(gameId);
