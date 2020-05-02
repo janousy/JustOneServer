@@ -106,7 +106,7 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-    public Hint addHintToRound(Hint inputHint, Long gameId) {
+    public synchronized Hint addHintToRound(Hint inputHint, Long gameId) {
         log.info(String.format("adding hint: %s", inputHint.getContent()));
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -228,7 +228,7 @@ public class RoundService {
         return currentRound.getTerm();
     }
 
-    public Hint updateHint(Hint inputHint, Long gameId) {
+    public synchronized Hint updateHint(Hint inputHint, Long gameId) {
 
         if (inputHint.getReporters().size() > 1) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "invalid reporters, should only be one");
