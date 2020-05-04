@@ -56,7 +56,9 @@ public class GuessValidator {
             //special behaviour if the card was the last we deduct 1 of the correct cards
             if (cardList.size() == 1) {
                 int correctCards = currentGame.getCorrectCards();
-                currentGame.setCorrectCards(correctCards - 1);
+                if (correctCards > 0) {
+                    currentGame.setCorrectCards(correctCards - 1);
+                }
             }
 
             if (!cardList.isEmpty()) {

@@ -12,6 +12,7 @@ import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
+import org.hibernate.annotations.Synchronize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +107,7 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-    public Hint addHintToRound(Hint inputHint, Long gameId) {
+    public synchronized Hint addHintToRound(Hint inputHint, Long gameId) {
         log.info(String.format("adding hint: %s", inputHint.getContent()));
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -327,7 +328,7 @@ public class RoundService {
             gameRepository.save(game);
             scoringSystem.updateScoresOfUsers(game);
 
-            return null;
+            return game;
         }
 
         //adding a new round to the game

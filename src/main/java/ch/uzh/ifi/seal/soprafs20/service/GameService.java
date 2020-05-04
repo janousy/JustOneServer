@@ -224,7 +224,7 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    //This methods adds 13 unique cards to a game
+    //This methods adds Constants.NumberOfRounds unique cards to a game
     //param: Game game
     //return: void
     void addCardsToGame(Game game) {
