@@ -51,7 +51,7 @@ public class DataLoader implements ApplicationRunner {
         //createInitialUsers();
         createInitialCards();
     }
-/*
+
     private void createInitialGames() {
 
         for (int i = 1; i <= 3; i++) {
@@ -101,7 +101,6 @@ public class DataLoader implements ApplicationRunner {
             userRepository.flush();
             playerRepository.flush();
         }
-*/
 
     private void createInitialCards() throws IOException {
 
