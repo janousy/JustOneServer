@@ -12,6 +12,7 @@ import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
+import org.hibernate.annotations.Synchronize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -228,7 +229,7 @@ public class RoundService {
         return currentRound.getTerm();
     }
 
-    public synchronized Hint updateHint(Hint inputHint, Long gameId) {
+    public Hint updateHint(Hint inputHint, Long gameId) {
 
         if (inputHint.getReporters().size() > 1) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "invalid reporters, should only be one");

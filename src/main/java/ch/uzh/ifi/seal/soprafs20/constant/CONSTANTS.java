@@ -4,7 +4,7 @@ public final class CONSTANTS {
     public static final int MAX_WORDS_PER_CARD = 5;
 
     //constants for the game
-    public static final int NUMBER_OF_ROUNDS = 13;
+    public static final int NUMBER_OF_ROUNDS = 1;
 
     //constants for the scoring system
     public static final int MAX_POINTS_PER_ROUND_GUESS = 30;
