@@ -157,6 +157,7 @@ public class GuessValidatorTest {
         Guess givenGuess = new Guess();
         givenGuess.setContent("falseGuess");
         testGame.removeCard(card1);
+        testGame.setCorrectCards(5);
 
         int oldNumberOfCorrectCards = testGame.getCorrectCards();
         int oldSizeOfCardList = testGame.getCardList().size();
