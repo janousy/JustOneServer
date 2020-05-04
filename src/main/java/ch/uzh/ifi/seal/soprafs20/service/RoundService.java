@@ -328,7 +328,7 @@ public class RoundService {
             gameRepository.save(game);
             scoringSystem.updateScoresOfUsers(game);
 
-            return null;
+            return game;
         }
 
         //adding a new round to the game
