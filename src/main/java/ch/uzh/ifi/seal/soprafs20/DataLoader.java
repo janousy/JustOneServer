@@ -47,8 +47,8 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) throws IOException {
-        createInitialGames();
-        createInitialUsers();
+        //createInitialGames();
+        //createInitialUsers();
         createInitialCards();
     }
 
@@ -77,7 +77,6 @@ public class DataLoader implements ApplicationRunner {
 
                 testUser.setToken("abcdef-" + i);
                 testUser.setStatus(UserStatus.ONLINE);
-                testUser.setCreationDate(date);
                 testUser.setUsername("testUser" + i);
                 testUser.setPassword("testPassword");
 

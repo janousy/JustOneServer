@@ -118,7 +118,21 @@ public class UserController {
         //update user in UserService
         User updatedUser = userService.updateUser(id, userInput);
 
-
         return UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
     }
+
+    //verify the password of a user
+    @PostMapping("users/{id}/passwords")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO verifyPasswordOfUser(@PathVariable Long id, @RequestBody UserPostDTO userPostDTO) {
+
+        User userInput = UserDTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        User verifiedUser = userService.verifyPasswordOfUser(id, userInput);
+
+        return UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(verifiedUser);
+
+    }
+
 }

@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @see UserService
  */
+//TODO extend this test
+
 @WebAppConfiguration
 @SpringBootTest
 public class UserServiceIntegrationTest {
@@ -43,21 +45,17 @@ public class UserServiceIntegrationTest {
         assertNull(userRepository.findByUsername("testUsername"));
 
         User testUser = new User();
-        testUser.setName("testName");
         testUser.setUsername("testUsername");
         testUser.setPassword("test");
-        testUser.setCreationDate((new Date()).toString());
 
         // when
         User createdUser = userService.createUser(testUser);
 
         // then
         assertEquals(testUser.getId(), createdUser.getId());
-        assertEquals(testUser.getName(), createdUser.getName());
         assertEquals(testUser.getUsername(), createdUser.getUsername());
         assertNotNull(createdUser.getToken());
         assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
-        assertEquals(testUser.getCreationDate(), createdUser.getCreationDate());
         assertEquals(testUser.getPassword(), createdUser.getPassword());
     }
 
@@ -66,10 +64,8 @@ public class UserServiceIntegrationTest {
         assertNull(userRepository.findByUsername("testUsername"));
 
         User testUser = new User();
-        testUser.setName("testName");
         testUser.setUsername("testUsername");
         testUser.setPassword("test");
-        testUser.setCreationDate((new Date()).toString());
 
         User createdUser = userService.createUser(testUser);
 
@@ -77,7 +73,6 @@ public class UserServiceIntegrationTest {
         User testUser2 = new User();
 
         // change the name but forget about the username
-        testUser2.setName("testName2");
         testUser2.setUsername("testUsername");
 
         // check that an error is thrown
