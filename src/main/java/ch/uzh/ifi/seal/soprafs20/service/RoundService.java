@@ -107,7 +107,7 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-    public synchronized Hint addHintToRound(Hint inputHint, Long gameId) {
+    public Hint addHintToRound(Hint inputHint, Long gameId) {
         log.info(String.format("adding hint: %s", inputHint.getContent()));
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -125,16 +125,17 @@ public class RoundService {
         inputHint.setMarked(ActionTypeStatus.UNKNOWN);
         log.info(String.format("setting hint %s", inputHint.getContent()));
 
-        hintValidator.validateWithExernalResources(inputHint, currentRound.getTerm());
-
         currentHints.forEach(hint -> {
             log.info(String.format("hint: %s", hint.getContent()));
         });
 
-        log.info(String.format("adding hint to round: %s", inputHint.getContent()));
-        currentRound.addHint(inputHint);
-        roundRepository.save(currentRound);
+        synchronized (this) {
+            hintValidator.validateWithExernalResources(inputHint, currentRound.getTerm());
 
+            log.info(String.format("adding hint to round: %s", inputHint.getContent()));
+            currentRound.addHint(inputHint);
+            roundRepository.save(currentRound);
+        }
         currentHints.forEach(hint -> {
             log.info(String.format("hint: %s", hint.getContent()));
         });
