@@ -126,15 +126,24 @@ public class RoundService {
         log.info(String.format("setting hint %s", inputHint.getContent()));
 
         hintValidator.validateWithExernalResources(inputHint, currentRound.getTerm());
-        log.info(String.format("adding hint to round"));
-        currentRound.addHint(inputHint);
 
-        //roundRepository.save(currentRound);
+        currentHints.forEach(hint -> {
+            log.info(String.format("hint: %s", hint.getContent()));
+        });
+
+        log.info(String.format("adding hint to round: %s", inputHint.getContent()));
+        currentRound.addHint(inputHint);
+        roundRepository.save(currentRound);
+
+        currentHints.forEach(hint -> {
+            log.info(String.format("hint: %s", hint.getContent()));
+        });
 
         //stopping the time of the player using the actionType
         scoringSystem.stopTimeForPlayer(inputHint);
 
         Game game = gameRepository.findGameByGameId(gameId);
+        int nrOfPlayers2 = game.getPlayerList().size();
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
         int nrOfHints = currentRound.getHintList().size();
         log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
@@ -143,7 +152,7 @@ public class RoundService {
         //go into if when all hints have arrived
         //log info
         log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
-        if (nrOfHints == (nrOfPlayers - 1)) {
+        if (nrOfHints == (nrOfPlayers2 - 1)) {
             log.info(String.format("setting game status to: %s", GameStatus.VALIDATING_HINTS));
             game.setStatus(GameStatus.VALIDATING_HINTS);
             //gameRepository.save(game);
@@ -151,6 +160,7 @@ public class RoundService {
         else {
             log.info(String.format("setting game status to: %s", GameStatus.RECEIVING_HINTS));
             game.setStatus(GameStatus.RECEIVING_HINTS);
+            //gameRepository.save(game);
         }
         return inputHint;
     }
