@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePostDTO;
@@ -69,6 +70,9 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO deleteGameByID(@PathVariable Long id) {
+
+        Game gametoDelete = gameService.getGameById(id);
+        gametoDelete.setStatus(GameStatus.DELETE);
 
         //get the proper game
         Game game = gameService.deleteGameById(id);

@@ -143,10 +143,6 @@ public class UserService {
         //find user which should be updated
         User oldUser = getUserById(id);
 
-        if (oldUser == null) {
-            throw new SopraServiceException("The user does not exist which should be updated");
-        }
-
         //if the password match we return the user
         if (oldUser.getPassword().equals(userInput.getPassword())) {
             return oldUser;
