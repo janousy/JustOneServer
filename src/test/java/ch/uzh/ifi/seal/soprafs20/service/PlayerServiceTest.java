@@ -54,12 +54,10 @@ public class PlayerServiceTest {
 
         testUser = new User();
         testUser.setId(1L);
-        testUser.setName("testName");
         testUser.setUsername("testUsername");
         testUser.setToken("12345");
         testUser.setStatus(UserStatus.OFFLINE);
         testUser.setPassword("password");
-        testUser.setCreationDate((new Date()).toString());
 
         testGame = new Game();
         testGame.setStatus(GameStatus.LOBBY);

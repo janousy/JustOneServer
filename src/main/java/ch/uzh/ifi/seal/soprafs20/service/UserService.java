@@ -49,14 +49,11 @@ public class UserService {
         newUser.setStatus(UserStatus.OFFLINE);
 
         checkIfUserExists(newUser);
-        Date date = new Date();
-        newUser.setCreationDate(date.toString());
 
         // saves the given entity but data is only persisted in the database once flush() is called
         newUser = userRepository.save(newUser);
         userRepository.flush();
 
-        List<User> users = getUsers();
 
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -87,6 +84,10 @@ public class UserService {
     public User logoutUser(User userInput){
         User toLogOutUser = userRepository.findByToken(userInput.getToken());
 
+        if (toLogOutUser == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The user you want to logout does not exist");
+        }
+
         toLogOutUser.setStatus(UserStatus.OFFLINE);
         userRepository.save(toLogOutUser);
 
@@ -95,34 +96,16 @@ public class UserService {
 
     //gets the user by its corresponding it
     //return: User
-    public User getUserById(Long UserId){
+    public User getUserById(Long userId) {
 
-        List<User> users = getUsers();
-        User userById = null;
+        User userById = userRepository.findUserById(userId);
 
-        for(User user:users){
-            if(user.getId().equals(UserId)){
-                userById = user;
-            }
-        }
-
-        if(userById == null){
+        if (userById == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The id is not correct or the id does not exist");
         }
 
         log.debug("Found User by Id: {}", userById);
         return userById;
-    }
-
-    public User getUserByToken(String token) {
-        User userByToken = userRepository.findByToken(token);
-
-        if (userByToken != null) {
-            return userByToken;
-        }
-        else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user by token not found");
-        }
     }
 
     //updates a user
@@ -133,28 +116,18 @@ public class UserService {
         User oldUser = getUserById(id);
 
 
-        if(oldUser == null){
-            throw new SopraServiceException("The user does not exist which should be updated");
-        }
-
-        if(userInput.getBirthDate() != null) {
-            if (!validateDate(userInput.getBirthDate())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "You did not input a correct date as birth date, please input the birth date in the format 1.1.1900");
-            }
-        }
-
-        if(userInput.getUsername() != null) {
+        if (userInput.getUsername() != null) {
             if (!userInput.getUsername().equals(oldUser.getUsername())) {
                 checkIfUserExists(userInput);
             }
         }
 
         //update the two user fields
-        if(userInput.getUsername() != null){
+        if (userInput.getUsername() != null) {
             oldUser.setUsername(userInput.getUsername());
         }
-        if(userInput.getBirthDate() != null) {
-            oldUser.setBirthDate(userInput.getBirthDate());
+        if (userInput.getPassword() != null) {
+            oldUser.setPassword(userInput.getPassword());
         }
 
         userRepository.save(oldUser);
@@ -164,25 +137,24 @@ public class UserService {
         return oldUser;
     }
 
-    //checks whether a date is correct
-    public static boolean validateDate(String strDate) {
-            SimpleDateFormat date = new SimpleDateFormat("dd.MM.yyyy");
-            date.setLenient(false);
+    //verifies that the password is correct
+    public User verifyPasswordOfUser(Long id, User userInput) {
 
-            try
-            {
-                Date date_check = date.parse(strDate);
-            }
-            // Date format is invalid
-            catch (ParseException e)
-            {
-                return false;
-            }
+        //find user which should be updated
+        User oldUser = getUserById(id);
 
-            // Return true if date format is valid
-            return true;
+        if (oldUser == null) {
+            throw new SopraServiceException("The user does not exist which should be updated");
+        }
+
+        //if the password match we return the user
+        if (oldUser.getPassword().equals(userInput.getPassword())) {
+            return oldUser;
+        }
+
+        //if the password don't match we return an emtpy user
+        return new User();
     }
-
 
 
     /*
@@ -193,7 +165,7 @@ public class UserService {
      * @throws SopraServiceException
      * @see User
      */
-    private void checkIfUserExists(User userToBeCreated) {
+    void checkIfUserExists(User userToBeCreated) {
         User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
 
         String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";

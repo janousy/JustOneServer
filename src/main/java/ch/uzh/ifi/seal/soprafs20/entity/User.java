@@ -14,7 +14,6 @@ import java.io.Serializable;
  * - nullable = false -> this cannot be left empty
  * - unique = true -> this value must be unqiue across the database -> composes the primary key
  */
-//TODO unnötige felder noch rauswerfen
 @Entity
 @Table(name = "USER")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -25,9 +24,6 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = true)
-    private String name;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -40,12 +36,6 @@ public class User implements Serializable {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    private String creationDate;
-
-    @Column(nullable = true)
-    private String birthDate;
 
     @Column(nullable = true)
     private int overallScore;
@@ -79,14 +69,6 @@ public class User implements Serializable {
 
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -117,22 +99,6 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
     }
 
     public int getOverallScore() {

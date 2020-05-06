@@ -77,7 +77,6 @@ public class DataLoader implements ApplicationRunner {
 
                 testUser.setToken("abcdef-" + i);
                 testUser.setStatus(UserStatus.ONLINE);
-                testUser.setCreationDate(date);
                 testUser.setUsername("testUser" + i);
                 testUser.setPassword("testPassword");
 

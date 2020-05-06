@@ -271,10 +271,10 @@ public class PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }
 
-        if (game.getStatus() != GameStatus.LOBBY && game.getStatus() != GameStatus.FINISHED) {
+        /*if (game.getStatus() != GameStatus.LOBBY && game.getStatus() != GameStatus.FINISHED) {
             String baseErrorMessage = "The Game has already started, thus you cannot remove a player anymore";
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
-        }
+        }*/
 
         game.removePlayer(playerToBeRemoved);
 

@@ -5,11 +5,8 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 public class UserGetDTO {
 
     private Long id;
-    private String name;
     private String username;
     private UserStatus status;
-    private String creationDate;
-    private String birthDate;
     private String token;
     private int overallScore;
 
@@ -19,14 +16,6 @@ public class UserGetDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUsername() {
@@ -43,22 +32,6 @@ public class UserGetDTO {
 
     public void setStatus(UserStatus status) {
         this.status = status;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String date) {
-        this.creationDate = date;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
     }
 
     public String getToken() {

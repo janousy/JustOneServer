@@ -4,7 +4,6 @@ public class UserPutDTO {
 
     private String username;
 
-    private String birthDate;
 
     private String password;
 
@@ -16,14 +15,6 @@ public class UserPutDTO {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
     }
 
     public String getPassword() {
