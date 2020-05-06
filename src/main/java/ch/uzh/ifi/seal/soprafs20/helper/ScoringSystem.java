@@ -81,7 +81,7 @@ public class ScoringSystem {
         }
         //case of guess incorrect points are deducted
         else {
-            earnedPoints = (int) (-elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+            earnedPoints = (int) (-elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND) - CONSTANTS.MIN_POINT_DEDUCTION_WRONG_GUESS;
 
             if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_GUESS_DEDUCTION * (-1)) {
                 earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_GUESS_DEDUCTION * (-1);
