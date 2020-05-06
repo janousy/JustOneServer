@@ -97,7 +97,7 @@ public class ScoringSystemTest {
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = (int) -(10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int scoreAdjustment = (int) -(10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND) - CONSTANTS.MIN_POINT_DEDUCTION_WRONG_GUESS;
         int expectedScore = oldScore + scoreAdjustment;
 
         //invoke the testMethod

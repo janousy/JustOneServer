@@ -64,8 +64,6 @@ public class UserServiceTest {
 
     @Test
     public void createUser_duplicateInputs_throwsException() {
-        // given -> a first user has already been created
-        userService.createUser(testUser);
 
         // then -> attempt to create second user with same user -> check that an error is thrown
         assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
