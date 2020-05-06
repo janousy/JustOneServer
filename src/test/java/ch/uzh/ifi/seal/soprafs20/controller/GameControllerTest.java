@@ -153,12 +153,13 @@ public class GameControllerTest {
         game.setPlayerList(new ArrayList<Player>());
         game.setRoundList(new ArrayList<Round>());
         game.setCardList(new ArrayList<Card>());
-        game.setStatus(GameStatus.LOBBY);
+        game.setStatus(GameStatus.DELETE);
 
         GameDeleteDTO gameDeleteDTO = new GameDeleteDTO();
         gameDeleteDTO.setGameId(1L);
 
         given(gameService.deleteGameById(Mockito.any())).willReturn(game);
+        given(gameService.getGameById(Mockito.any())).willReturn(game);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest = delete("/games/1")
