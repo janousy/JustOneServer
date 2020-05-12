@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -107,7 +108,7 @@ public class RoundService {
         return roundList.get(lastRoundInternal);
     }
 
-    public Hint addHintToRound(Hint inputHint, Long gameId) {
+    public synchronized Hint addHintToRound(Hint inputHint, Long gameId) {
         log.info(String.format("adding hint: %s", inputHint.getContent()));
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
@@ -120,28 +121,33 @@ public class RoundService {
             }
         });
 
-        inputHint.setRoundId(currentRound.getId());
-        inputHint.setStatus(ActionTypeStatus.UNKNOWN);
-        inputHint.setMarked(ActionTypeStatus.UNKNOWN);
-        log.info(String.format("setting hint %s", inputHint.getContent()));
-
+        log.info(String.format("creating hint %s", inputHint.getContent()));
         currentHints.forEach(hint -> {
-            log.info(String.format("hint: %s", hint.getContent()));
+            log.info(String.format("hints before adding: %s", hint.getContent()));
         });
 
-        synchronized (this) {
-            hintValidator.validateWithExernalResources(inputHint, currentRound.getTerm());
+        Hint newHint = new Hint();
+        newHint.setToken(inputHint.getToken());
+        newHint.setContent(inputHint.getContent());
+        newHint.setRoundId(currentRound.getId());
+        newHint.setStatus(ActionTypeStatus.UNKNOWN);
+        newHint.setMarked(ActionTypeStatus.UNKNOWN);
 
-            log.info(String.format("adding hint to round: %s", inputHint.getContent()));
-            currentRound.addHint(inputHint);
-            roundRepository.save(currentRound);
-        }
+        //validate input content hint with external API
+        hintValidator.validateWithExernalResources(newHint, currentRound.getTerm());
+
+        log.info(String.format("adding hint to round: %s", newHint.getContent()));
+
+        currentHints.add(newHint);
+        currentRound.setHintList(currentHints);
+        roundRepository.saveAndFlush(currentRound);
+
         currentHints.forEach(hint -> {
-            log.info(String.format("hint: %s", hint.getContent()));
+            log.info(String.format("hints after adding: %s", hint.getContent()));
         });
 
         //stopping the time of the player using the actionType
-        scoringSystem.stopTimeForPlayer(inputHint);
+        scoringSystem.stopTimeForPlayer(newHint);
 
         Game game = gameRepository.findGameByGameId(gameId);
         int nrOfPlayers2 = game.getPlayerList().size();
@@ -163,7 +169,7 @@ public class RoundService {
             game.setStatus(GameStatus.RECEIVING_HINTS);
             //gameRepository.save(game);
         }
-        return inputHint;
+        return newHint;
     }
 
     //adds a guess to the round, starts new round,
