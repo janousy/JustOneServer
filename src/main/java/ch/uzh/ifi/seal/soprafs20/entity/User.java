@@ -37,7 +37,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true)
+    @Column
     private int overallScore;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
