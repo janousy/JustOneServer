@@ -13,5 +13,6 @@ public final class CONSTANTS {
     public static final int MAX_POINTS_PER_ROUND_HINT_DEDUCTION = 10;
     public static final double POINT_DEDUCTION_PER_SECOND = 0.5;
     public static final int MIN_POINT_DEDUCTION_WRONG_GUESS = 5;
+    public static final int MIN_POINT_DEDUCTION_WRONG_HINT = 5;
 
 }

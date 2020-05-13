@@ -53,7 +53,7 @@ public class ScoringSystem {
         //update the scores of all hint_givers
         List<Hint> hintList = currentRound.getHintList();
         for (Hint h : hintList) {
-            updateScoreOfClue_Giver(h);
+            updateScoreOfClueGiver(h);
         }
     }
 
@@ -98,7 +98,7 @@ public class ScoringSystem {
     //method updates the score of the a hint giver
     //param: Hint hint, Long gameId
     //return void
-    void updateScoreOfClue_Giver(Hint hint) {
+    void updateScoreOfClueGiver(Hint hint) {
 
         Player clueGivingPlayer = playerRepository.findByUserToken(hint.getToken());
         int elapsedTime = (int) clueGivingPlayer.getElapsedTime();
@@ -121,7 +121,7 @@ public class ScoringSystem {
 
         //case if hint is invalid
         else {
-            earnedPoints = (int) (-elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+            earnedPoints = (int) (-elapsedTime * CONSTANTS.POINT_DEDUCTION_PER_SECOND) - CONSTANTS.MIN_POINT_DEDUCTION_WRONG_HINT;
 
             if (earnedPoints < CONSTANTS.MAX_POINTS_PER_ROUND_HINT_DEDUCTION * (-1)) {
                 earnedPoints = CONSTANTS.MAX_POINTS_PER_ROUND_HINT_DEDUCTION * (-1);
@@ -187,7 +187,7 @@ public class ScoringSystem {
     //method sets the current time for all clue_givers
     //param: ActionType action
     //return: void
-    public void startTimeForClue_Givers(Long gameId) {
+    public void startTimeForClueGivers(Long gameId) {
         //find all the players of the game
         List<Player> playerList = playerRepository.findByGameGameId(gameId);
 

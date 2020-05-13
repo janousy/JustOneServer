@@ -27,7 +27,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    //returns a list with all users http method: get, mapping: /users
+    //returns a list with all users
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -49,7 +49,7 @@ public class UserController {
         return userGetDTOs;
     }
 
-    //returns a specific user corresponding to the id http method: get, mapping: /users/{id}
+    //returns a specific user corresponding to the id
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -62,7 +62,7 @@ public class UserController {
         return UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
     }
 
-    //creation of a user http method: post, mapping: /users
+    //creation of a user
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -77,7 +77,7 @@ public class UserController {
         return UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
     }
 
-    //login of a user http method: put mapping: /login
+    //login of a user
     @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -92,7 +92,7 @@ public class UserController {
         return UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
 
-    //logout of a user http method: put mapping: /logout
+    //logout of a user
     @PutMapping("/logout")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -107,7 +107,7 @@ public class UserController {
         return UserDTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedOutUser);
     }
 
-    //update of a user http method: put, mapping: /users/{id}
+    //update of a user
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody

@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +70,45 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())))
                 .andExpect(jsonPath("$[0].token", is(user.getToken())));
+    }
+
+    @Test
+    public void givenUsers_whenGetUsers_thenReturnJsonArraySorted() throws Exception {
+        // given
+        User user = new User();
+        user.setUsername("testUser");
+        user.setStatus(UserStatus.OFFLINE);
+        user.setPassword("password");
+        user.setToken("1");
+        user.setOverallScore(0);
+
+        User user2 = new User();
+        user2.setUsername("testUser2");
+        user2.setStatus(UserStatus.OFFLINE);
+        user2.setPassword("password2");
+        user2.setToken("2");
+        user2.setOverallScore(10);
+
+        List<User> allUsers = new ArrayList<>();
+        allUsers.add(user);
+        allUsers.add(user2);
+
+        // this mocks the UserService -> we define above what the userService should return when getUsers() is called
+        given(userService.getUsers()).willReturn(allUsers);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON).param("sort_by", "true");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].username", is(user2.getUsername())))
+                .andExpect(jsonPath("$[0].status", is(user2.getStatus().toString())))
+                .andExpect(jsonPath("$[0].token", is(user2.getToken())))
+                .andExpect(jsonPath("$[1].username", is(user.getUsername())))
+                .andExpect(jsonPath("$[1].status", is(user.getStatus().toString())))
+                .andExpect(jsonPath("$[1].token", is(user.getToken())));
     }
 
     @Test

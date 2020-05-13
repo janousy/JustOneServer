@@ -115,18 +115,18 @@ public class ScoringSystemTest {
 
         //preparation for the test
         Hint givenHint = new Hint();
-        givenHint.setStatus(ActionTypeStatus.INVALID);
+        givenHint.setStatus(ActionTypeStatus.VALID);
 
         Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(testPlayer);
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = (int) (-10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int scoreAdjustment = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) (10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
         int expectedScore = oldScore + scoreAdjustment;
 
 
         //invoke the testMethod
-        scoringSystem.updateScoreOfClue_Giver(givenHint);
+        scoringSystem.updateScoreOfClueGiver(givenHint);
 
         //then
         Mockito.verify(playerRepository, Mockito.times(1)).findByUserToken(Mockito.any());
@@ -140,18 +140,18 @@ public class ScoringSystemTest {
 
         //preparation for the test
         Hint givenHint = new Hint();
-        givenHint.setStatus(ActionTypeStatus.VALID);
+        givenHint.setStatus(ActionTypeStatus.INVALID);
 
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(testPlayer);
         Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
 
         int oldScore = testPlayer.getScore();
-        int scoreAdjustment = (int) (CONSTANTS.MAX_POINTS_PER_ROUND_HINT - 10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int scoreAdjustment = (int) (-10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND) - CONSTANTS.MIN_POINT_DEDUCTION_WRONG_HINT;
         int expectedScore = oldScore + scoreAdjustment;
 
         //invoke the testMethod
-        scoringSystem.updateScoreOfClue_Giver(givenHint);
+        scoringSystem.updateScoreOfClueGiver(givenHint);
 
         //then
         Mockito.verify(playerRepository, Mockito.times(1)).findByUserToken(Mockito.any());
@@ -283,7 +283,7 @@ public class ScoringSystemTest {
         long oldTimeOfPlayer = testPlayer.getElapsedTime();
 
         //invoke the testMethod
-        scoringSystem.startTimeForClue_Givers(testGame.getGameId());
+        scoringSystem.startTimeForClueGivers(testGame.getGameId());
 
         //then
         Mockito.verify(playerRepository, Mockito.times(1)).findByGameGameId(Mockito.any());
@@ -305,7 +305,7 @@ public class ScoringSystemTest {
         long oldTimeOfPlayer = testPlayer.getElapsedTime();
 
         //invoke the testMethod
-        scoringSystem.startTimeForClue_Givers(testGame.getGameId());
+        scoringSystem.startTimeForClueGivers(testGame.getGameId());
 
         //then
         Mockito.verify(playerRepository, Mockito.times(1)).findByGameGameId(Mockito.any());
