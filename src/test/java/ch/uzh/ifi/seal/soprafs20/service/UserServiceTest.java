@@ -219,7 +219,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_passwordsDontMatch_emptyUser() {
+    public void verifyPasswordOfUser_passwordsDontMatch() {
         User userInput = new User();
         userInput.setPassword("wrongPassword");
 

@@ -64,10 +64,12 @@ public class UserServiceIntegrationTest {
     public void createUser_duplicateUsername_throwsException() {
         assertNull(userRepository.findByUsername("testUsername"));
 
+        //create a testUser
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("test");
 
+        //create User
         User createdUser = userService.createUser(testUser);
 
         // attempt to create second user with same username
@@ -85,6 +87,7 @@ public class UserServiceIntegrationTest {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
+        //create a TestUser
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
@@ -95,6 +98,7 @@ public class UserServiceIntegrationTest {
         //when
         User loggedInUser = userService.loginUser(testUser);
 
+        //verify the loggedInUser
         assertEquals(testUser.getId(), loggedInUser.getId());
         assertEquals(testUser.getUsername(), loggedInUser.getUsername());
         assertNotNull(loggedInUser.getToken());
@@ -107,76 +111,120 @@ public class UserServiceIntegrationTest {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
+        //create a TestUser
         User testUser = new User();
         testUser.setUsername("testUsername");
         testUser.setPassword("testPassword");
         testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
 
         // then
         assertThrows(ResponseStatusException.class, () -> userService.loginUser(testUser));
     }
-/*
+
     @Test
     public void loginUser_passwordWrong_throwsException() {
+        //create a testUser
+        User testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testUsername");
+        testUser.setPassword("password");
+        testUser.setToken("1");
+        testUser.setStatus(UserStatus.OFFLINE);
+        userRepository.save(testUser);
+
+        //the information of the user who wants to login
         User testUser2 = new User();
-        testUser2.setId(2L);
         testUser2.setUsername("testUsername");
         testUser2.setPassword("wrongPassword");
-        testUser2.setToken("2");
-        testUser2.setOverallScore(0);
-        testUser2.setStatus(UserStatus.OFFLINE);
+
 
         // then
         assertThrows(ResponseStatusException.class, () -> userService.loginUser(testUser2));
-        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
     }
 
-    /*
     @Test
     public void loginUser_userAlreadyLoggedIn_throwsException() {
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        //create a TestUser
+        User testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
         testUser.setStatus(UserStatus.ONLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
+
 
         // then
         assertThrows(ResponseStatusException.class, () -> userService.loginUser(testUser));
-        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
-
     }
 
     @Test
     public void logoutUser_validInput_success() {
-        Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(testUser);
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
 
+        //create a TestUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
         testUser.setStatus(UserStatus.ONLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
 
-        User logoutUser = userService.logoutUser(testUser);
+        //when
+        User loggedOutUser = userService.logoutUser(testUser);
 
-        // then
-        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
-        Mockito.verify(userRepository, Mockito.times(1)).findByToken(Mockito.any());
-
-        assertEquals(testUser.getId(), logoutUser.getId());
-        assertEquals(testUser.getUsername(), logoutUser.getUsername());
-        assertNotNull(logoutUser.getToken());
-        assertEquals(UserStatus.OFFLINE, logoutUser.getStatus());
-        assertEquals(testUser.getPassword(), logoutUser.getPassword());
+        //verify the loggedInUser
+        assertEquals(testUser.getId(), loggedOutUser.getId());
+        assertEquals(testUser.getUsername(), loggedOutUser.getUsername());
+        assertNotNull(loggedOutUser.getToken());
+        assertEquals(UserStatus.OFFLINE, loggedOutUser.getStatus());
+        assertEquals(testUser.getPassword(), loggedOutUser.getPassword());
     }
 
     @Test
     public void logoutUser_invalidInput_throwsException() {
-        Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(null);
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
+
+        //the information of the user who wants to login
+        User testUser2 = new User();
+        testUser2.setUsername("testUsername2");
+        testUser2.setPassword("wrongPassword");
 
         // then
-        assertThrows(ResponseStatusException.class, () -> userService.logoutUser(testUser));
-        Mockito.verify(userRepository, Mockito.times(1)).findByToken(Mockito.any());
+        assertThrows(ResponseStatusException.class, () -> userService.logoutUser(testUser2));
     }
 
     @Test
     public void getUserById_validInput_success() {
-        User userById = userService.getUserById(1L);
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
 
-        // then
-        Mockito.verify(userRepository, Mockito.times(1)).findUserById(Mockito.any());
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
 
+        //when
+        User userById = userService.getUserById(testUser.getId());
+
+        //verify the userById
         assertEquals(testUser.getId(), userById.getId());
         assertEquals(testUser.getUsername(), userById.getUsername());
         assertNotNull(userById.getToken());
@@ -186,54 +234,89 @@ public class UserServiceIntegrationTest {
 
     @Test
     public void getUserById_userDoesNotExist_throwsException() {
-        Mockito.when(userRepository.findUserById(Mockito.any())).thenReturn(null);
-
+        //no data needs to be created
         // then
         assertThrows(ResponseStatusException.class, () -> userService.getUserById(1L));
-        Mockito.verify(userRepository, Mockito.times(1)).findUserById(Mockito.any());
     }
 
     @Test
     public void updateUser_validInput_success() {
-        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
 
-        User userInput = new User();
-        userInput.setUsername("newUsername");
-        userInput.setPassword("newPassword");
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
 
-        User updatedUser = userService.updateUser(1L, userInput);
+        User updateForUser = new User();
+        updateForUser.setUsername("newUsername");
+        updateForUser.setPassword("newPassword");
 
-        // then
-        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+        //call the method
+        User updatedUser = userService.updateUser(testUser.getId(), updateForUser);
 
+        //verify that the user has been updated correctly
         assertEquals(testUser.getId(), updatedUser.getId());
-        assertEquals(testUser.getUsername(), updatedUser.getUsername());
+        assertEquals(updateForUser.getUsername(), updatedUser.getUsername());
         assertNotNull(updatedUser.getToken());
         assertEquals(UserStatus.OFFLINE, updatedUser.getStatus());
-        assertEquals(testUser.getPassword(), updatedUser.getPassword());
+        assertEquals(updatedUser.getPassword(), updatedUser.getPassword());
     }
 
     @Test
     public void updateUser_usernameAlreadyExists_throwsException() {
-        User userInput = new User();
-        userInput.setUsername("username");
-        userInput.setPassword("newPassword");
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
 
-        // then
-        assertThrows(ResponseStatusException.class, () -> userService.updateUser(1L, userInput));
-        Mockito.verify(userRepository, Mockito.times(1)).findUserById(Mockito.any());
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
+
+        //create a second user such that the name is already taken
+        User testUser2 = new User();
+        testUser2.setUsername("testUsername2");
+        testUser2.setPassword("testPassword2");
+        testUser2.setStatus(UserStatus.OFFLINE);
+        testUser2.setToken("2");
+        userRepository.save(testUser2);
+
+        //create the update for the user
+        User updateForUser = new User();
+        updateForUser.setUsername("testUsername2");
+        updateForUser.setPassword("testPassword2");
+
+        //verify that a exception is thrown because the username already exists
+        assertThrows(ResponseStatusException.class, () -> userService.updateUser(1L, updateForUser));
     }
 
     @Test
     public void verifyPasswordOfUser_validInput_success() {
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
+
+        //create the user input
         User userInput = new User();
-        userInput.setPassword("password");
+        userInput.setPassword("testPassword");
 
-        User verifiedUser = userService.verifyPasswordOfUser(1L, userInput);
+        User verifiedUser = userService.verifyPasswordOfUser(testUser.getId(), userInput);
 
-        // then
-        Mockito.verify(userRepository, Mockito.times(1)).findUserById(Mockito.any());
-
+        //verify that the verified user is correct
         assertEquals(testUser.getId(), verifiedUser.getId());
         assertEquals(testUser.getUsername(), verifiedUser.getUsername());
         assertNotNull(verifiedUser.getToken());
@@ -242,15 +325,25 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_passwordsDontMatch_emptyUser() {
+    public void verifyPasswordOfUser_passwordsDontMatch() {
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
+
+        //create the user input
         User userInput = new User();
         userInput.setPassword("wrongPassword");
 
-        User verifiedUser = userService.verifyPasswordOfUser(1L, userInput);
+        User verifiedUser = userService.verifyPasswordOfUser(testUser.getId(), userInput);
 
-        // then
-        Mockito.verify(userRepository, Mockito.times(1)).findUserById(Mockito.any());
-
+        // verify that we get an empty user back
         assertNull(verifiedUser.getId());
         assertNull(verifiedUser.getUsername());
         assertNull(verifiedUser.getToken());
@@ -260,14 +353,22 @@ public class UserServiceIntegrationTest {
 
     @Test
     public void checkIfUserExists_UserExists_throwsException() {
-        User userInput = new User();
-        userInput.setUsername("username");
-        userInput.setPassword("newPassword");
+        // given
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        //create a testUser
+        User testUser = new User();
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setStatus(UserStatus.OFFLINE);
+        testUser.setToken("1");
+        userRepository.save(testUser);
+
+        //create a second user such that the name is already taken
+        User testUser2 = new User();
+        testUser2.setUsername("testUsername");
 
         // then
-        assertThrows(ResponseStatusException.class, () -> userService.checkIfUserExists(userInput));
-        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
+        assertThrows(ResponseStatusException.class, () -> userService.checkIfUserExists(testUser2));
     }
-
- */
 }
