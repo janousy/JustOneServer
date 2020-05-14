@@ -134,7 +134,9 @@ public class RoundService {
         newHint.setMarked(ActionTypeStatus.UNKNOWN);
 
         //validate input content hint with external API
-        hintValidator.validateWithExernalResources(newHint, currentRound.getTerm());
+        //validating twice, once empty stemmer for stemming, once with wordnet for lemmatization
+        hintValidator.validateWithExernalResources(newHint, currentRound.getTerm(), "");
+        hintValidator.validateWithExernalResources(newHint, currentRound.getTerm(), "wordnet");
 
         log.info(String.format("adding hint to round: %s", newHint.getContent()));
 
@@ -466,5 +468,4 @@ public class RoundService {
             }
         }
     }
-
 }

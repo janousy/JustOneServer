@@ -43,20 +43,24 @@ public class HintValidator {
     /* External APIs:
      *   http://text-processing.com/, stemming and lemmatization, throttled at 1000 calls per day per IP, returns 503 if exceeded
      * */
-    public Hint validateWithExernalResources(Hint inputHint, Term currentTerm) {
-        String termLemma = getWordLemma(currentTerm.getContent());
-        String hintLemma = getWordLemma(inputHint.getContent());
-        return compareHintToTerm(inputHint, hintLemma, termLemma);
+    public Hint validateWithExernalResources(Hint inputHint, Term currentTerm, String inputStemmer) {
+        String termContentProcessed = processWithNLP(currentTerm.getContent(), inputStemmer);
+        String hintContentProcessed = processWithNLP(inputHint.getContent(), inputStemmer);
+        return compareHintToTerm(inputHint, hintContentProcessed, termContentProcessed);
     }
 
-    public String getWordLemma(String word) {
+    public String processWithNLP(String word, String stemmer) {
         try {
-            final String POST_URL = "http://text-processing.com/api/stem/"; //api for word stem processing
+            final String POST_URL = "http://text-processing.com/api/stem/"; //api for word stem lemmatization processing
 
+            //either wordnet stemmer or empty stemmer possible
+            if (!stemmer.equals("wordnet")) {
+                stemmer = "";
+            }
             //stemmer must be wordnet in order to get lemmatization
-            // UPPERCASE NOT WORKING!!!!
+            // UPPERCASE NOT WORKING BY DEFINITION OF API SPECS!!!!
             String requestParameter = word.toLowerCase();
-            final String POST_PARAMS = String.format("text=%s&stemmer=wordnet", requestParameter);
+            final String POST_PARAMS = String.format("text=%s&stemmer=%s", requestParameter, stemmer);
 
             log.info(String.format("connecting to %s", POST_URL));
             log.info(String.format("post form data: %s", POST_PARAMS));
@@ -130,8 +134,8 @@ public class HintValidator {
         return currentHints;
     }
 
-    public Hint compareHintToTerm(Hint hint, String hintLemma, String termLemma) {
-        if (termLemma.toLowerCase().equals(hintLemma.toLowerCase())) {
+    public Hint compareHintToTerm(Hint hint, String hintContent, String termContent) {
+        if (termContent.toLowerCase().equals(hintContent.toLowerCase())) {
             hint.setStatus(ActionTypeStatus.INVALID);
         }
         else {
