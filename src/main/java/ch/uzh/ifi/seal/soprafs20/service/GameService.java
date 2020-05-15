@@ -211,6 +211,23 @@ public class GameService {
         }
     }
 
+    //updates the status of a game
+    //param: Long gameId, Game updateForGame
+    //return: returns the updated game
+    public Game updateGameStatus(Long gameId, Game updateForGame) {
+
+        Game gameToUpdate = getGameById(gameId);
+
+        if (updateForGame.getStatus() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You did not define a proper GameStatus");
+        }
+
+        gameToUpdate.setStatus(updateForGame.getStatus());
+        gameRepository.save(gameToUpdate);
+
+        return gameToUpdate;
+    }
+
     //this method finish the preparation of a game to start playing
     //param: Game game
     //return: void
