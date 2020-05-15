@@ -96,7 +96,8 @@ public class HintValidator {
                 //decompose response message
                 JSONObject JSON_response = new JSONObject(response.toString()); //gradlew dependency required! should be in
                 String wordLemma = JSON_response.getString("text");
-                log.info("lemmatized word: " + wordLemma + " || current word: " + word);
+
+                log.info(((stemmer.equals("wordnet")) ? "lemmatized " : "stemmed ") + "word: " + wordLemma + " || current word: " + word);
                 return wordLemma;
 
             }
@@ -120,6 +121,9 @@ public class HintValidator {
             if (hint.getInvalidCounter() >= nrOfClueGivers / 2) {
                 currentHints.get(currentHints.indexOf(hint)).setStatus(ActionTypeStatus.INVALID);
             }
+            else {
+                hint.setStatus(ActionTypeStatus.VALID);
+            }
 
             List<Integer> similarites = hint.getSimilarity();
             for (int similarity : similarites) {
@@ -138,11 +142,9 @@ public class HintValidator {
     }
 
     public Hint compareHintToTerm(Hint hint, String hintContent, String termContent) {
+
         if (termContent.toLowerCase().equals(hintContent.toLowerCase())) {
             hint.setStatus(ActionTypeStatus.INVALID);
-        }
-        else {
-            hint.setStatus(ActionTypeStatus.UNKNOWN);
         }
         return hint;
     }
@@ -157,6 +159,13 @@ public class HintValidator {
 
     public Hint checkSingleWord(Hint inputHint) {
         if (inputHint.getContent().contains(" ")) {
+            inputHint.setStatus(ActionTypeStatus.INVALID);
+        }
+        return inputHint;
+    }
+
+    public Hint checkTermIncluded(Hint inputHint, Term currentTerm) {
+        if (inputHint.getContent().toLowerCase().contains(currentTerm.getContent().toLowerCase())) {
             inputHint.setStatus(ActionTypeStatus.INVALID);
         }
         return inputHint;

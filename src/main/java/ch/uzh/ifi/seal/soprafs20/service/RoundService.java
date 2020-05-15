@@ -136,6 +136,7 @@ public class RoundService {
         //check if hint is similar to any hint given, if yes set to invalid
         hintValidator.checkDuplicates(newHint, currentHints);
         hintValidator.checkSingleWord(newHint);
+        hintValidator.checkTermIncluded(newHint, currentRound.getTerm());
 
         log.debug(String.format("adding hint to round: %s", newHint.getContent()));
 
@@ -276,7 +277,7 @@ public class RoundService {
 
         if (inputHint.getMarked() == ActionTypeStatus.INVALID) {
             int invalidCount = hintByToken.getInvalidCounter();
-            hintByToken.setInvalidCounter(invalidCount += 1);
+            hintByToken.setInvalidCounter(invalidCount + 1);
         }
 
         hintByToken.setMarked(ActionTypeStatus.UNKNOWN); //just to make sure never changed

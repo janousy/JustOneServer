@@ -28,7 +28,6 @@ public interface HintDTOMapper {
     @Mapping(source = "content", target = "content")
     @Mapping(source = "token", target = "token")
     @Mapping(source = "status", target = "status")
-    @Mapping(source = "marked", target = "marked")
     @Mapping(source = "invalidCounter", target = "invalidCounter")
     @Mapping(source = "similarity", target = "similarity")
     @Mapping(source = "reporters", target = "reporters")
