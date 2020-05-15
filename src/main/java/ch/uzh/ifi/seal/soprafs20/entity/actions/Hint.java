@@ -24,6 +24,9 @@ public class Hint implements ActionType {
     @Column(name = "marked_Hint")
     private ActionTypeStatus marked;
 
+    @Column(name = "invalidCounter_Hint")
+    private int invalidCounter;
+
     @Column(name = "similarity_Hint")
     private ArrayList<Integer> similarity = new ArrayList<Integer>();
 
@@ -52,6 +55,14 @@ public class Hint implements ActionType {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getInvalidCounter() {
+        return invalidCounter;
+    }
+
+    public void setInvalidCounter(int invalidCounter) {
+        this.invalidCounter = invalidCounter;
     }
 
     public ArrayList<Integer> getSimilarity() {

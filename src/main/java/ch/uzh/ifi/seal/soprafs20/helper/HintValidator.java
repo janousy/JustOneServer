@@ -110,11 +110,14 @@ public class HintValidator {
         }
     }
 
+    //only when all hints are reported, hints can get validated by marking and similarity
     public List<Hint> validateSimilarityAndMarking(List<Hint> currentHints) {
         int nrOfClueGivers = currentHints.size();
 
+        //such that a hint becomes invalid by marking, half of the players must have it marked as invalid (invalidCounter)
+        //same goes with similarity, half of the players must mark another hint as similar
         for (Hint hint : currentHints) {
-            if (hint.getMarked() == ActionTypeStatus.INVALID) {
+            if (hint.getInvalidCounter() >= nrOfClueGivers / 2) {
                 currentHints.get(currentHints.indexOf(hint)).setStatus(ActionTypeStatus.INVALID);
             }
 
@@ -142,5 +145,20 @@ public class HintValidator {
             hint.setStatus(ActionTypeStatus.UNKNOWN);
         }
         return hint;
+    }
+
+    public Hint checkDuplicates(Hint inputHint, List<Hint> currentHints) {
+        if (currentHints.stream().anyMatch(hint
+                -> hint.getContent().equals(inputHint.getContent()))) {
+            inputHint.setStatus(ActionTypeStatus.INVALID);
+        }
+        return inputHint;
+    }
+
+    public Hint checkSingleWord(Hint inputHint) {
+        if (inputHint.getContent().contains(" ")) {
+            inputHint.setStatus(ActionTypeStatus.INVALID);
+        }
+        return inputHint;
     }
 }

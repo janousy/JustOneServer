@@ -109,7 +109,7 @@ public class RoundService {
     }
 
     public synchronized Hint addHintToRound(Hint inputHint, Long gameId) {
-        log.info(String.format("adding hint started for: %s", inputHint.getContent()));
+        log.debug(String.format("adding hint started for: %s", inputHint.getContent()));
         checkIfTokenValid(inputHint.getToken(), PlayerStatus.CLUE_GIVER);
         validateGameState(GameStatus.RECEIVING_HINTS, gameId);
 
@@ -119,11 +119,6 @@ public class RoundService {
             if (hint.getToken().equals(inputHint.getToken())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "player has already set a hint");
             }
-        });
-
-        log.info(String.format("creating hint %s", inputHint.getContent()));
-        currentHints.forEach(hint -> {
-            log.info(String.format("hints before adding: %s", hint.getContent()));
         });
 
         Hint newHint = new Hint();
@@ -138,15 +133,15 @@ public class RoundService {
         hintValidator.validateWithExernalResources(newHint, currentRound.getTerm(), "");
         hintValidator.validateWithExernalResources(newHint, currentRound.getTerm(), "wordnet");
 
-        log.info(String.format("adding hint to round: %s", newHint.getContent()));
+        //check if hint is similar to any hint given, if yes set to invalid
+        hintValidator.checkDuplicates(newHint, currentHints);
+        hintValidator.checkSingleWord(newHint);
+
+        log.debug(String.format("adding hint to round: %s", newHint.getContent()));
 
         currentHints.add(newHint);
         currentRound.setHintList(currentHints);
         roundRepository.saveAndFlush(currentRound);
-
-        currentHints.forEach(hint -> {
-            log.info(String.format("hints after adding: %s", hint.getContent()));
-        });
 
         //stopping the time of the player using the actionType
         scoringSystem.stopTimeForPlayer(newHint);
@@ -155,21 +150,17 @@ public class RoundService {
         int nrOfPlayers2 = game.getPlayerList().size();
         int nrOfPlayers = playerRepository.findByGameGameId(gameId).size();
         int nrOfHints = currentRound.getHintList().size();
-        log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
-        log.info(String.format("nr of players: %d", nrOfPlayers));
+        log.debug(String.format("nr of hints: %d", currentRound.getHintList().size()));
+        log.debug(String.format("nr of players: %d", nrOfPlayers));
 
-        //go into if when all hints have arrived
-        //log info
-        log.info(String.format("nr of hints: %d", currentRound.getHintList().size()));
+        //go into when all hints have arrived
         if (nrOfHints == (nrOfPlayers2 - 1)) {
-            log.info(String.format("setting game status to: %s", GameStatus.VALIDATING_HINTS));
+            log.debug(String.format("setting game status to: %s", GameStatus.VALIDATING_HINTS));
             game.setStatus(GameStatus.VALIDATING_HINTS);
-            //gameRepository.save(game);
         }
         else {
-            log.info(String.format("setting game status to: %s", GameStatus.RECEIVING_HINTS));
+            log.debug(String.format("setting game status to: %s", GameStatus.RECEIVING_HINTS));
             game.setStatus(GameStatus.RECEIVING_HINTS);
-            //gameRepository.save(game);
         }
         return newHint;
     }
@@ -283,13 +274,14 @@ public class RoundService {
         currentSimilarity.addAll(inputHint.getSimilarity());
         currentReporters.addAll(inputHint.getReporters());
 
-        hintByToken.setMarked(inputHint.getMarked());
+        if (inputHint.getMarked() == ActionTypeStatus.INVALID) {
+            int invalidCount = hintByToken.getInvalidCounter();
+            hintByToken.setInvalidCounter(invalidCount += 1);
+        }
+
+        hintByToken.setMarked(ActionTypeStatus.UNKNOWN); //just to make sure never changed
         hintByToken.setSimilarity(currentSimilarity);
         hintByToken.setReporters(currentReporters);
-
-        if (inputHint.getMarked() != null) {
-            hintByToken.setStatus(inputHint.getMarked());
-        }
 
         //check if all hints validated
         boolean allHintsReported = true;

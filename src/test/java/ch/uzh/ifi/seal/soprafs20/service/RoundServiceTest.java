@@ -124,7 +124,7 @@ public class RoundServiceTest {
         validatedHint.setStatus(ActionTypeStatus.VALID);
 
         Mockito.doAnswer((invocation -> null)).when(scoringSystem).stopTimeForPlayer(Mockito.any());
-        Mockito.when(hintValidator.validateWithExernalResources(inputHint, round1.getTerm())).thenReturn(validatedHint);
+        Mockito.when(hintValidator.validateWithExernalResources(inputHint, round1.getTerm(), "wordnet")).thenReturn(validatedHint);
         Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(player1);
         Mockito.when(gameRepository.findGameByGameId(Mockito.anyLong())).thenReturn(game1);
 
@@ -284,7 +284,6 @@ public class RoundServiceTest {
         assertEquals(similarities, updatedHint.getSimilarity());
         assertEquals(reporter, updatedHint.getReporters());
     }
-
     @Test
     public void givenTerm_skipTermByGuesser_success() {
         player1.setUserToken("testToken");

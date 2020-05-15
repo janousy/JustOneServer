@@ -10,8 +10,17 @@ public class HintGetDTO {
     private String token;
     private ActionTypeStatus status;
     private ActionTypeStatus marked;
+    private int invalidCounter;
     private ArrayList<Integer> similarity;
     private ArrayList<String> reporters;
+
+    public int getInvalidCounter() {
+        return invalidCounter;
+    }
+
+    public void setInvalidCounter(int invalidCounter) {
+        this.invalidCounter = invalidCounter;
+    }
 
     public ActionTypeStatus getMarked() {
         return marked;

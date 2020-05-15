@@ -54,20 +54,6 @@ public class HintValidatorTest {
     }
 
     @Test
-    public void givenListOfHints_validateMarking() {
-        testHint1.setMarked(ActionTypeStatus.INVALID);
-        testHint2.setMarked(ActionTypeStatus.VALID);
-        hintList.add(testHint1);
-        hintList.add(testHint2);
-
-        List<Hint> validatedHints = hintValidator.validateSimilarityAndMarking(hintList);
-
-        assertEquals(hintList.size(), validatedHints.size());
-        assertEquals(testHint1.getMarked(), validatedHints.get(0).getStatus());
-        assertEquals(testHint2.getMarked(), validatedHints.get(1).getStatus());
-    }
-
-    @Test
     public void givenListOfHints_validateSimilarity() {
         ArrayList<Integer> similarities1 = new ArrayList<>();
         similarities1.add(2); //hint1 is similar to hint3
@@ -94,12 +80,12 @@ public class HintValidatorTest {
         term.setContent("test");
 
         HintValidator hintValidatorSpy = Mockito.spy(HintValidator.class);
-        Mockito.when(hintValidatorSpy.getWordLemma(hint.getContent())).thenReturn(hint.getContent());
-        Mockito.when(hintValidatorSpy.getWordLemma(term.getContent())).thenReturn(term.getContent());
+        Mockito.when(hintValidatorSpy.processWithNLP(hint.getContent(), "wordnet")).thenReturn(hint.getContent());
+        Mockito.when(hintValidatorSpy.processWithNLP(term.getContent(), "wordnet")).thenReturn(term.getContent());
 
-        hintValidatorSpy.validateWithExernalResources(hint, term);
+        hintValidatorSpy.validateWithExernalResources(hint, term, "wordnet");
 
-        Mockito.verify(hintValidatorSpy, Mockito.times(2)).getWordLemma(Mockito.any());
+        Mockito.verify(hintValidatorSpy, Mockito.times(2)).processWithNLP(Mockito.any(), Mockito.anyString());
 
         assertEquals(ActionTypeStatus.INVALID, hint.getStatus());
     }

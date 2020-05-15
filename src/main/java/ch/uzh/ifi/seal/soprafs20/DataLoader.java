@@ -47,8 +47,8 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) throws IOException {
-        //createInitialGames();
-        //createInitialUsers();
+        createInitialGames();
+        createInitialUsers();
         createInitialCards();
     }
 
@@ -63,50 +63,49 @@ public class DataLoader implements ApplicationRunner {
             testGame.setStatus(gameStatus);
             gameRepository.save(testGame);
         }
-            gameRepository.flush();
+        gameRepository.flush();
+    }
+
+    private void createInitialUsers() {
+
+        String date = new Date().toString();
+        int numberOfPlayers = 8;
+
+        for (int i = 1; i <= numberOfPlayers; i++) {
+            User testUser = new User();
+            Player testPlayer = new Player();
+
+            testUser.setToken("abcdef-" + i);
+            testUser.setStatus(UserStatus.ONLINE);
+            testUser.setUsername("testUser" + i);
+            testUser.setPassword("testPassword");
+
+
+            testPlayer.setName("testPlayer" + i);
+            testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
+            testPlayer.setScore(0);
+            //defining a Host for each game
+            testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
+            testPlayer.setUserToken(testUser.getToken());
+            testPlayer.setElapsedTime(0L);
+
+            //put two player player into each game, leave third game empty
+            testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
+            testUser.setPlayer(testPlayer);
+            testPlayer.setUser(testUser);
+            testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+
+            userRepository.save(testUser);
+            playerRepository.save(testPlayer);
         }
-
-        private void createInitialUsers() {
-
-            String date = new Date().toString();
-            int numberOfPlayers = 8;
-
-            for (int i = 1; i <= numberOfPlayers; i++) {
-                User testUser = new User();
-                Player testPlayer = new Player();
-
-                testUser.setToken("abcdef-" + i);
-                testUser.setStatus(UserStatus.ONLINE);
-                testUser.setUsername("testUser" + i);
-                testUser.setPassword("testPassword");
-
-
-                testPlayer.setName("testPlayer" + i);
-                testPlayer.setStatus(i % numberOfPlayers / 2 == 0 ? PlayerStatus.NOT_READY : PlayerStatus.READY);
-                testPlayer.setScore(0);
-                //defining a Host for each game
-                testPlayer.setRole(i % numberOfPlayers / 2 == 0 ? PlayerRole.HOST : PlayerRole.GUEST);
-                testPlayer.setUserToken(testUser.getToken());
-                testPlayer.setElapsedTime(0L);
-
-                //put two player player into each game, leave third game empty
-                testPlayer.setGame(i <= numberOfPlayers / 2 ? gameRepository.findGameByGameId(1L) : gameRepository.findGameByGameId(2L));
-                testUser.setPlayer(testPlayer);
-                testPlayer.setUser(testUser);
-                testPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
-
-                userRepository.save(testUser);
-                playerRepository.save(testPlayer);
-            }
-            userRepository.flush();
-            playerRepository.flush();
-        }
+        userRepository.flush();
+        playerRepository.flush();
+    }
 
 
     private void createInitialCards() throws IOException {
 
         int BATCHSIZE = 5;
-        //InputStream inputStream = getClass().getResourceAsStream("cards-EN.txt");
         InputStream inputStream = DataLoader.class.getClassLoader().getResourceAsStream("cards-EN.txt");
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -120,6 +119,7 @@ public class DataLoader implements ApplicationRunner {
             }
             line = bufferedReader.readLine();
         }
+
         String everything = stringBuffer.toString();
         String[] termsSplitted = everything.split("\n");
 
