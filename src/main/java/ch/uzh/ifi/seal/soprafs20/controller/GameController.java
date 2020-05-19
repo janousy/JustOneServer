@@ -22,7 +22,7 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    //returns a list with all games http method: get, mapping: /games
+    //returns a list with all games
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -39,7 +39,7 @@ public class GameController {
 
     }
 
-    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    //returns a specific game corresponding to the id
     @GetMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -66,7 +66,7 @@ public class GameController {
     }
 
 
-    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    //returns a specific game corresponding to the id
     @DeleteMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -82,7 +82,7 @@ public class GameController {
         return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 
-    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    //returns a specific game corresponding to the id
     @PutMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

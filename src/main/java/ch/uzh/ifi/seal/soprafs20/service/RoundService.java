@@ -81,6 +81,10 @@ public class RoundService {
     //return: Round round
     public Round getLastRoundOfGame(Long gameId) {
         Game game = gameRepository.findGameByGameId(gameId);
+
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game id you specified does not exist");
+        }
         List<Round> roundList = game.getRoundList();
 
         //currentRound nr is in external representation(+1)

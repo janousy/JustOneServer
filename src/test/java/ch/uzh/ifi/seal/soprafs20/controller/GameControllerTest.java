@@ -5,6 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameDeleteDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePutDTO;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -142,7 +143,6 @@ public class GameControllerTest {
                 .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())));
     }
 
-
     @Test
     public void deleteGame_validInput_gameDeleted() throws Exception {
         // given
@@ -168,6 +168,37 @@ public class GameControllerTest {
 
         // then
         mockMvc.perform(deleteRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId", is(game.getGameId().intValue())))
+                .andExpect(jsonPath("$.name", is(game.getName())))
+                .andExpect(jsonPath("$.status", is(game.getStatus().toString())))
+                .andExpect(jsonPath("$.correctCards", is(game.getCorrectCards())));
+    }
+
+    @Test
+    public void updateGameStateById_validInput_gameDeleted() throws Exception {
+        // given
+        Game game = new Game();
+        game.setName("Game 1");
+        game.setGameId(1L);
+        game.setCorrectCards(0);
+        game.setPlayerList(new ArrayList<Player>());
+        game.setRoundList(new ArrayList<Round>());
+        game.setCardList(new ArrayList<Card>());
+        game.setStatus(GameStatus.LOBBY);
+
+        GamePutDTO gamePutDTO = new GamePutDTO();
+        gamePutDTO.setStatus(GameStatus.FINISHED);
+
+        given(gameService.updateGameStatus(Mockito.any(), Mockito.any())).willReturn(game);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder putRequest = put("/games/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(gamePutDTO));
+
+        // then
+        mockMvc.perform(putRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.gameId", is(game.getGameId().intValue())))
                 .andExpect(jsonPath("$.name", is(game.getName())))

@@ -1,6 +1,12 @@
 package ch.uzh.ifi.seal.soprafs20.constant;
 
 public final class CONSTANTS {
+
+    //private constructor ensures no object is instantiated
+    private CONSTANTS() {
+        throw new IllegalStateException("CONSTANTS class");
+    }
+
     public static final int MAX_WORDS_PER_CARD = 5;
 
     //constants for the game

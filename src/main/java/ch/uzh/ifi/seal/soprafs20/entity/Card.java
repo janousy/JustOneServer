@@ -14,7 +14,7 @@ public class Card {
     private Long id;
 
     @ManyToMany(mappedBy = "cardList")
-    private List<Game> gameList = new ArrayList<Game>();
+    private List<Game> gameList = new ArrayList<>();
 
     @Column
     private String word1;
@@ -32,6 +32,7 @@ public class Card {
     private String word5;
 
     public Card() {
+        //empty constructor
     }
 
     public Long getId() {
