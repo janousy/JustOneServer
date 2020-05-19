@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @see UserService
  */
-//TODO extend this test
 
 @WebAppConfiguration
 @SpringBootTest

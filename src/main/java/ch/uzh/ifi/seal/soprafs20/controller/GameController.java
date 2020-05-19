@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GameGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePostDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.game.GamePutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.GameDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    //returns a list with all games http method: get, mapping: /games
+    //returns a list with all games
     @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -38,7 +39,7 @@ public class GameController {
 
     }
 
-    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    //returns a specific game corresponding to the id
     @GetMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -65,7 +66,7 @@ public class GameController {
     }
 
 
-    //returns a specific game corresponding to the id http method: get, mapping: /games/{id}
+    //returns a specific game corresponding to the id
     @DeleteMapping("/games/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -79,6 +80,19 @@ public class GameController {
 
         // convert internal representation of user back to API
         return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+    }
+
+    //returns a specific game corresponding to the id
+    @PutMapping("/games/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO updateGameStateById(@PathVariable Long id, @RequestBody GamePutDTO gamePutDTO) {
+
+        Game updatedGame = GameDTOMapper.INSTANCE.convertGamePutDTOtoEntity(gamePutDTO);
+
+        Game createdGame = gameService.updateGameStatus(id, updatedGame);
+
+        return GameDTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
     }
 
 }

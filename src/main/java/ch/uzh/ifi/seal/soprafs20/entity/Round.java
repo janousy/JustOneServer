@@ -20,7 +20,7 @@ public class Round {
     private Long id;
 
     @ElementCollection
-    private List<Hint> hintList = new ArrayList<Hint>();
+    private List<Hint> hintList = new ArrayList<>();
 
     @Embedded
     private Guess guess;
@@ -37,6 +37,7 @@ public class Round {
 
 
     public Round() {
+        //empty constructor
     }
 
 

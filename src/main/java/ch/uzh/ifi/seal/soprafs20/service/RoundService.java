@@ -12,7 +12,6 @@ import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
-import org.hibernate.annotations.Synchronize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -83,6 +81,10 @@ public class RoundService {
     //return: Round round
     public Round getLastRoundOfGame(Long gameId) {
         Game game = gameRepository.findGameByGameId(gameId);
+
+        if (game == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The game id you specified does not exist");
+        }
         List<Round> roundList = game.getRoundList();
 
         //currentRound nr is in external representation(+1)
@@ -215,7 +217,7 @@ public class RoundService {
             });
 
             //starting the time for all clue_givers
-            scoringSystem.startTimeForClue_Givers(gameId);
+            scoringSystem.startTimeForClueGivers(gameId);
 
             currentRound.setTerm(newTerm);
             return newTerm;

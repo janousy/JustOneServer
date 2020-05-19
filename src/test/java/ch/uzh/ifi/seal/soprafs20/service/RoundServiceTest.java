@@ -11,7 +11,6 @@ import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +19,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,7 +183,7 @@ public class RoundServiceTest {
         Term inputTerm = new Term();
         inputTerm.setWordId(0L); //setting testTerm1
 
-        Mockito.doAnswer((invocation -> null)).when(scoringSystem).startTimeForClue_Givers(Mockito.any());
+        Mockito.doAnswer((invocation -> null)).when(scoringSystem).startTimeForClueGivers(Mockito.any());
         Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(player1);
         Mockito.when(gameRepository.findGameByGameId(Mockito.anyLong())).thenReturn(game1);
         Mockito.when(playerRepository.findByGameGameId(Mockito.anyLong())).thenReturn(playerList);

@@ -27,8 +27,6 @@ executed upon application startup. Comment out both methods in run() to get an e
 @Component
 public class DataLoader implements ApplicationRunner {
 
-    private final Logger log = LoggerFactory.getLogger(DataLoader.class);
-
     private UserRepository userRepository;
     private GameRepository gameRepository;
     private PlayerRepository playerRepository;
@@ -47,8 +45,8 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) throws IOException {
-        createInitialGames();
-        createInitialUsers();
+        //createInitialGames();
+        //createInitialUsers();
         createInitialCards();
     }
 
@@ -66,15 +64,13 @@ public class DataLoader implements ApplicationRunner {
         gameRepository.flush();
     }
 
-    private void createInitialUsers() {
 
-        String date = new Date().toString();
+    private void createInitialUsers() {
         int numberOfPlayers = 8;
 
         for (int i = 1; i <= numberOfPlayers; i++) {
             User testUser = new User();
             Player testPlayer = new Player();
-
             testUser.setToken("abcdef-" + i);
             testUser.setStatus(UserStatus.ONLINE);
             testUser.setUsername("testUser" + i);
@@ -98,6 +94,7 @@ public class DataLoader implements ApplicationRunner {
             userRepository.save(testUser);
             playerRepository.save(testPlayer);
         }
+
         userRepository.flush();
         playerRepository.flush();
     }
@@ -105,27 +102,26 @@ public class DataLoader implements ApplicationRunner {
 
     private void createInitialCards() throws IOException {
 
-        int BATCHSIZE = 5;
+        int batchsize = 5;
+        //InputStream inputStream = getClass().getResourceAsStream("cards-EN.txt");
         InputStream inputStream = DataLoader.class.getClassLoader().getResourceAsStream("cards-EN.txt");
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
         String line = bufferedReader.readLine();
 
         while (line != null) {
             if (!line.equals("")) {
-                stringBuffer.append(line);
-                stringBuffer.append(System.lineSeparator());
+                stringBuilder.append(line);
+                stringBuilder.append(System.lineSeparator());
             }
             line = bufferedReader.readLine();
         }
-
-        String everything = stringBuffer.toString();
+        String everything = stringBuilder.toString();
         String[] termsSplitted = everything.split("\n");
 
-        for (int i = BATCHSIZE; i < termsSplitted.length + BATCHSIZE; i = i + BATCHSIZE) {
-            String[] termBatch = Arrays.copyOfRange(termsSplitted, i - BATCHSIZE, i);
-            //log.info(String.format("Init new Card with terms: %s, %s, %s, %s, %s", (Object[]) termBatch));
+        for (int i = batchsize; i < termsSplitted.length + batchsize; i = i + batchsize) {
+            String[] termBatch = Arrays.copyOfRange(termsSplitted, i - batchsize, i);
             Card card = new Card();
             card.setWord1(termBatch[0]);
             card.setWord2(termBatch[1]);

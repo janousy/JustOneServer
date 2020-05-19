@@ -403,4 +403,41 @@ public class GameServiceIntegrationTest {
         assertEquals(testGame.getCorrectCards(), checkedGame.getCorrectCards());
     }
 
+    @Test
+    public void updateGameStatus_validInput_success() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        Game testGame = new Game();
+        testGame.setName("testGame 1");
+        testGame.setStatus(GameStatus.LOBBY);
+        testGame.setCorrectCards(0);
+
+        gameRepository.save(testGame);
+
+        //defining the update for the Game
+        Game updateForGame = new Game();
+        updateForGame.setStatus(GameStatus.FINISHED);
+
+        Game updatedGame = gameService.updateGameStatus(testGame.getGameId(), updateForGame);
+
+        assertEquals(testGame.getGameId(), updatedGame.getGameId());
+        assertEquals(testGame.getName(), updatedGame.getName());
+        assertEquals(GameStatus.FINISHED, updatedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), updatedGame.getCorrectCards());
+    }
+
+    @Test
+    public void updateGameStatus_invalidInput_throwsException() {
+        // given
+        assertNull(gameRepository.findByName("testGame 1"));
+
+        //defining the update for the Game
+        Game updateForGame = new Game();
+        updateForGame.setStatus(null);
+
+        assertThrows(ResponseStatusException.class, () -> gameService.updateGameStatus(1L, updateForGame));
+
+    }
+
 }

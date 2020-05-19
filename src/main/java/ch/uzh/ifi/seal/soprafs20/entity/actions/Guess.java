@@ -53,5 +53,6 @@ public class Guess implements ActionType {
     }
 
     public Guess() {
+        //empty constructor
     }
 }

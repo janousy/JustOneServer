@@ -26,18 +26,15 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private int correctCards;
 
-    @Column(nullable = false)
-    private int roundNr;
-
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Player> playerList = new ArrayList<Player>();
+    private List<Player> playerList = new ArrayList<>();
 
     @OneToMany(mappedBy = "game")
-    private List<Round> roundList = new ArrayList<Round>();
+    private List<Round> roundList = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "game_card", joinColumns = @JoinColumn(name = "game_gameId"), inverseJoinColumns = @JoinColumn(name = "card_id"))
-    private List<Card> cardList = new ArrayList<Card>();
+    private List<Card> cardList = new ArrayList<>();
 
     @Column(nullable = false)
     private GameStatus status;
@@ -99,14 +96,6 @@ public class Game implements Serializable {
         this.status = status;
     }
 
-    public int getRoundNr() {
-        return roundNr;
-    }
-
-    public void setRoundNr(int roundNr) {
-        this.roundNr = roundNr;
-    }
-
     public void addPlayer(Player player) {
         playerList.add(player);
         player.setGame(this);
@@ -126,7 +115,6 @@ public class Game implements Serializable {
         roundList.remove(round);
         round.setGame(null);
     }
-
 
     public void addCard(Card card) {
         cardList.add(card);

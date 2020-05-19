@@ -20,8 +20,6 @@ import java.util.List;
 @Transactional
 public class GuessValidator {
 
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
-
     private final GameRepository gameRepository;
 
     @Autowired

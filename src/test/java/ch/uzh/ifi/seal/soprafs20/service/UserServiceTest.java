@@ -11,10 +11,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-//TODO extend this test
 public class UserServiceTest {
 
     @Mock
@@ -43,6 +44,26 @@ public class UserServiceTest {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
         Mockito.when(userRepository.findUserById(Mockito.any())).thenReturn(testUser);
 
+    }
+
+    @Test
+    public void getAllUsers_validInputs_success() {
+        List<User> usersList = new ArrayList<User>();
+        usersList.add(testUser);
+
+        Mockito.when(userRepository.findAll()).thenReturn(usersList);
+
+        // when -> any object is being save in the userRepository -> return the dummy testUser
+        List<User> allUsers = userService.getUsers();
+
+        // then
+        Mockito.verify(userRepository, Mockito.times(1)).findAll();
+
+        assertEquals(testUser.getId(), allUsers.get(0).getId());
+        assertEquals(testUser.getUsername(), allUsers.get(0).getUsername());
+        assertNotNull(allUsers.get(0).getToken());
+        assertEquals(UserStatus.OFFLINE, allUsers.get(0).getStatus());
+        assertEquals(testUser.getPassword(), allUsers.get(0).getPassword());
     }
 
     @Test

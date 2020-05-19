@@ -27,11 +27,10 @@ import java.util.List;
 @Service
 @Transactional
 public class GameService {
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final Logger log = LoggerFactory.getLogger(GameService.class);
 
     private final GameRepository gameRepository;
     private final CardRepository cardRepository;
-    private final PlayerRepository playerRepository;
 
     private final RoundService roundService;
     private final PlayerService playerService;
@@ -45,7 +44,6 @@ public class GameService {
     ) {
         this.gameRepository = gameRepository;
         this.cardRepository = cardRepository;
-        this.playerRepository = playerRepository;
         this.roundService = roundService;
         this.playerService = playerService;
     }
@@ -97,7 +95,6 @@ public class GameService {
 
         //setting status and cards
         newGame.setStatus(GameStatus.LOBBY);
-        //newGame.setRoundNr(0);
         newGame.setCorrectCards(0);
 
         newGame = gameRepository.save(newGame);
@@ -174,14 +171,10 @@ public class GameService {
     public Game checkIfPlayersKnowTerm(Game game) {
         List<Player> playersInGame = game.getPlayerList();
 
-        Game test = gameRepository.findGameByGameId(game.getGameId());
-
         //check if all clue givers have reporter whether they know the term
         //if they did not yet, return game
-        boolean allClueGiversReported = true;
         for (Player player : playersInGame) {
             if (player.getPlayerTermStatus() == PlayerTermStatus.NOT_SET && player.getStatus() == PlayerStatus.CLUE_GIVER) {
-                allClueGiversReported = false;
                 return game;
             }
         }
@@ -209,6 +202,23 @@ public class GameService {
             game.setStatus(GameStatus.RECEIVING_HINTS);
             return game;
         }
+    }
+
+    //updates the status of a game
+    //param: Long gameId, Game updateForGame
+    //return: returns the updated game
+    public Game updateGameStatus(Long gameId, Game updateForGame) {
+
+        Game gameToUpdate = getGameById(gameId);
+
+        if (updateForGame.getStatus() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You did not define a proper GameStatus");
+        }
+
+        gameToUpdate.setStatus(updateForGame.getStatus());
+        gameRepository.save(gameToUpdate);
+
+        return gameToUpdate;
     }
 
     //this method finish the preparation of a game to start playing

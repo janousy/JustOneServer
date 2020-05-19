@@ -17,7 +17,6 @@ import ch.uzh.ifi.seal.soprafs20.service.RoundService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class RoundController {
     public List<RoundGetDTO> getAllRounds() {
         // fetch all rounds in the internal representation
         List<Round> rounds = roundService.getAllRounds();
-        List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
+        List<RoundGetDTO> roundGetDTOS = new ArrayList<>();
 
         for (Round round : rounds) {
             roundGetDTOS.add(RoundDTOMapper.INSTANCE.convertEntityToRoundGetDTO(round));

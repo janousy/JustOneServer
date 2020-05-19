@@ -284,9 +284,6 @@ public class GameServiceTest {
         //call the to be tested method
         Game checkedGame = gameService.checkIfPlayersKnowTerm(testGame);
 
-
-        Mockito.verify(gameRepository, Mockito.times(1)).findGameByGameId(Mockito.any());
-
         // then
         assertEquals(testGame.getGameId(), checkedGame.getGameId());
         assertEquals(testGame.getName(), checkedGame.getName());
@@ -318,6 +315,44 @@ public class GameServiceTest {
         assertEquals(testGame.getPlayerList(), checkedGame.getPlayerList());
         assertEquals(testGame.getCardList(), checkedGame.getCardList());
         assertEquals(testGame.getRoundList(), checkedGame.getRoundList());
+    }
+
+    @Test
+    public void updateGameStatus_validInput_success() {
+        // when -> setup additional mocks for GameRepository
+        Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
+
+        //defining the update for the Game
+        Game updateForGame = new Game();
+        updateForGame.setStatus(GameStatus.FINISHED);
+
+        Game updatedGame = gameService.updateGameStatus(1L, updateForGame);
+
+        Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(gameRepository, Mockito.times(1)).findGameByGameId(Mockito.any());
+
+        assertEquals(testGame.getGameId(), updatedGame.getGameId());
+        assertEquals(testGame.getName(), updatedGame.getName());
+        assertEquals(GameStatus.FINISHED, updatedGame.getStatus());
+        assertEquals(testGame.getCorrectCards(), updatedGame.getCorrectCards());
+        assertEquals(testGame.getPlayerList(), updatedGame.getPlayerList());
+        assertEquals(testGame.getCardList(), updatedGame.getCardList());
+        assertEquals(testGame.getRoundList(), updatedGame.getRoundList());
+
+    }
+
+    @Test
+    public void updateGameStatus_invalidInput_throwsException() {
+        // when -> setup additional mocks for GameRepository
+        Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
+
+        //defining the update for the Game
+        Game updateForGame = new Game();
+        updateForGame.setStatus(null);
+
+        assertThrows(ResponseStatusException.class, () -> gameService.updateGameStatus(1L, updateForGame));
+        Mockito.verify(gameRepository, Mockito.times(1)).findGameByGameId(Mockito.any());
+
     }
 
     @Test
