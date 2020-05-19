@@ -28,10 +28,10 @@ public class Hint implements ActionType {
     private int invalidCounter;
 
     @Column(name = "similarity_Hint")
-    private ArrayList<Integer> similarity = new ArrayList<Integer>();
+    private ArrayList<Integer> similarity = new ArrayList<>();
 
     @Column(name = "reporters_Hint")
-    private ArrayList<String> reporters = new ArrayList<String>();
+    private ArrayList<String> reporters = new ArrayList<>();
 
     public ActionTypeStatus getMarked() {
         return marked;

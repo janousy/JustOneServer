@@ -27,7 +27,7 @@ import java.util.List;
 @Service
 @Transactional
 public class RoundService {
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final Logger log = LoggerFactory.getLogger(RoundService.class);
 
     private final RoundRepository roundRepository;
     private final PlayerRepository playerRepository;
@@ -65,7 +65,7 @@ public class RoundService {
     public List<Round> getAllRoundsOfGame(Long gameId) {
 
         List<Round> allRounds = roundRepository.findAll();
-        List<Round> rounds = new ArrayList<Round>();
+        List<Round> rounds = new ArrayList<>();
 
         for (Round r : allRounds) {
             if (r.getGame().getGameId().equals(gameId)) {
@@ -212,9 +212,7 @@ public class RoundService {
             gameRepository.save(game);
 
             //as soon as a new term is set, the playertermstatus must be reset
-            playerRepository.findByGameGameId(gameId).forEach(player -> {
-                player.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
-            });
+            playerRepository.findByGameGameId(gameId).forEach(player -> player.setPlayerTermStatus(PlayerTermStatus.NOT_SET));
 
             //starting the time for all clue_givers
             scoringSystem.startTimeForClueGivers(gameId);
@@ -354,12 +352,11 @@ public class RoundService {
         Round newRound = new Round();
         newRound.setCard(card);
         game.addRound(newRound);
-        newRound = roundRepository.save(newRound);
+        roundRepository.save(newRound);
 
         game.setStatus(GameStatus.RECEIVING_TERM);
 
         //increasing the Round number of the game
-        //game.setRoundNr(roundNr + 1);
         gameRepository.save(game);
 
         //setting the playerStatus correctly

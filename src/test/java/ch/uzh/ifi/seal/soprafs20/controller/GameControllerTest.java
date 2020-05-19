@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the GameController works.
  */
 @WebMvcTest(GameController.class)
-public class GameControllerTest {
+class GameControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,7 +46,7 @@ public class GameControllerTest {
     private GameService gameService;
 
     @Test
-    public void givenGames_whenGetGames_thenReturnJsonArray() throws Exception {
+    void givenGames_whenGetGames_thenReturnJsonArray() throws Exception {
         // given
         Game game = new Game();
         game.setName("Game 1");
@@ -75,7 +75,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void createGame_validInput_gameCreated() throws Exception {
+    void createGame_validInput_gameCreated() throws Exception {
         // given
         Game game = new Game();
         game.setName("Game 1");
@@ -108,7 +108,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void getGameById_validInput() throws Exception {
+    void getGameById_validInput() throws Exception {
         // given
         Game game = new Game();
         game.setName("Game 1");
@@ -144,7 +144,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void deleteGame_validInput_gameDeleted() throws Exception {
+    void deleteGame_validInput_gameDeleted() throws Exception {
         // given
         Game game = new Game();
         game.setName("Game 1");
@@ -176,7 +176,7 @@ public class GameControllerTest {
     }
 
     @Test
-    public void updateGameStateById_validInput_gameDeleted() throws Exception {
+    void updateGameStateById_validInput_gameDeleted() throws Exception {
         // given
         Game game = new Game();
         game.setName("Game 1");

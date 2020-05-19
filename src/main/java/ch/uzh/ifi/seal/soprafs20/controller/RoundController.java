@@ -52,7 +52,7 @@ public class RoundController {
     @ResponseBody
     public List<RoundGetDTO> getAllRoundsOfGame(@PathVariable Long gameId,
                                                 @RequestParam(required = false, name = "lastRound", defaultValue = "false") String lastRound) {
-        List<RoundGetDTO> roundGetDTOS = new ArrayList<RoundGetDTO>();
+        List<RoundGetDTO> roundGetDTOS = new ArrayList<>();
 
         //returns the last finished round
         if (lastRound.equals("true")) {

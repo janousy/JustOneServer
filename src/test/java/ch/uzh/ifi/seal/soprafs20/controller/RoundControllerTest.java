@@ -79,7 +79,6 @@ public class RoundControllerTest {
     }
 
     //get last round from game by id
-    //TODO make test work with params
     public void givenRound_whenGetRoundsFromGameWithParams_thenReturnJsonArray() throws Exception {
 
         Round testRound = new Round();

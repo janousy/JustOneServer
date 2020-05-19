@@ -110,7 +110,7 @@ public class PlayerController {
                                      @PathVariable Long playerId) {
 
         Player deletedPlayer = playerService.deletePlayer(gameId, playerId);
-        Game deletedGame = gameService.deleteGameById(gameId);
+        gameService.deleteGameById(gameId);
 
         return PlayerDTOMapper.INSTANCE.convertEntityToPlayerGetDTO(deletedPlayer);
     }

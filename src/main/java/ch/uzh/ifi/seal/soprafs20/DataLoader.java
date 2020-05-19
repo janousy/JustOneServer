@@ -9,8 +9,6 @@ import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
@@ -103,7 +101,6 @@ public class DataLoader implements ApplicationRunner {
     private void createInitialCards() throws IOException {
 
         int batchsize = 5;
-        //InputStream inputStream = getClass().getResourceAsStream("cards-EN.txt");
         InputStream inputStream = DataLoader.class.getClassLoader().getResourceAsStream("cards-EN.txt");
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);

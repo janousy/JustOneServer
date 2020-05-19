@@ -67,7 +67,6 @@ public class PlayerService {
 
     public Player createPlayer(Player newPlayer, Long gameId) {
 
-        //checkIfPlayerExistsByName(newPlayer);
         User userByToken = userRepository.findByToken(newPlayer.getUserToken());
 
         newPlayer.setStatus(PlayerStatus.NOT_READY);
@@ -109,14 +108,13 @@ public class PlayerService {
 
             //check if game is empty now and invoke the delete method
             List<Player> playerList = game.getPlayerList();
-            if (playerList.size() == 0) {
+            if (playerList.isEmpty()) {
                 game.setStatus(GameStatus.DELETE);
                 return playerById;
             }
 
             //a new host must be set if the deleted player was a host and the game is not empty
             if (playerById.getRole() == PlayerRole.HOST) {
-                //List<Player> playerList = playerRepository.findByGameGameId(gameId);
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
                 randomPlayer.setRole(PlayerRole.HOST);
                 playerRepository.save(randomPlayer);
@@ -174,15 +172,6 @@ public class PlayerService {
 
 
     //helper methods
-    private void checkIfPlayerExistsByName(Player playerToBeCreated) {
-        Player playerByName = playerRepository.findByName(playerToBeCreated.getName());
-        String baseErrorMessage = "The %s provided %s not unique. Therefore, the player could not be created!";
-
-        if (playerByName != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "playername", "is"));
-        }
-    }
-
     private boolean checkIfGameHasHost(Long gameId) {
         boolean hasHost = false;
         List<Player> playersInGameById = playerRepository.findByGameGameId(gameId);
@@ -266,15 +255,10 @@ public class PlayerService {
         }
 
         //throw an error if too many players want to join the game
-        if (game.getPlayerList().size() == 0) {
+        if (game.getPlayerList().isEmpty()) {
             String baseErrorMessage = "The lobby is already empty";
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
         }
-
-        /*if (game.getStatus() != GameStatus.LOBBY && game.getStatus() != GameStatus.FINISHED) {
-            String baseErrorMessage = "The Game has already started, thus you cannot remove a player anymore";
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, baseErrorMessage);
-        }*/
 
         game.removePlayer(playerToBeRemoved);
 

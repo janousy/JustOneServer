@@ -97,7 +97,6 @@ public class RoundServiceTest {
 
     @Test
     public void whenGetLastRound_GameFinished_success() {
-        //TODO what if 1 round and game not finished
         roundList.add(round1);
         game1.setRoundList(roundList);
         game1.setStatus(GameStatus.FINISHED);

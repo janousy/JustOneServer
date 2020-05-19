@@ -1,32 +1,25 @@
 package ch.uzh.ifi.seal.soprafs20.helper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.ActionTypeStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.Round;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.RoundRepository;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @Transactional
@@ -38,6 +31,7 @@ public class HintValidator {
 
     @Autowired
     public HintValidator() {
+        //empty on purpose
     }
 
     /* External APIs:
@@ -107,7 +101,7 @@ public class HintValidator {
             }
         }
         catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "api not available"); //TODO what
+            throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "api not available");
         }
     }
 

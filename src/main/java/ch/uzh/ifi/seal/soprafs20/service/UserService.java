@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-
-
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,15 +105,11 @@ public class UserService {
     //updates a user
     //return: void
     public User updateUser(Long id, User userInput){
-
         //find user which should be updated
         User oldUser = getUserById(id);
 
-
-        if (userInput.getUsername() != null) {
-            if (!userInput.getUsername().equals(oldUser.getUsername())) {
-                checkIfUserExists(userInput);
-            }
+        if (userInput.getUsername() != null && !userInput.getUsername().equals(oldUser.getUsername())) {
+            checkIfUserExists(userInput);
         }
 
         //update the two user fields
