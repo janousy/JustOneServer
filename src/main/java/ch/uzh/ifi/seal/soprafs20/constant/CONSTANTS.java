@@ -11,6 +11,7 @@ public final class CONSTANTS {
 
     //constants for the game
     public static final int NUMBER_OF_ROUNDS = 13;
+    public static final int MINIMAL_NR_OF_PLAYERS = 3;
 
     //constants for the scoring system
     public static final int MAX_POINTS_PER_ROUND_GUESS = 30;

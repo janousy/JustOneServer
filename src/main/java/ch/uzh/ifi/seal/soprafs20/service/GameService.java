@@ -9,6 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Round;
+import ch.uzh.ifi.seal.soprafs20.helper.ScoringSystem;
 import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PlayerRepository;
@@ -34,18 +35,20 @@ public class GameService {
 
     private final RoundService roundService;
     private final PlayerService playerService;
+    private final ScoringSystem scoringSystem;
 
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository,
                        @Qualifier("cardRepository") CardRepository cardRepository,
-                       @Qualifier("playerRepository") PlayerRepository playerRepository,
                        RoundService roundService,
-                       PlayerService playerService
+                       PlayerService playerService,
+                       ScoringSystem scoringSystem
     ) {
         this.gameRepository = gameRepository;
         this.cardRepository = cardRepository;
         this.roundService = roundService;
         this.playerService = playerService;
+        this.scoringSystem = scoringSystem;
     }
 
     //get all Games as a list
@@ -168,6 +171,7 @@ public class GameService {
         return game;
     }
 
+
     public Game checkIfPlayersKnowTerm(Game game) {
         List<Player> playersInGame = game.getPlayerList();
 
@@ -217,6 +221,10 @@ public class GameService {
 
         gameToUpdate.setStatus(updateForGame.getStatus());
         gameRepository.save(gameToUpdate);
+
+        if (gameToUpdate.getStatus() == GameStatus.FINISHED && gameToUpdate.getPlayerList().size() >= CONSTANTS.MINIMAL_NR_OF_PLAYERS) {
+            scoringSystem.updateScoresOfUsers(gameToUpdate);
+        }
 
         return gameToUpdate;
     }
