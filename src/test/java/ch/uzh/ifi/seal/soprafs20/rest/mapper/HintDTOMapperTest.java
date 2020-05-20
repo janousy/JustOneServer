@@ -1,11 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.entity.actions.Guess;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.action.GuessGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.action.HintPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.GuessDTOMapper;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.action.HintDTOMapper;
 import org.junit.jupiter.api.Test;
 

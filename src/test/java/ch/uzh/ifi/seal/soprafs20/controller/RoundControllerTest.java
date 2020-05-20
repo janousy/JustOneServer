@@ -35,6 +35,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * RoundControllerTest
+ * This is a WebMvcTest which allows to test the RoundController i.e. HTTP request without actually sending them over the network.
+ * This tests if the RoundController works.
+ */
 @WebMvcTest(RoundController.class)
 public class RoundControllerTest {
 

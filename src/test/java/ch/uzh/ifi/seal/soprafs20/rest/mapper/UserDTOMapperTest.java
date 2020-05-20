@@ -7,8 +7,6 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.user.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.user.UserPutDTO;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

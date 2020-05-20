@@ -9,7 +9,6 @@ import ch.uzh.ifi.seal.soprafs20.service.PlayerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,7 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
-
+/**
+ * PlayerControllerTest
+ * This is a WebMvcTest which allows to test the PlayerController i.e. HTTP request without actually sending them over the network.
+ * This tests if the PlayerController works.
+ */
 @WebMvcTest(PlayerController.class)
 public class PlayerControllerTest {
 
