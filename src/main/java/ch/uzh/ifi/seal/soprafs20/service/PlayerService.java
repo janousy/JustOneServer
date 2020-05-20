@@ -118,7 +118,7 @@ public class PlayerService {
                 Player randomPlayer = playerList.get(rand.nextInt(playerList.size()));
                 randomPlayer.setRole(PlayerRole.HOST);
                 playerRepository.save(randomPlayer);
-                log.info("new host was set");
+                log.debug("new host was set");
             }
             playerRepository.flush();
             return playerById;

@@ -56,8 +56,8 @@ public class HintValidator {
             String requestParameter = word.toLowerCase();
             final String POST_PARAMS = String.format("text=%s&stemmer=%s", requestParameter, stemmer);
 
-            log.info(String.format("connecting to %s", POST_URL));
-            log.info(String.format("post form data: %s", POST_PARAMS));
+            log.debug(String.format("connecting to %s", POST_URL));
+            log.debug(String.format("post form data: %s", POST_PARAMS));
 
             URL obj = new URL(POST_URL);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -73,7 +73,7 @@ public class HintValidator {
             // For POST only - END
 
             int responseCode = con.getResponseCode();
-            log.info("POST Response Code :: " + responseCode);
+            log.debug("POST Response Code :: " + responseCode);
 
             if (responseCode == HttpURLConnection.HTTP_OK) {//success
 
@@ -91,12 +91,12 @@ public class HintValidator {
                 JSONObject JSON_response = new JSONObject(response.toString()); //gradlew dependency required! should be in
                 String wordLemma = JSON_response.getString("text");
 
-                log.info(((stemmer.equals("wordnet")) ? "lemmatized " : "stemmed ") + "word: " + wordLemma + " || current word: " + word);
+                log.debug(((stemmer.equals("wordnet")) ? "lemmatized " : "stemmed ") + "word: " + wordLemma + " || current word: " + word);
                 return wordLemma;
 
             }
             else {
-                log.info("POST request invalid");
+                log.debug("POST request invalid");
                 return word;
             }
         }
@@ -107,7 +107,7 @@ public class HintValidator {
 
     //only when all hints are reported, hints can get validated by marking and similarity
     public List<Hint> validateSimilarityAndMarking(List<Hint> currentHints) {
-        int nrOfClueGivers = currentHints.size();
+        float nrOfClueGivers = currentHints.size();
 
         //such that a hint becomes invalid by marking, half of the players must have it marked as invalid (invalidCounter)
         //same goes with similarity, half of the players must mark another hint as similar
@@ -144,9 +144,12 @@ public class HintValidator {
     }
 
     public Hint checkDuplicates(Hint inputHint, List<Hint> currentHints) {
-        if (currentHints.stream().anyMatch(hint
-                -> hint.getContent().equals(inputHint.getContent()))) {
-            inputHint.setStatus(ActionTypeStatus.INVALID);
+        for (Hint hint : currentHints) {
+            if (hint.getContent().toLowerCase().equals(
+                    inputHint.getContent().toLowerCase())) {
+                hint.setStatus(ActionTypeStatus.INVALID);
+                inputHint.setStatus(ActionTypeStatus.INVALID);
+            }
         }
         return inputHint;
     }

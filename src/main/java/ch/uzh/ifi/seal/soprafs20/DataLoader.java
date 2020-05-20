@@ -43,8 +43,8 @@ public class DataLoader implements ApplicationRunner {
     }
 
     public void run(ApplicationArguments args) throws IOException {
-        //createInitialGames();
-        //createInitialUsers();
+        createInitialGames();
+        createInitialUsers();
         createInitialCards();
     }
 
