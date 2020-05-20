@@ -5,39 +5,6 @@
 The Project aim is to provide the server side infrastrucute for our Just One Web Application. It mainly provides an API interface
 and includes the business logic of our game implementation.
 
-## Technologies
-
-For our backend we mainly used Java Springboot, JPA (i.e. Hibernate) and a H2 temporary database.
-As our IDE choice we use Jetbrains Intellij.
-
-## High Level Components
-
-User/Player-Component
-> Such that a registered individual can be identified, a user is created with a corresponding profile. A user profile can be modified. 
-> As soon as a user joins
-> a game, a player is automatically created. This seperation to enable the later extension of a user playing multiple games at once.
-> Remind that this is currently not implemented.
->
-> - [User entity](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/entity/User.java)
-> - [Player entity](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/entity/Player.java)
-
-Gameservice
-> The game service provides all functionalities to create, start, alter and delete a game.
-> Additionally, it handles the the cards of any game, such as draw a new one. A game is composed
-of several rounds.
-> - [GameService](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/service/GameService.java)
-
-Roundservice
-> The roundservice includes the major business logic. It handles hints, terms and guesses of players and coordinates
-their validation using the validator classes. Moreover, the roundservice manages the states of specific game.
-> - [RoundService](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/service/RoundService.java)
-
-Validators
-> Two main validator class are responsible for validating hints and guesses. The hint validation makes use of an
->external API for NLP processing.
->- [HintValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/HintValidator.java)
->- [GuessValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/GuessValidator.java)
-
 ## Launch & Deployment
 
 ### Setup this Template with your IDE of choice
@@ -114,6 +81,39 @@ do the following:
 ### Testing
 Have a look here: https://www.baeldung.com/spring-boot-testing
 
+## Technologies
+
+For our backend we mainly used [Java Springboot](https://spring.io/projects/spring-boot), JPA (i.e. [Hibernate](https://hibernate.org/)) and a [H2 temporary database](https://www.h2database.com/html/main.html).
+As our IDE choice we use [Jetbrains Intellij](https://www.jetbrains.com/de-de/idea/).
+
+## High Level Components
+
+User/Player-Component
+> Such that a registered individual can be identified, a user is created with a corresponding profile. A user profile can be modified. 
+> As soon as a user joins
+> a game, a player is automatically created. This seperation to enable the later extension of a user playing multiple games at once.
+> Remind that this is currently not implemented.
+>
+> - [User entity](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/entity/User.java)
+> - [Player entity](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/entity/Player.java)
+
+Gameservice
+> The game service provides all functionalities to create, start, alter and delete a game.
+> Additionally, it handles the the cards of any game, such as draw a new one. A game is composed
+of several rounds.
+> - [GameService](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/service/GameService.java)
+
+Roundservice
+> The roundservice includes the major business logic. It handles hints, terms and guesses of players and coordinates
+their validation using the validator classes. Moreover, the roundservice manages the states of specific game.
+> - [RoundService](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/service/RoundService.java)
+
+Validators
+> Two main validator class are responsible for validating hints and guesses. The hint validation makes use of an
+>external API for NLP processing.
+> - [HintValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/HintValidator.java)
+> - [GuessValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/GuessValidator.java)
+
 ### External Dependencies
 
 #### Accessing H2 Database
@@ -140,36 +140,36 @@ As new developer joining this project, there a few features on the list:
 ## Authors and Acknowledgement
 
 * Backend Developers:
-    - Janosch Baltensperger, BSc Student University of Zurich
-    - Domenic Luca Fuerer, BSc Student University of Zurich
+    - [Janosch Baltensperger](https://github.com/janousy), BSc Student University of Zurich
+    - [Domenic Luca Fuerer](https://github.com/dofuerer), BSc Student University of Zurich
     
 * Supervisor and Tutor:
-    - Nik Zaugg, MSc Student University of Zurich
+    - [Nik Zaugg](https://github.com/nikzaugg), MSc Student University of Zurich
     
- ##Licence
- 
- ### Apache
- 
- [Apache Licence 2.0](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/LICENSE)
- 
- ### MIT License
- 
- Copyright (c) [2020] [Janosch Baltensperger, Domenic Luca Fuerer]
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
+##Licence
+
+### Apache
+
+[Apache Licence 2.0](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/LICENSE)
+
+### MIT License
+
+Copyright (c) [2020] [Janosch Baltensperger, Domenic Luca Fuerer]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
