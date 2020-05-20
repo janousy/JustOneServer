@@ -1,16 +1,16 @@
-#README SOPRA FS20 Group 17
+# README SOPRA FS20 Group 17
 
-##Introduction
+## Introduction
 
 The Project aim is to provide the server side infrastrucute for our Just One Web Application. It mainly provides an API interface
 and includes the business logic of our game implementation.
 
-##Technologies
+## Technologies
 
 For our backend we mainly used Java Springboot, JPA (i.e. Hibernate) and a H2 temporary database.
 As our IDE choice we use Jetbrains Intellij.
 
-##High Level Components
+## High Level Components
 
 User/Player-Component
 > Such that a registered individual can be identified, a user is created with a corresponding profile. A user profile can be modified. 
@@ -38,7 +38,7 @@ Validators
 >- [HintValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/HintValidator.java)
 >- [GuessValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/GuessValidator.java)
 
-##Launch & Deployment
+## Launch & Deployment
 
 ### Setup this Template with your IDE of choice
 
@@ -137,7 +137,7 @@ As new developer joining this project, there a few features on the list:
 - Extended hint validaiton for foreign languages
 - Exchange in-memory DB with persistant DB
 
-##Authors and Acknowledgement
+## Authors and Acknowledgement
 
 * Backend Developers:
     - Janosch Baltensperger, BSc Student University of Zurich
@@ -152,7 +152,7 @@ As new developer joining this project, there a few features on the list:
  
  [Apache Licence 2.0](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/LICENSE)
  
- ###MIT License
+ ### MIT License
  
  Copyright (c) [2020] [Janosch Baltensperger, Domenic Luca Fuerer]
  
