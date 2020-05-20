@@ -146,7 +146,7 @@ As new developer joining this project, there a few features on the list:
 * Supervisor and Tutor:
     - [Nik Zaugg](https://github.com/nikzaugg), MSc Student University of Zurich
     
-##Licence
+## Licence
 
 ### Apache
 
