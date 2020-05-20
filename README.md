@@ -1,14 +1,17 @@
 #README SOPRA FS20 Group 17
 
 ##Introduction
+
 The Project aim is to provide the server side infrastrucute for our Just One Web Application. It mainly provides an API interface
 and includes the business logic of our game implementation.
 
 ##Technologies
+
 For our backend we mainly used Java Springboot, JPA (i.e. Hibernate) and a H2 temporary database.
 As our IDE choice we use Jetbrains Intellij.
 
 ##High Level Components
+
 User/Player-Component
 > Such that a registered individual can be identified, a user is created with a corresponding profile. A user profile can be modified. 
 > As soon as a user joins
@@ -36,6 +39,7 @@ Validators
 >- [GuessValidator](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/helper/GuessValidator.java)
 
 ##Launch & Deployment
+
 ### Setup this Template with your IDE of choice
 
 Download your IDE of choice: (e.g., [Eclipse](http://www.eclipse.org/downloads/), [IntelliJ](https://www.jetbrains.com/idea/download/)) and make sure Java 13 is installed on your system.
@@ -111,7 +115,9 @@ do the following:
 Have a look here: https://www.baeldung.com/spring-boot-testing
 
 ### External Dependencies
+
 #### Accessing H2 Database
+
 In development enviroment, the H2 database can be accessed locally through the browser using this link:
 `http://localhost:8080/h2-console/
 
@@ -119,6 +125,7 @@ The database is initially loaded with Card entities using our
 [Dataloader Class](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/src/main/java/ch/uzh/ifi/seal/soprafs20/DataLoader.java).
 
 ### Releases
+
 A new release of the application can be published using Github [here](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/releases)
 
 ## Roadmap
@@ -131,6 +138,7 @@ As new developer joining this project, there a few features on the list:
 - Exchange in-memory DB with persistant DB
 
 ##Authors and Acknowledgement
+
 * Backend Developers:
     - Janosch Baltensperger, BSc Student University of Zurich
     - Domenic Luca Fuerer, BSc Student University of Zurich
@@ -139,6 +147,7 @@ As new developer joining this project, there a few features on the list:
     - Nik Zaugg, MSc Student University of Zurich
     
  ##Licence
+ 
  ### Apache
  
  [Apache Licence 2.0](https://github.com/SOPRA-Group-17/sopra-fs-20-group17-server/blob/master/LICENSE)
