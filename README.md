@@ -1,4 +1,4 @@
-# README SOPRA FS20 Group 17
+# README - SOPRA FS20 Group 17
 
 ## Introduction
 
