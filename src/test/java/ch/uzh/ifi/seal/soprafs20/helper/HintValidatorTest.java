@@ -6,17 +6,11 @@ import ch.uzh.ifi.seal.soprafs20.entity.actions.Hint;
 import ch.uzh.ifi.seal.soprafs20.entity.actions.Term;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.w3c.dom.stylesheets.LinkStyle;
+
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,5 +82,40 @@ public class HintValidatorTest {
         Mockito.verify(hintValidatorSpy, Mockito.times(2)).processWithNLP(Mockito.any(), Mockito.anyString());
 
         assertEquals(ActionTypeStatus.INVALID, hint.getStatus());
+    }
+
+    @Test
+    public void givenHints_validateDuplicates() {
+        testHint1.setContent("test");
+        testHint2.setContent("test1");
+        testHint3.setContent("test");
+
+        List<Hint> currentHints = new ArrayList<>();
+        currentHints.add(testHint1);
+        currentHints.add(testHint2);
+
+        hintValidator.checkDuplicates(testHint3, currentHints);
+
+        assertEquals(ActionTypeStatus.INVALID, testHint1.getStatus());
+        assertEquals(ActionTypeStatus.INVALID, testHint3.getStatus());
+    }
+
+    @Test
+    public void givenHint_compareHintToTerm() {
+        testHint1.setContent("SomeMoreStringtestSomeMoreString");
+        testTerm.setContent("test");
+
+        hintValidator.checkTermIncluded(testHint1, testTerm);
+
+        assertEquals(ActionTypeStatus.INVALID, testHint1.getStatus());
+    }
+
+    @Test
+    public void givenHint_checkSingleWord() {
+        testHint1.setContent("SomeMore MoreString");
+
+        hintValidator.checkSingleWord(testHint1);
+
+        assertEquals(ActionTypeStatus.INVALID, testHint1.getStatus());
     }
 }
