@@ -21,6 +21,8 @@ public interface PlayerDTOMapper {
     @Mapping(source = "userToken", target = "userToken")
     @Mapping(source = "elapsedTime", target = "elapsedTime")
     @Mapping(source = "playerTermStatus", target = "playerTermStatus")
+    @Mapping(source = "nrOfValidHints", target = "nrOfValidHints")
+    @Mapping(source = "nrOfValidGuesses", target = "nrOfValidGuesses")
     PlayerGetDTO convertEntityToPlayerGetDTO(Player player);
 
     @Mapping(source = "name", target = "name")

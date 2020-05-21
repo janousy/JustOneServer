@@ -46,8 +46,30 @@ public class Player implements Serializable {
     @Column(nullable = false)
     private long elapsedTime;
 
+    @Column(nullable = false)
+    private int nrOfValidHints;
+
+    @Column(nullable = false)
+    private int nrOfValidGuesses;
+
     @Column
     private PlayerTermStatus playerTermStatus;
+
+    public int getNrOfValidHints() {
+        return nrOfValidHints;
+    }
+
+    public void setNrOfValidHints(int nrOfValidHints) {
+        this.nrOfValidHints = nrOfValidHints;
+    }
+
+    public int getNrOfValidGuesses() {
+        return nrOfValidGuesses;
+    }
+
+    public void setNrOfValidGuesses(int nrOfValidGuesses) {
+        this.nrOfValidGuesses = nrOfValidGuesses;
+    }
 
     public PlayerTermStatus getPlayerTermStatus() {
         return playerTermStatus;

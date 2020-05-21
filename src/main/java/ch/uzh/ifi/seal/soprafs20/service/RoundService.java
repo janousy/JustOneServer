@@ -183,6 +183,9 @@ public class RoundService {
         //validating the guess
         Guess validatedGuess = guessValidator.guessValidationGuessGiven(guess, gameId, currentRound);
 
+        //updated validity score of guesser
+        updateValidityCountOfPlayer(validatedGuess);
+
         //updating the score of the guesser and the clueGivers
         scoringSystem.updateScoresOfPlayers(gameId);
 
@@ -295,6 +298,10 @@ public class RoundService {
 
         if (allHintsReported) {
             List<Hint> validatedHints = hintValidator.validateSimilarityAndMarking(currentHints);
+
+            //after final validation of hints, the counters of valid hints and guesses for the respecitve player must be updated
+            validatedHints.forEach(this::updateValidityCountOfPlayer);
+
             Round currentRound = findRoundByGameId(gameId);
             currentRound.setHintList(validatedHints);
             gameById.setStatus(GameStatus.RECEIVING_GUESS);
@@ -457,6 +464,30 @@ public class RoundService {
                 Player player = playerList.get(i);
                 player.setStatus(PlayerStatus.CLUE_GIVER);
                 playerRepository.save(player);
+            }
+        }
+    }
+
+
+    private void updateValidityCountOfPlayer(ActionType inputAction) {
+        if (inputAction.getStatus().equals(ActionTypeStatus.VALID)) {
+
+            //find the respective player
+            Player playerByHintToken = playerRepository.findByUserToken(inputAction.getToken());
+
+            //check whether toke belongs to cluegiver or guesser
+            if (playerByHintToken.getStatus().equals(PlayerStatus.CLUE_GIVER)) {
+                int currentCount = playerByHintToken.getNrOfValidHints();
+                playerByHintToken.setNrOfValidHints(currentCount + 1);
+                log.info(String.format("Hint Validity count of player %s increased to: %d", playerByHintToken.getUser().getUsername(), playerByHintToken.getNrOfValidHints()));
+            }
+            else if (playerByHintToken.getStatus().equals(PlayerStatus.GUESSER)) {
+                int currentCount = playerByHintToken.getNrOfValidGuesses();
+                playerByHintToken.setNrOfValidGuesses(currentCount + 1);
+                log.info(String.format("Guess Validity count of player %s increased to: %d", playerByHintToken.getUser().getUsername(), playerByHintToken.getNrOfValidGuesses()));
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("player by token %s does not have an active status", inputAction.getToken()));
             }
         }
     }

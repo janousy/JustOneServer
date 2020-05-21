@@ -75,6 +75,8 @@ public class PlayerService {
         newPlayer.setUserToken(userByToken.getToken());
         newPlayer.setElapsedTime(0L);
         newPlayer.setPlayerTermStatus(PlayerTermStatus.NOT_SET);
+        newPlayer.setNrOfValidHints(0);
+        newPlayer.setNrOfValidGuesses(0);
         if (!checkIfGameHasHost(gameId)) {
             newPlayer.setRole(PlayerRole.HOST);
         }

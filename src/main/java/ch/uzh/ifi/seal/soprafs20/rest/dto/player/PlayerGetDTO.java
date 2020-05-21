@@ -13,6 +13,24 @@ public class PlayerGetDTO {
     private String userToken;
     private long elapsedTime;
     private PlayerTermStatus playerTermStatus;
+    private int nrOfValidHints;
+    private int nrOfValidGuesses;
+
+    public int getNrOfValidHints() {
+        return nrOfValidHints;
+    }
+
+    public void setNrOfValidHints(int nrOfValidHints) {
+        this.nrOfValidHints = nrOfValidHints;
+    }
+
+    public int getNrOfValidGuesses() {
+        return nrOfValidGuesses;
+    }
+
+    public void setNrOfValidGuesses(int nrOfValidGuesses) {
+        this.nrOfValidGuesses = nrOfValidGuesses;
+    }
 
     public PlayerTermStatus getPlayerTermStatus() {
         return playerTermStatus;
