@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
-public class GameRepositoryIntegrationTest {
+class GameRepositoryIntegrationTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -23,7 +23,7 @@ public class GameRepositoryIntegrationTest {
     private GameRepository gameRepository;
 
     @Test
-    public void findByName_success() {
+    void findByName_success() {
         // given
         Game game = new Game();
         game.setGameId(1L);
@@ -48,7 +48,7 @@ public class GameRepositoryIntegrationTest {
 
 
     @Test
-    public void findGameByGameId_success() {
+    void findGameByGameId_success() {
         // given
         Game game = new Game();
         game.setGameId(1L);

@@ -23,7 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class ScoringSystemTest {
+class ScoringSystemTest {
 
     @Mock
     private UserRepository userRepository;
@@ -60,7 +60,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfGuesser_GuessValid() {
+    void updateScoresOfGuesser_GuessValid() {
 
         //preparation for the test
         Guess givenGuess = new Guess();
@@ -86,7 +86,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfGuesser_AdditionalPointsEnabled_GuessValid() {
+    void updateScoresOfGuesser_AdditionalPointsEnabled_GuessValid() {
 
         testPlayer.setNrOfValidGuesses(3);
 
@@ -115,7 +115,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfGuesser_GuessInvalid() {
+    void updateScoresOfGuesser_GuessInvalid() {
 
         //preparation for the test
         Guess givenGuess = new Guess();
@@ -140,7 +140,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfClueGiver_HintValid() {
+    void updateScoresOfClueGiver_HintValid() {
 
         //preparation for the test
         Hint givenHint = new Hint();
@@ -165,7 +165,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfClueGiver_AdditionalPointsEnabled_HintValid() {
+    void updateScoresOfClueGiver_AdditionalPointsEnabled_HintValid() {
 
         testPlayer.setNrOfValidHints(7);
 
@@ -194,7 +194,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfClueGiver_HintInvalid() {
+    void updateScoresOfClueGiver_HintInvalid() {
 
         //preparation for the test
         Hint givenHint = new Hint();
@@ -219,7 +219,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfUsers_ScoreLargerThanZero() {
+    void updateScoresOfUsers_ScoreLargerThanZero() {
 
         //preparation for the test
         User testUser = new User();
@@ -240,7 +240,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void updateScoresOfUsers_ScoreSmallerThanZero() {
+    void updateScoresOfUsers_ScoreSmallerThanZero() {
 
         //preparation for the test
         testPlayer.setScore(-10);
@@ -262,7 +262,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void stopTimeForPlayers_success() {
+    void stopTimeForPlayers_success() {
 
         Guess guess = new Guess();
         guess.setStatus(ActionTypeStatus.VALID);
@@ -287,7 +287,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void startTimeForGuesser_success() {
+    void startTimeForGuesser_success() {
 
         testPlayer.setStatus(PlayerStatus.GUESSER);
 
@@ -309,7 +309,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void startTimeForGuesser_NoGuesser() {
+    void startTimeForGuesser_NoGuesser() {
 
         testPlayer.setStatus(PlayerStatus.CLUE_GIVER);
 
@@ -329,7 +329,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void startTimeForClueGivers_success() {
+    void startTimeForClueGivers_success() {
 
         testPlayer.setStatus(PlayerStatus.CLUE_GIVER);
 
@@ -352,7 +352,7 @@ public class ScoringSystemTest {
     }
 
     @Test
-    public void startTimeForClue_Givers_NoClueGiver() {
+    void startTimeForClue_Givers_NoClueGiver() {
 
         testPlayer.setStatus(PlayerStatus.GUESSER);
 

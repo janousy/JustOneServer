@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PlayerDTOMapperTest {
+class PlayerDTOMapperTest {
 
     @Test
-    public void testCreatePlayer_fromPlayerDTO_toUser_success() {
+    void testCreatePlayer_fromPlayerDTO_toUser_success() {
 
         PlayerPostDTO playerPostDTO = new PlayerPostDTO();
         playerPostDTO.setName("testPlayer");
@@ -26,7 +26,7 @@ public class PlayerDTOMapperTest {
     }
 
     @Test
-    public void testGetUser_fromPlayer_toPlayerGetDTO_success() {
+    void testGetUser_fromPlayer_toPlayerGetDTO_success() {
         Player testPlayer = new Player();
         testPlayer = new Player();
         testPlayer.setId(1L);
@@ -49,7 +49,7 @@ public class PlayerDTOMapperTest {
     }
 
     @Test
-    public void testUpdatePlayer_fromPlayerPutDTO_toPlayer() {
+    void testUpdatePlayer_fromPlayerPutDTO_toPlayer() {
         PlayerPutDTO playerPutDTO = new PlayerPutDTO();
         playerPutDTO.setName("testPlayer");
 

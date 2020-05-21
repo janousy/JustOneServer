@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GuessDTOMapperTest {
+class GuessDTOMapperTest {
     @Test
-    public void testCreateGuess_fromGuessDTO_toGuess_success() {
+    void testCreateGuess_fromGuessDTO_toGuess_success() {
 
         GuessPostDTO guessPostDTO = new GuessPostDTO();
         guessPostDTO.setContent("testGuess");

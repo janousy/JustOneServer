@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +47,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @Test
-    public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+    void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
@@ -72,7 +72,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenUsers_whenGetUsers_thenReturnJsonArraySorted() throws Exception {
+    void givenUsers_whenGetUsers_thenReturnJsonArraySorted() throws Exception {
         // given
         User user = new User();
         user.setUsername("testUser");
@@ -111,7 +111,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUser_validInput_userCreated() throws Exception {
+    void createUser_validInput_userCreated() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -142,7 +142,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getUserById_validInput() throws Exception {
+    void getUserById_validInput() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -174,7 +174,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void loginUser_validInput_userLoggedIn() throws Exception {
+    void loginUser_validInput_userLoggedIn() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -204,7 +204,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void logoutUser_validInput_userLoggedOut() throws Exception {
+    void logoutUser_validInput_userLoggedOut() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -234,7 +234,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUser_validInput_userUpdated() throws Exception {
+    void updateUser_validInput_userUpdated() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -262,7 +262,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_passwordCorrect() throws Exception {
+    void verifyPasswordOfUser_passwordCorrect() throws Exception {
         // given
         User user = new User();
         user.setId(1L);

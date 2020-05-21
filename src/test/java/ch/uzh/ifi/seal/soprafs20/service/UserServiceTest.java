@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -47,7 +47,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getAllUsers_validInputs_success() {
+    void getAllUsers_validInputs_success() {
         List<User> usersList = new ArrayList<User>();
         usersList.add(testUser);
 
@@ -67,7 +67,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_validInputs_success() {
+    void createUser_validInputs_success() {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
 
         // when -> any object is being save in the userRepository -> return the dummy testUser
@@ -84,14 +84,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void createUser_duplicateInputs_throwsException() {
+    void createUser_duplicateInputs_throwsException() {
 
         // then -> attempt to create second user with same user -> check that an error is thrown
         assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
     }
 
     @Test
-    public void loginUser_validInput_success() {
+    void loginUser_validInput_success() {
         // when -> any object is being save in the userRepository -> return the dummy testUser
         User loggedInUser = userService.loginUser(testUser);
 
@@ -107,7 +107,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void loginUser_userDoesNotExist_throwsException() {
+    void loginUser_userDoesNotExist_throwsException() {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
 
         // then
@@ -116,7 +116,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void loginUser_passwordWrong_throwsException() {
+    void loginUser_passwordWrong_throwsException() {
         User testUser2 = new User();
         testUser2.setId(2L);
         testUser2.setUsername("testUsername");
@@ -131,7 +131,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void loginUser_userAlreadyLoggedIn_throwsException() {
+    void loginUser_userAlreadyLoggedIn_throwsException() {
         testUser.setStatus(UserStatus.ONLINE);
 
         // then
@@ -141,7 +141,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void logoutUser_validInput_success() {
+    void logoutUser_validInput_success() {
         Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(testUser);
 
         testUser.setStatus(UserStatus.ONLINE);
@@ -160,7 +160,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void logoutUser_invalidInput_throwsException() {
+    void logoutUser_invalidInput_throwsException() {
         Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(null);
 
         // then
@@ -169,7 +169,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserById_validInput_success() {
+    void getUserById_validInput_success() {
         User userById = userService.getUserById(1L);
 
         // then
@@ -183,7 +183,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUserById_userDoesNotExist_throwsException() {
+    void getUserById_userDoesNotExist_throwsException() {
         Mockito.when(userRepository.findUserById(Mockito.any())).thenReturn(null);
 
         // then
@@ -192,7 +192,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void updateUser_validInput_success() {
+    void updateUser_validInput_success() {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
 
         User userInput = new User();
@@ -212,7 +212,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void updateUser_usernameAlreadyExists_throwsException() {
+    void updateUser_usernameAlreadyExists_throwsException() {
         User userInput = new User();
         userInput.setUsername("username");
         userInput.setPassword("newPassword");
@@ -223,7 +223,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_validInput_success() {
+    void verifyPasswordOfUser_validInput_success() {
         User userInput = new User();
         userInput.setPassword("password");
 
@@ -240,7 +240,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_passwordsDontMatch() {
+    void verifyPasswordOfUser_passwordsDontMatch() {
         User userInput = new User();
         userInput.setPassword("wrongPassword");
 
@@ -257,7 +257,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void checkIfUserExists_UserExists_throwsException() {
+    void checkIfUserExists_UserExists_throwsException() {
         User userInput = new User();
         userInput.setUsername("username");
         userInput.setPassword("newPassword");

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @WebAppConfiguration
 @SpringBootTest
-public class GameServiceIntegrationTest {
+class GameServiceIntegrationTest {
     @Qualifier("gameRepository")
     @Autowired
     private GameRepository gameRepository;
@@ -40,7 +40,7 @@ public class GameServiceIntegrationTest {
 
 
     @Test
-    public void createGame_validInputs_success() {
+    void createGame_validInputs_success() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -62,7 +62,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void createGame_duplicateName_throwsException() {
+    void createGame_duplicateName_throwsException() {
         assertNull(gameRepository.findByName("testGame 1"));
 
         Game testGame = new Game();
@@ -83,7 +83,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void getGameById_validInputs_success() {
+    void getGameById_validInputs_success() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -107,7 +107,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void getGameById_wrongInputs_throwsException() {
+    void getGameById_wrongInputs_throwsException() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -116,7 +116,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void deleteGameById_validInput_success() {
+    void deleteGameById_validInput_success() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -139,7 +139,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void deleteGameById_wrongInput_returnsTheSame() {
+    void deleteGameById_wrongInput_returnsTheSame() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -161,7 +161,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void checkGameReady_validInput_success() {
+    void checkGameReady_validInput_success() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -213,7 +213,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void checkGameReady_playerListSmaller3_returnsTheSame() {
+    void checkGameReady_playerListSmaller3_returnsTheSame() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -235,7 +235,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void checkGameReady_playerListNotReady_returnsTheSame() {
+    void checkGameReady_playerListNotReady_returnsTheSame() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -265,7 +265,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void checkIfPlayersKnowTerm_success() {
+    void checkIfPlayersKnowTerm_success() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -310,7 +310,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void checkIfPlayersKnowTerm_nrOfUnknownsToLarge() {
+    void checkIfPlayersKnowTerm_nrOfUnknownsToLarge() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -357,7 +357,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void checkIfPlayersKnowTerm_NotAllClueGiversHaveReported() {
+    void checkIfPlayersKnowTerm_NotAllClueGiversHaveReported() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -400,7 +400,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void updateGameStatus_validInput_success() {
+    void updateGameStatus_validInput_success() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 
@@ -424,7 +424,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void updateGameStatus_invalidInput_throwsException() {
+    void updateGameStatus_invalidInput_throwsException() {
         // given
         assertNull(gameRepository.findByName("testGame 1"));
 

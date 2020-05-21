@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the RoundController works.
  */
 @WebMvcTest(RoundController.class)
-public class RoundControllerTest {
+class RoundControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,7 +51,7 @@ public class RoundControllerTest {
 
     //get all rounds
     @Test
-    public void givenRounds_whenGetAllRounds_thenReturnJsonArray() throws Exception {
+    void givenRounds_whenGetAllRounds_thenReturnJsonArray() throws Exception {
 
         Round testRound = new Round();
 
@@ -68,7 +68,7 @@ public class RoundControllerTest {
 
     //get rounds from game ID
     @Test
-    public void givenRound_whenGetRoundsFromGame_thenReturnJsonArray() throws Exception {
+    void givenRound_whenGetRoundsFromGame_thenReturnJsonArray() throws Exception {
 
         Round testRound = new Round();
 
@@ -100,7 +100,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenTerm_whenGetTermFromRound_thenReturnJsonArray() throws Exception {
+    void givenTerm_whenGetTermFromRound_thenReturnJsonArray() throws Exception {
 
         Term term = new Term();
 
@@ -116,7 +116,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenGuess_whenGetGuessFromRound_thenReturnJsonArray() throws Exception {
+    void givenGuess_whenGetGuessFromRound_thenReturnJsonArray() throws Exception {
 
         Guess guess = new Guess();
 
@@ -131,7 +131,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenHintList_whenGetHintsFromRound_thenReturnJsonArray() throws Exception {
+    void givenHintList_whenGetHintsFromRound_thenReturnJsonArray() throws Exception {
 
         Hint testHint = new Hint();
 
@@ -149,7 +149,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenHint_whenCreateHintToRound_thenReturnJsonArray() throws Exception {
+    void givenHint_whenCreateHintToRound_thenReturnJsonArray() throws Exception {
 
         Hint hint = new Hint();
         hint.setRoundId(1L);
@@ -179,7 +179,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenHint_whenReportHintOfRound_thenReturnJsonArray() throws Exception {
+    void givenHint_whenReportHintOfRound_thenReturnJsonArray() throws Exception {
 
         Hint hint = new Hint();
         hint.setRoundId(1L);
@@ -213,7 +213,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenGuess_whenCreateGuessToRound_thenReturnJsonArray() throws Exception {
+    void givenGuess_whenCreateGuessToRound_thenReturnJsonArray() throws Exception {
 
         Guess guess = new Guess();
         guess.setRoundId(1L);
@@ -240,7 +240,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenTerm_whenCreateTermToRound_thenReturnJsonArray() throws Exception {
+    void givenTerm_whenCreateTermToRound_thenReturnJsonArray() throws Exception {
 
         Term term = new Term();
         term.setRoundId(1L);
@@ -268,7 +268,7 @@ public class RoundControllerTest {
     }
 
     @Test
-    public void givenTermAndGame_whenDeleteTermFromRound_thenReturnJsonArray() throws Exception {
+    void givenTermAndGame_whenDeleteTermFromRound_thenReturnJsonArray() throws Exception {
 
         GuessPostDTO guessPostDTO = new GuessPostDTO();
         guessPostDTO.setToken("123");

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @DataJpaTest
-public class CardRepositoryIntegrationTest {
+class CardRepositoryIntegrationTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -20,7 +20,7 @@ public class CardRepositoryIntegrationTest {
     private CardRepository cardRepository;
 
     @Test
-    public void findCardById_success() {
+    void findCardById_success() {
         // given
         Card card = new Card();
         card.setId(1L);

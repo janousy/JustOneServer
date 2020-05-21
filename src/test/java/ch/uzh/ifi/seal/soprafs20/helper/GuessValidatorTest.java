@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GuessValidatorTest {
+class GuessValidatorTest {
 
     @Mock
     private GameRepository gameRepository;
@@ -78,7 +78,7 @@ public class GuessValidatorTest {
     }
 
     @Test
-    public void guessValidationGuessGiven_guessTrue() {
+    void guessValidationGuessGiven_guessTrue() {
 
         Guess givenGuess = new Guess();
         givenGuess.setContent("word1");
@@ -96,7 +96,7 @@ public class GuessValidatorTest {
     }
 
     @Test
-    public void guessValidationGuessGiven_guessTrue_UpperCaseAndBlankSpace() {
+    void guessValidationGuessGiven_guessTrue_UpperCaseAndBlankSpace() {
 
         Guess givenGuess = new Guess();
         givenGuess.setContent("WORD 1    ");
@@ -115,7 +115,7 @@ public class GuessValidatorTest {
     }
 
     @Test
-    public void guessValidationGuessGiven_guessTrue_cardListEmpty() {
+    void guessValidationGuessGiven_guessTrue_cardListEmpty() {
 
         Guess givenGuess = new Guess();
         givenGuess.setContent("word1");
@@ -135,7 +135,7 @@ public class GuessValidatorTest {
     }
 
     @Test
-    public void guessValidationGuessGiven_guessFalse_NotLastCard() {
+    void guessValidationGuessGiven_guessFalse_NotLastCard() {
 
         Guess givenGuess = new Guess();
         givenGuess.setContent("falseGuess");
@@ -153,7 +153,7 @@ public class GuessValidatorTest {
     }
 
     @Test
-    public void guessValidationGuessGiven_guessFalse_LastCard() {
+    void guessValidationGuessGiven_guessFalse_LastCard() {
         Guess givenGuess = new Guess();
         givenGuess.setContent("falseGuess");
         testGame.removeCard(card1);
@@ -172,7 +172,7 @@ public class GuessValidatorTest {
     }
 
     @Test
-    public void guessValidationGuessSkipped_guessSkipped() {
+    void guessValidationGuessSkipped_guessSkipped() {
         int oldNumberOfCorrectCards = testGame.getCorrectCards();
         int oldSizeOfCardList = testGame.getCardList().size();
 

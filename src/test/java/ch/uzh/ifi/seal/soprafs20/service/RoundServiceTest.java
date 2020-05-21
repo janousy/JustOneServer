@@ -25,7 +25,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class RoundServiceTest {
+class RoundServiceTest {
 
     @Mock
     private RoundRepository roundRepository;
@@ -74,7 +74,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void whenGetAllRoundsOfGame_returnRounds_success() {
+    void whenGetAllRoundsOfGame_returnRounds_success() {
         round1.setGame(game1);
         round2.setGame(game2);
         roundList.add(round1);
@@ -87,7 +87,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void whenGetLastRound_NoRounds_throwsExeption() {
+    void whenGetLastRound_NoRounds_throwsExeption() {
         //no rounds added to roundList, thus no round in game startet
         game1.setRoundList(roundList);
 
@@ -96,7 +96,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void whenGetLastRound_GameFinished_success() {
+    void whenGetLastRound_GameFinished_success() {
         roundList.add(round1);
         game1.setRoundList(roundList);
         game1.setStatus(GameStatus.FINISHED);
@@ -107,7 +107,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void addHintToRound_TokenValid_success() {
+    void addHintToRound_TokenValid_success() {
 
         player1.setUserToken("testToken");
         player1.setStatus(PlayerStatus.CLUE_GIVER);
@@ -132,7 +132,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void addGuessToRound_TokenValid_success() {
+    void addGuessToRound_TokenValid_success() {
 
         player1.setUserToken("testToken");
         player1.setStatus(PlayerStatus.GUESSER);
@@ -160,7 +160,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void addTermToRound_TokenValid_success() {
+    void addTermToRound_TokenValid_success() {
         player1.setUserToken("testToken");
         player1.setStatus(PlayerStatus.GUESSER);
 
@@ -199,7 +199,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void givenRoundWithHints_getAllHintsFromRound() {
+    void givenRoundWithHints_getAllHintsFromRound() {
         Hint testHint = new Hint();
         List<Hint> hintList = new ArrayList<>();
         hintList.add(testHint);
@@ -214,7 +214,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void givenRoundWithGuess_getCurrentGuessFromRound() {
+    void givenRoundWithGuess_getCurrentGuessFromRound() {
         Guess testGuess = new Guess();
         round1.setGuess(testGuess);
         roundList.add(round1);
@@ -227,7 +227,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void givenRoundWithTerm_getCurrentTermFromRound() {
+    void givenRoundWithTerm_getCurrentTermFromRound() {
         Term testTerm = new Term();
         round1.setTerm(testTerm);
         roundList.add(round1);
@@ -240,7 +240,7 @@ public class RoundServiceTest {
     }
 
     @Test
-    public void givenRoundWithHint_updateHint_success() {
+    void givenRoundWithHint_updateHint_success() {
         ArrayList<Integer> similarities = new ArrayList<>();
         ArrayList<String> reporter = new ArrayList<>();
         reporter.add("testToken");
@@ -281,8 +281,9 @@ public class RoundServiceTest {
         assertEquals(similarities, updatedHint.getSimilarity());
         assertEquals(reporter, updatedHint.getReporters());
     }
+
     @Test
-    public void givenTerm_skipTermByGuesser_success() {
+    void givenTerm_skipTermByGuesser_success() {
         player1.setUserToken("testToken");
         player1.setStatus(PlayerStatus.GUESSER);
         List<Player> playerList = new ArrayList<>();

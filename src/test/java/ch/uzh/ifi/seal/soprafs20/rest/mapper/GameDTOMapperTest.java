@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * DTOMapperTest
  * Tests if the mapping between the internal and the external/API representation works.
  */
-public class GameDTOMapperTest {
+class GameDTOMapperTest {
     @Test
-    public void testCreateGame_fromGamePostDTO_toGame_success() {
+    void testCreateGame_fromGamePostDTO_toGame_success() {
         // create UserPostDTO
         GamePostDTO gamePostDTO = new GamePostDTO();
         gamePostDTO.setName("Test Game 1");
@@ -30,7 +30,7 @@ public class GameDTOMapperTest {
     }
 
     @Test
-    public void testGetGame_fromGame_toGameGetDTO_success() {
+    void testGetGame_fromGame_toGameGetDTO_success() {
         // create Game
         Game game = new Game();
         game.setName("TestGame 1");
@@ -52,7 +52,7 @@ public class GameDTOMapperTest {
     }
 
     @Test
-    public void testDeleteGame_fromGameDeleteDTO_toGame_success() {
+    void testDeleteGame_fromGameDeleteDTO_toGame_success() {
         // create UserPostDTO
         GameDeleteDTO gameDeleteDTO = new GameDeleteDTO();
         gameDeleteDTO.setGameId(1L);
@@ -65,7 +65,7 @@ public class GameDTOMapperTest {
     }
 
     @Test
-    public void testUpdateGame_fromGamePutDTO_toGame_success() {
+    void testUpdateGame_fromGamePutDTO_toGame_success() {
         // create UserPutDTO
         GamePutDTO gamePutDTO = new GamePutDTO();
         gamePutDTO.setStatus(GameStatus.FINISHED);

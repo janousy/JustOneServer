@@ -24,7 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameServiceTest {
+class GameServiceTest {
 
     @Mock
     private GameRepository gameRepository;
@@ -56,7 +56,7 @@ public class GameServiceTest {
 
 
     @Test
-    public void createGame_validInputs_success() {
+    void createGame_validInputs_success() {
         // when -> any object is being save in the gameRepository -> return the dummy testGame
         Game createdGame = gameService.createGame(testGame);
 
@@ -73,7 +73,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void createGame_duplicateInputs_throwsException() {
+    void createGame_duplicateInputs_throwsException() {
         // given -> a first game has already been created
         gameService.createGame(testGame);
 
@@ -86,7 +86,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void getGameById_validInputs_success() {
+    void getGameById_validInputs_success() {
         // when -> setup additional mocks for GameRepository
         Mockito.when(gameRepository.findByName(Mockito.any())).thenReturn(testGame);
         Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
@@ -108,7 +108,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void getGameById_wrongInputs_throwsException() {
+    void getGameById_wrongInputs_throwsException() {
         // when -> setup additional mocks for GameRepository
         Mockito.when(gameRepository.findByName(Mockito.any())).thenReturn(testGame);
         Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(null);
@@ -117,7 +117,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void deleteGameById_validInput_success() {
+    void deleteGameById_validInput_success() {
         testGame.setStatus(GameStatus.DELETE);
         Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
 
@@ -137,7 +137,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void deleteGameById_wrongInput_returnsTheSame() {
+    void deleteGameById_wrongInput_returnsTheSame() {
         Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
 
         Game deletedGame = gameService.deleteGameById(1L);
@@ -156,7 +156,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void checkGameReady_validInput_success() {
+    void checkGameReady_validInput_success() {
 
         //adjusting the testgame in order to let it start
         Player player1 = new Player();
@@ -194,7 +194,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void checkGameReady_playerListSmaller3_returnsTheSame() {
+    void checkGameReady_playerListSmaller3_returnsTheSame() {
 
         Game checkedGame = gameService.checkGameReady(testGame);
 
@@ -210,7 +210,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void checkGameReady_playerListNotReady_returnsTheSame() {
+    void checkGameReady_playerListNotReady_returnsTheSame() {
         //adjusting the testGame in order to let it start
         Player player1 = new Player();
         Player player2 = new Player();
@@ -233,7 +233,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void checkIfPlayersKnowTerm_success() {
+    void checkIfPlayersKnowTerm_success() {
         //prepare the game
         Player player1 = new Player();
         player1.setStatus(PlayerStatus.CLUE_GIVER);
@@ -261,7 +261,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void checkIfPlayersKnowTerm_nrOfUnknownsToLarge() {
+    void checkIfPlayersKnowTerm_nrOfUnknownsToLarge() {
         //prepare the game
         //add a player to the game
         Player player1 = new Player();
@@ -296,7 +296,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void checkIfPlayersKnowTerm_NotAllClueGiversHaveReported() {
+    void checkIfPlayersKnowTerm_NotAllClueGiversHaveReported() {
         //prepare the game
         Player player1 = new Player();
         player1.setStatus(PlayerStatus.CLUE_GIVER);
@@ -318,7 +318,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void updateGameStatus_validInput_success() {
+    void updateGameStatus_validInput_success() {
         // when -> setup additional mocks for GameRepository
         Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
 
@@ -342,7 +342,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void updateGameStatus_invalidInput_throwsException() {
+    void updateGameStatus_invalidInput_throwsException() {
         // when -> setup additional mocks for GameRepository
         Mockito.when(gameRepository.findGameByGameId(Mockito.any())).thenReturn(testGame);
 
@@ -356,7 +356,7 @@ public class GameServiceTest {
     }
 
     @Test
-    public void addCardsToGame_validInput_success() {
+    void addCardsToGame_validInput_success() {
         //prepare the cardRepository.findAll mock
         List<Card> cardList = new ArrayList<Card>();
         for (int i = 0; i < 50; i++) {
@@ -374,11 +374,11 @@ public class GameServiceTest {
         Mockito.verify(cardRepository, Mockito.times(1)).findAll();
         Mockito.verify(cardRepository, Mockito.times(CONSTANTS.NUMBER_OF_ROUNDS)).findCardById(Mockito.any());
 
-        assertEquals(testGame.getCardList().size(), CONSTANTS.NUMBER_OF_ROUNDS);
+        assertEquals(CONSTANTS.NUMBER_OF_ROUNDS, testGame.getCardList().size());
     }
 
     @Test
-    public void findRoundByGameId_validInput_success() {
+    void findRoundByGameId_validInput_success() {
         //prepare the gameRepository mock
         Round roundToAdd = new Round();
         roundToAdd.setId(1L);
@@ -391,13 +391,13 @@ public class GameServiceTest {
     }
 
     @Test
-    public void findRoundByGameId_gameIsNull() {
+    void findRoundByGameId_gameIsNull() {
 
         assertThrows(ResponseStatusException.class, () -> gameService.findRoundByGameId(testGame));
     }
 
     @Test
-    public void findRoundByGameId_RoundListIsTooSmall() {
+    void findRoundByGameId_RoundListIsTooSmall() {
 
         assertThrows(ResponseStatusException.class, () -> gameService.findRoundByGameId(testGame));
     }

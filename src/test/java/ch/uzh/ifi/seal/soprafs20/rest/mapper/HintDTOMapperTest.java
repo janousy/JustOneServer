@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HintDTOMapperTest {
+class HintDTOMapperTest {
 
     @Test
-    public void testCreateHint_fromHintDTO_toHint_success() {
+    void testCreateHint_fromHintDTO_toHint_success() {
         HintPostDTO hintPostDTO = new HintPostDTO();
         hintPostDTO.setContent("testHint");
         hintPostDTO.setToken("testToken");

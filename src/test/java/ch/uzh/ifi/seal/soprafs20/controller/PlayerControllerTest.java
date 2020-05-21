@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.is;
  * This tests if the PlayerController works.
  */
 @WebMvcTest(PlayerController.class)
-public class PlayerControllerTest {
+class PlayerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,7 +46,7 @@ public class PlayerControllerTest {
     private GameService gameService;
 
     @Test
-    public void givenPlayers_whenGetAllPlayers_thenReturnJsonArray() throws Exception {
+    void givenPlayers_whenGetAllPlayers_thenReturnJsonArray() throws Exception {
 
         Player testPlayer = new Player();
         testPlayer.setName("testPlayer");
@@ -73,7 +73,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void givenPlayers_whenGetAllPlayerFromGame() throws Exception {
+    void givenPlayers_whenGetAllPlayerFromGame() throws Exception {
 
         Player testPlayer = new Player();
         testPlayer.setName("testPlayer");
@@ -101,7 +101,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void givenPlayers_whenGetPlayerFromGame_thenReturnJsonArray() throws Exception {
+    void givenPlayers_whenGetPlayerFromGame_thenReturnJsonArray() throws Exception {
 
         Player testPlayer = new Player();
         testPlayer.setName("testPlayer");
@@ -125,7 +125,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void createPlayer_validInput_playerCreated() throws Exception {
+    void createPlayer_validInput_playerCreated() throws Exception {
         Player testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");
@@ -156,7 +156,7 @@ public class PlayerControllerTest {
     }
 
     @Test
-    public void deletePlayer_validInput_playerDeleted() throws Exception {
+    void deletePlayer_validInput_playerDeleted() throws Exception {
         Player testPlayer = new Player();
         testPlayer.setId(1L);
         testPlayer.setName("testPlayer");

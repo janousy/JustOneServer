@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TermDTOMapperTest {
+class TermDTOMapperTest {
     @Test
-    public void testCreateTerm_fromTermDTO_toTerm_success() {
+    void testCreateTerm_fromTermDTO_toTerm_success() {
 
         TermPostDTO termPostDTO = new TermPostDTO();
         termPostDTO.setWordId(0L);

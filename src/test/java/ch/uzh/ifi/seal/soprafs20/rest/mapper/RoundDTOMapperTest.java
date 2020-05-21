@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RoundDTOMapperTest {
+class RoundDTOMapperTest {
 
     @Test
-    public void testGetRound_fromRound_toRoundGetDTO_success() {
+    void testGetRound_fromRound_toRoundGetDTO_success() {
         // create Round
         Round round = new Round();
         round.setId(1L);

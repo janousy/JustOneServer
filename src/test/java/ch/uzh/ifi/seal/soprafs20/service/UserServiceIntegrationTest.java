@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @WebAppConfiguration
 @SpringBootTest
-public class UserServiceIntegrationTest {
+class UserServiceIntegrationTest {
 
     @Qualifier("userRepository")
     @Autowired
@@ -36,7 +36,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void createUser_validInputs_success() {
+    void createUser_validInputs_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -56,7 +56,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void createUser_duplicateUsername_throwsException() {
+    void createUser_duplicateUsername_throwsException() {
         assertNull(userRepository.findByUsername("testUsername"));
 
         //create a testUser
@@ -78,7 +78,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void loginUser_validInput_success() {
+    void loginUser_validInput_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -102,7 +102,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void loginUser_userDoesNotExist_throwsException() {
+    void loginUser_userDoesNotExist_throwsException() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -118,7 +118,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void loginUser_passwordWrong_throwsException() {
+    void loginUser_passwordWrong_throwsException() {
         //create a testUser
         User testUser = new User();
         testUser.setId(1L);
@@ -139,7 +139,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void loginUser_userAlreadyLoggedIn_throwsException() {
+    void loginUser_userAlreadyLoggedIn_throwsException() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -158,7 +158,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void logoutUser_validInput_success() {
+    void logoutUser_validInput_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -182,7 +182,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void logoutUser_invalidInput_throwsException() {
+    void logoutUser_invalidInput_throwsException() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -204,7 +204,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void getUserById_validInput_success() {
+    void getUserById_validInput_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -228,14 +228,14 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void getUserById_userDoesNotExist_throwsException() {
+    void getUserById_userDoesNotExist_throwsException() {
         //no data needs to be created
         // then
         assertThrows(ResponseStatusException.class, () -> userService.getUserById(1L));
     }
 
     @Test
-    public void updateUser_validInput_success() {
+    void updateUser_validInput_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -263,7 +263,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void updateUser_usernameAlreadyExists_throwsException() {
+    void updateUser_usernameAlreadyExists_throwsException() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -293,7 +293,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_validInput_success() {
+    void verifyPasswordOfUser_validInput_success() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -320,7 +320,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void verifyPasswordOfUser_passwordsDontMatch() {
+    void verifyPasswordOfUser_passwordsDontMatch() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 
@@ -347,7 +347,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void checkIfUserExists_UserExists_throwsException() {
+    void checkIfUserExists_UserExists_throwsException() {
         // given
         assertNull(userRepository.findByUsername("testUsername"));
 

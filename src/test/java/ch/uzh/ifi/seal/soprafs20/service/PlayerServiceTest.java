@@ -20,7 +20,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PlayerServiceTest {
+class PlayerServiceTest {
 
     @Mock
     private PlayerRepository playerRepository;
@@ -71,7 +71,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void createPlayer_validInputs_success() {
+    void createPlayer_validInputs_success() {
 
         Player createdPlayer = playerService.createPlayer(testPlayer, 1L);
 
@@ -87,7 +87,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void whenCreatePlayer_CheckIfGameHasHost_OnlyOneHost_success() {
+    void whenCreatePlayer_CheckIfGameHasHost_OnlyOneHost_success() {
         Player testPlayer2 = new Player();
         testPlayer2.setId(2L);
         testPlayer2.setName("testPlayer");
@@ -109,7 +109,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void whenCreatePlayer_FirstIsHostAndSecondGuest_success() {
+    void whenCreatePlayer_FirstIsHostAndSecondGuest_success() {
         testPlayer.setRole(PlayerRole.HOST);
         playerList.add(testPlayer);
         testGame.setStatus(GameStatus.RECEIVING_GUESS);
@@ -120,7 +120,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void deletePlayer_whenPlayerInGame_success() {
+    void deletePlayer_whenPlayerInGame_success() {
         Long gameId = 1L;
         Long playerId = 1L;
         List<Player> testPlayerList = new ArrayList<>();
@@ -141,7 +141,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void deletePlayer_whenPlayerNotInGame_throwsExeption() {
+    void deletePlayer_whenPlayerNotInGame_throwsExeption() {
         Long gameId = 1L;
         Long playerId = 1L;
 
@@ -150,7 +150,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void deletePlayer_whenGameHasStarted_throwsExeption() {
+    void deletePlayer_whenGameHasStarted_throwsExeption() {
         Long gameId = 1L;
         Long playerId = 1L;
         testGame.setStatus(GameStatus.RECEIVING_GUESS); //must not be LOBBY or FINISHED
@@ -160,7 +160,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void updatePlayerTermStatus_whenPlayerIsClueGiver_success() {
+    void updatePlayerTermStatus_whenPlayerIsClueGiver_success() {
 
         Long playerId = 1L;
 
@@ -179,7 +179,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void updatePlayerTermStatus_whenPlayerIsNotClueGiver_throwsExeption() {
+    void updatePlayerTermStatus_whenPlayerIsNotClueGiver_throwsExeption() {
 
         Long playerId = 1L;
 
@@ -194,7 +194,7 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void updatePlayerStatus_whenPlayerNotInAction_success() {
+    void updatePlayerStatus_whenPlayerNotInAction_success() {
 
         Long playerId = 1L;
 
@@ -212,9 +212,8 @@ public class PlayerServiceTest {
         assertEquals(testPlayer.getPlayerTermStatus(), updatedPlayer.getPlayerTermStatus());
     }
 
-
     @Test
-    public void updatePlayerStatus_whenPlayerInAction_throwsExeption() {
+    void updatePlayerStatus_whenPlayerInAction_throwsExeption() {
 
         Long playerId = 1L;
 

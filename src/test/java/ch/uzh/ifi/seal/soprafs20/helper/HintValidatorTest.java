@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HintValidatorTest {
+class HintValidatorTest {
 
     private Term testTerm;
     private Round testRound;
@@ -48,7 +48,7 @@ public class HintValidatorTest {
     }
 
     @Test
-    public void givenListOfHints_validateSimilarity() {
+    void givenListOfHints_validateSimilarity() {
         ArrayList<Integer> similarities1 = new ArrayList<>();
         similarities1.add(2); //hint1 is similar to hint3
         similarities1.add(2); //hint1 is similar to hint3
@@ -67,7 +67,7 @@ public class HintValidatorTest {
     }
 
     @Test
-    public void givenHintAndTerm_validateEquality_success() {
+    void givenHintAndTerm_validateEquality_success() {
         Hint hint = new Hint();
         hint.setContent("test");
         Term term = new Term();
@@ -85,7 +85,7 @@ public class HintValidatorTest {
     }
 
     @Test
-    public void givenHints_validateDuplicates() {
+    void givenHints_validateDuplicates() {
         testHint1.setContent("test");
         testHint2.setContent("test1");
         testHint3.setContent("test");
@@ -101,7 +101,7 @@ public class HintValidatorTest {
     }
 
     @Test
-    public void givenHint_compareHintToTerm() {
+    void givenHint_compareHintToTerm() {
         testHint1.setContent("SomeMoreStringtestSomeMoreString");
         testTerm.setContent("test");
 
@@ -111,7 +111,7 @@ public class HintValidatorTest {
     }
 
     @Test
-    public void givenHint_checkSingleWord() {
+    void givenHint_checkSingleWord() {
         testHint1.setContent("SomeMore MoreString");
 
         hintValidator.checkSingleWord(testHint1);
