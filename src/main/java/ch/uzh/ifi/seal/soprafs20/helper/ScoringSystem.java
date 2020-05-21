@@ -75,6 +75,11 @@ public class ScoringSystem {
                 earnedPoints = 0;
             }
 
+            //verify that the player gets his special reward if enough correct guesses
+            if (guessingPlayer.getNrOfValidGuesses() >= CONSTANTS.MIN_NR_OF_CORRECT_GUESS_FOR_REWARD) {
+                earnedPoints = earnedPoints + CONSTANTS.ADDITIONAL_POINTS_REWARD_GUESS;
+            }
+
             int oldScore = guessingPlayer.getScore();
             guessingPlayer.setScore(oldScore + earnedPoints);
             playerRepository.save(guessingPlayer);
@@ -111,6 +116,11 @@ public class ScoringSystem {
             //to assure that the guesser gets at least 0 points and not negative if too slow
             if (earnedPoints < 0) {
                 earnedPoints = 0;
+            }
+
+            //verify that the player gets his special reward if enough correct guesses
+            if (clueGivingPlayer.getNrOfValidHints() >= CONSTANTS.MIN_NR_OF_CORRECT_HINTS_FOR_REWARD) {
+                earnedPoints = earnedPoints + CONSTANTS.ADDITIONAL_POINTS_REWARD_HINT;
             }
 
             int oldScore = clueGivingPlayer.getScore();

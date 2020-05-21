@@ -86,6 +86,35 @@ public class ScoringSystemTest {
     }
 
     @Test
+    public void updateScoresOfGuesser_AdditionalPointsEnabled_GuessValid() {
+
+        testPlayer.setNrOfValidGuesses(3);
+
+        //preparation for the test
+        Guess givenGuess = new Guess();
+        givenGuess.setStatus(ActionTypeStatus.VALID);
+
+        // when -> any object is being save in the gameRepository -> return the dummy testGame
+        Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(testPlayer);
+        Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
+
+        int oldScore = testPlayer.getScore();
+        int scoreAdjustment = (int) (CONSTANTS.MAX_POINTS_PER_ROUND_GUESS - (10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND));
+        scoreAdjustment = scoreAdjustment + CONSTANTS.ADDITIONAL_POINTS_REWARD_GUESS;
+        int expectedScore = oldScore + scoreAdjustment;
+
+        //invoke the testMethod
+        scoringSystem.updateScoreOfGuesser(givenGuess);
+
+        //then
+        Mockito.verify(playerRepository, Mockito.times(1)).findByUserToken(Mockito.any());
+        Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
+
+        assertEquals(expectedScore, testPlayer.getScore());
+
+    }
+
+    @Test
     public void updateScoresOfGuesser_GuessInvalid() {
 
         //preparation for the test
@@ -122,6 +151,35 @@ public class ScoringSystemTest {
 
         int oldScore = testPlayer.getScore();
         int scoreAdjustment = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) (10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        int expectedScore = oldScore + scoreAdjustment;
+
+
+        //invoke the testMethod
+        scoringSystem.updateScoreOfClueGiver(givenHint);
+
+        //then
+        Mockito.verify(playerRepository, Mockito.times(1)).findByUserToken(Mockito.any());
+        Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
+
+        assertEquals(expectedScore, testPlayer.getScore());
+    }
+
+    @Test
+    public void updateScoresOfClueGiver_AdditionalPointsEnabled_HintValid() {
+
+        testPlayer.setNrOfValidHints(7);
+
+
+        //preparation for the test
+        Hint givenHint = new Hint();
+        givenHint.setStatus(ActionTypeStatus.VALID);
+
+        Mockito.when(playerRepository.findByUserToken(Mockito.any())).thenReturn(testPlayer);
+        Mockito.when(playerRepository.save(Mockito.any())).thenReturn(testPlayer);
+
+        int oldScore = testPlayer.getScore();
+        int scoreAdjustment = CONSTANTS.MAX_POINTS_PER_ROUND_HINT - (int) (10 * CONSTANTS.POINT_DEDUCTION_PER_SECOND);
+        scoreAdjustment = scoreAdjustment + CONSTANTS.ADDITIONAL_POINTS_REWARD_HINT;
         int expectedScore = oldScore + scoreAdjustment;
 
 
