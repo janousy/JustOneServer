@@ -135,7 +135,7 @@ As new developer joining this project, there a few features on the list:
 - Chat functionality, to improve interaction opportunities of players
 - Bots, for lonely players
 - Extended hint validaiton for foreign languages
-- Exchange in-memory DB with persistant DB
+- Exchange in-memory DB with persistent DB
 
 ## Authors and Acknowledgement
 
